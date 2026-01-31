@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-// gcc -Wall -std=c99 main.c -o build/mantis
+// gcc -Wall -std=c99 -Iinclude src/main.c -o build/mantis
+// ./build/mantis
 
 int main(void) {
     printf("CCPROG2 MP start!");
