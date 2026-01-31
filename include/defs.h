@@ -1,8 +1,7 @@
 /******************************************************************************
  *  Description     : <short description of the file>
- *  Author/s        : <student1 full name (last name, first name)>
- *                    <student2 full name (last name, first name)>
- *  Section         : <your section>
+ *  Author/s        : Alip, Rafael Prince Naif E.
+ *  Section         : S12A
  *  Last Modified   : <date when last revision was made>
  ******************************************************************************/
 
