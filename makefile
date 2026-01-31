@@ -3,7 +3,7 @@ PROJECT_NAME = mantis
 
 # files
 INCLUDE = -Iinclude
-SRCS = $(wildcard src/*.c) $(wildcard ./lib/*.c)
+SRCS = $(wildcard src/*.c)
 
 # build/link
 $(PROJECT_NAME): $(SRCS) $(INCLUDE)

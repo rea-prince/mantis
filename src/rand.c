@@ -1,13 +1,12 @@
 /******************************************************************************
- *  Description     : <short description of the file>
- *  Author/s        : <student1 full name (last name, first name)>
- *                    <student2 full name (last name, first name)>
- *  Section         : <your section>
+ *  Description     : Provided functions for randomizing values
+ *  Author/s        : Alip, Rafael Prince Naif E.
+ *  Section         : S12A
  *  Last Modified   : <date when last revision was made>
  ******************************************************************************/
 
-#ifndef HELPERS_2_C // Include this to prevent redefinition error
-#define HELPERS_2_C // Include this to prevent redefinition error
+#ifndef RAND_C // Include this to prevent redefinition error
+#define RAND_C // Include this to prevent redefinition error
 
 #include <stdio.h>
 #include <stdlib.h>

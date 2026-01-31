@@ -6,12 +6,15 @@
  *  Acknowledgments : <list of references used in the making of this project>
  ******************************************************************************/
 
+// gcc -Wall -std=c99 -Iinclude src/*.c -o build/mantis
+
 /* ----- preprocessor directives ----- */
 #include <stdio.h>
 
 #include "defs.h"
 #include "helpers_1.c"
-#include "helpers_2.c"
+#include "rand.c"
+#include "interface.c"
 
 /* ----- definitions (i.e., constants, typedefs, structs) ----- */
 
@@ -97,6 +100,5 @@ int main()
  * that I/we have not copied in part or whole or otherwise plagiarized the work of other
  * students and/or persons, nor did I employ the use of AI in any part of the deliverable.
  *
- * <student1 full name (last name, first name)> (DLSU ID# <number>)
- * <student2 full name (last name, first name)> (DLSU ID# <number>)
+ * Alip, Rafael Prince Naif E. (DLSU ID# 12504734)
  */
