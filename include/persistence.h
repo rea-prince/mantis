@@ -1,12 +1,12 @@
 /******************************************************************************
- *  Description     : <short description of the file>
+ *  Description     : Definitions of all information needed for file persistence
  *  Author/s        : Alip, Rafael Prince Naif E.
  *  Section         : S12A
  *  Last Modified   : <date when last revision was made>
  ******************************************************************************/
 
-#ifndef DEFS_H // Include this to prevent redefinition error
-#define DEFS_H // Include this to prevent redefinition error
+#ifndef PERSISTENCE_H // Include this to prevent redefinition error
+#define PERSISTENCE_H // Include this to prevent redefinition error
 
 /******************************************************************************
  * NOTE: These definitions are placed here in defs.h to demonstrate code

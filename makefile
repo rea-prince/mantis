@@ -1,4 +1,4 @@
-CFLAGS = -Wall -std=c99 -Iinclude
+CFLAGS = -Wall -std=c99
 PROJECT_NAME = mantis
 
 # files
@@ -6,10 +6,10 @@ INCLUDE = -Iinclude
 SRCS = $(wildcard src/*.c)
 
 # build/link
-$(PROJECT_NAME): $(SRCS) $(INCLUDE)
-	echo "Building file!"
-	gcc $(CFLAGS) $^ -o build/$@
-	echo "Done building!"
+$(PROJECT_NAME): $(SRCS)
+	@echo "Building file!"
+	gcc $(CFLAGS) $(INCLUDE) $^ -o build/$@
+	@echo "Done building!"
 
 clean:
 	rm -rf ./build/$(PROJECT_NAME)
