@@ -2,7 +2,7 @@
  *  Description     : <short description of the project>
  *  Author/s        : Alip, Rafael Prince Naif E.
  *  Section         : S12A
- *  Last Modified   : <date when last revision was made>
+ *  Last Modified   : February 15, 2026
  *  Acknowledgments : <list of references used in the making of this project>
  ******************************************************************************/
 
@@ -10,21 +10,30 @@
 
 /* ----- preprocessor directives ----- */
 #include <stdio.h>
+#include <stdbool.h>
+
+/* ----- definitions (i.e., constants, typedefs, structs) ----- */
+
+#include "models.h"
+
+/* ----- function implementations ----- */
 
 #include "persistence.h"
 #include "logic.h"
 #include "rand.h"
 #include "interface.h"
 
-/* ----- definitions (i.e., constants, typedefs, structs) ----- */
-
-/* ----- function implementations ----- */
-
 int main()
 {
+    printf("Hello, world!\n");
 
+    // prompt
 
-  return 0;
+    // game loop func
+
+    // prompt loop
+
+    return 0;
 }
 
 /**

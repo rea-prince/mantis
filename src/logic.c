@@ -9,6 +9,7 @@
 #define LOGIC_C // Include this to prevent redefinition error
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -36,15 +37,61 @@ void displayCoodinates(Coordinate points[], int arrSize)
   printf("\n\n");
 }
 
+/* HELPER FUNCTIONS */
 
-/* TODO */
+// Load players function
+
+// Display winner
+
+// Edit and re-sort players.txt
+
+
+/* TO-DO */
 
 // Player turn
 
+// Check player win
+
 // Round simulation
 
-// Game simulation
+// Game simulation (final loop)
+
+int playGame() {
+
+    /* Loading players */
+
+    // open players.txt
+
+    // get number of players
+
+    // for (number of players)
+        // scanf for name
+        // add and initialize to players array
+        // if name not in players.txt,
+            // append and initialize 0 0 for won and high score
+        // else do nothing
+
+    /* Game proper */
+
+    // state vars for game condition
+        // win bool
+        // winner placeholder struct
+
+    // ROUND simulation loops while condition is not met
+
+    /* Game end */
+
+    // Display winner/loser
+
+    // edit player wins, check if high score
+
+    // re-sort players.txt by high score
+
+    // close players.txt
+
+    return 1; // return for success
+}
 
 
 
-#endif // HELPERS_1_C; Include this to prevent redefinition error
+#endif // LOGIC_C; Include this to prevent redefinition error

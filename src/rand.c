@@ -25,7 +25,7 @@
  */
 void initRandom()
 {
-  srand(time(0)); // Initialize the seed for the random number generator
+    srand(time(0)); // Initialize the seed for the random number generator
 }
 
 /**
@@ -35,7 +35,7 @@ void initRandom()
  */
 int randomInt()
 {
-  return rand() % 100; // Generate a random number from 0 to 99
+    return rand() % 100; // Generate a random number from 0 to 99
 }
 
 /**
@@ -48,19 +48,19 @@ int randomInt()
  */
 void shuffle(void *array, size_t n, size_t elem_size, unsigned int seed)
 {
-  unsigned char *arr = (unsigned char *)array;
-  srand(seed); // Set the seed for reproducibility
+    unsigned char *arr = (unsigned char *)array;
+    srand(seed); // Set the seed for reproducibility
 
-  for (size_t i = n - 1; i > 0; i--)
-  {
-    size_t j = rand() % (i + 1); // Random index from 0 to i
+    for (size_t i = n - 1; i > 0; i--)
+    {
+        size_t j = rand() % (i + 1); // Random index from 0 to i
 
-    // Swap elements
-    unsigned char temp[elem_size];
-    memcpy(temp, arr + i * elem_size, elem_size);
-    memcpy(arr + i * elem_size, arr + j * elem_size, elem_size);
-    memcpy(arr + j * elem_size, temp, elem_size);
-  }
+        // Swap elements
+        unsigned char temp[elem_size];
+        memcpy(temp, arr + i * elem_size, elem_size);
+        memcpy(arr + i * elem_size, arr + j * elem_size, elem_size);
+        memcpy(arr + j * elem_size, temp, elem_size);
+    }
 }
 
 #endif // HELPERS_2_C; Include this to prevent redefinition error

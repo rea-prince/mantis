@@ -5,11 +5,11 @@ PROJECT_NAME = mantis
 INCLUDE = -Iinclude
 SRCS = $(wildcard src/*.c)
 
-# build/link
+# build
 $(PROJECT_NAME): $(SRCS)
-	@echo "Building file!"
+	@echo "Compiling binaries! ouo"
 	gcc $(CFLAGS) $(INCLUDE) $^ -o build/$@
-	@echo "Done building!"
+	@echo "Done building! ^-^"
 
 clean:
 	rm -rf ./build/$(PROJECT_NAME)

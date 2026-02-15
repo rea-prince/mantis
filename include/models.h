@@ -29,7 +29,7 @@ typedef struct {
  */
 typedef struct {
     char* username;
-    Card cards[];
+    Card cards[6];
     int points;
 } Player;
 
