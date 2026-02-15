@@ -21,12 +21,13 @@
 
 #define DECK_SIZE 84
 #define MIN_PLAYERS 3
-#define MAX_PLAYERS 6
+#define MAX_PLAYERS 50
 
 #define MAX_NAME_CHARS 37
 #define MAX_LOGGED_PLAYERS 100
 
 #define BACK_COLORS 3
-#define MAX_PLAYER_CARDS 6
+#define CARD_COLORS 7
+#define CARDS_PER_COLOR 12
 
 #endif

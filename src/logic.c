@@ -10,66 +10,36 @@
 
 #include "common.h"
 #include "models.h"
-
-/* HELPER FUNCTIONS */
-
-// Search name function
-int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int playerCount) {
-    int nameIdx;
-    int retIdx = -1;
-    for (nameIdx = 0; nameIdx < playerCount && retIdx == -1; nameIdx++)
-        if (strcmp(list[nameIdx], key) == 0)
-            retIdx = nameIdx;
-    return retIdx;
-}
-
-// Load players function
-
-// Load deck function from mantis.txt
-
-int createDeck(FILE* mantisDeck, Card gameDeck[]) {
-
-    char lineBuffer[11];
-    int randSeed = randomInt();
-
-    /* Load deck into memory */
-
-    int cardIdx = 0;
-    while (cardIdx < DECK_SIZE && fgets(lineBuffer, sizeof(lineBuffer), mantisDeck)) {
-        gameDeck[cardIdx].color = lineBuffer[0];
-
-        gameDeck[cardIdx].back[0] = lineBuffer[4];
-        gameDeck[cardIdx].back[1] = lineBuffer[5];
-        gameDeck[cardIdx].back[2] = lineBuffer[6];
-
-        gameDeck[cardIdx].value = (lineBuffer[8] - 48);
-        cardIdx++;
-    }
-
-    /* Shuffle deck */
-
-    shuffle(gameDeck, cardIdx, sizeof(Card), randSeed);
-
-    return 1;
-}
-
-// Display winner
-
-// Edit and re-sort players.txt
-
+#include "helpers.h"
 
 /* TO-DO */
 
-// Player turn
+/* -------------------- */
+/* SIMULATE PLAYER TURN */
+// take players array, deck array, turn index, player action
+// If steal,
+// If score,
 
-// Check player win
 
-// Round simulation
 
-// Game simulation
+
+
+/* -------------- */
+/* SIMULATE ROUND */
+
+// Loop through players
+// Call playerTurn()
+
+
+
+
+
+
+/* ------------- */
+/* SIMULATE GAME */
 
 int playGame(Card* gameDeck, Player* players) {
-    /* Game proper */
+
 
     // state vars for game condition
         // win bool
@@ -81,21 +51,15 @@ int playGame(Card* gameDeck, Player* players) {
     return 1;
 }
 
-// Initialize game
+/* --------------- */
+/* INITIALIZE GAME */
 
 int initGame() {
-
-    /* Game variables */
 
     int playerCount, playerIdx;
     Card gameDeck[DECK_SIZE];
 
-    // Load players.txt
-    FILE* playersRead = fopen("players.txt", "r");
-    if (playersRead == NULL)
-        printf("Error: Could not read from players.txt\n");
-
-    // start players
+    /* INITIALIZE PLAYERS */
 
     printf("How many players? : ");
     scanf("%d", &playerCount);
@@ -119,28 +83,12 @@ int initGame() {
         }
         if (!duplicateFound) {
             strcpy(players[playerIdx].username, nameBuffer);
+            players[playerIdx].points = 0;
             playerIdx++;
         }
     } while (playerIdx < playerCount);
 
-
-    // open players.txt
-
-
-    FILE* playersWrite = fopen("players.txt", "w");
-    if (playersWrite == NULL)
-        printf("Error: Could not write to players.txt\n");
-
-
-
-    // for (number of players)
-        // scanf for name
-        // add and initialize to players array
-        // if name not in players.txt,
-            // append and initialize 0 0 for won and high score
-        // else do nothing
-
-    /* Loading deck */
+    /* LOAD DECK */
 
     FILE* mantisDeck = fopen("mantis.txt", "r");
     if (mantisDeck == NULL)
@@ -150,15 +98,26 @@ int initGame() {
         fclose(mantisDeck);
     }
 
-    /* Play Game */
+    /* PLAY GAME */
 
     playGame(gameDeck, players);
 
-    /* Game end */
-
     // Display winner/loser
 
-    // edit player wins, check if high score
+    /* LOG PLAYER STATS */
+
+    // open players.txt
+
+    FILE* playersRead = fopen("players.txt", "r");
+    if (playersRead == NULL)
+        printf("Error: Could not read from players.txt\n");
+    FILE* playersWrite = fopen("players.txt", "w");
+    if (playersWrite == NULL)
+        printf("Error: Could not write to players.txt\n");
+
+    // append names if non existent
+
+    // edit scores
 
     // re-sort players.txt by high score
 

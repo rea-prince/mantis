@@ -16,7 +16,7 @@
 typedef struct {
     char color;             // card's color
     char back[BACK_COLORS]; // colors at the card's back
-    int value;                        // card's color
+    int value;              // card's color
 } Card;
 
 /**
@@ -24,7 +24,7 @@ typedef struct {
  */
 typedef struct {
     char* username;
-    Card cards[MAX_PLAYER_CARDS];
+    Card cards[CARD_COLORS + 1][CARDS_PER_COLOR]; // 7 colors and 1 score pile
     int points;
 } Player;
 
