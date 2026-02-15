@@ -5,15 +5,10 @@
  *  Last Modified   : <date when last revision was made>
  ******************************************************************************/
 
- #ifndef MODELS_H
- #define MODELS_H
+#ifndef MODELS_H
+#define MODELS_H
 
- #define BACK_COLORS 3
- #define MAX_PLAYER_CARDS 6
-
-/**
- * Enum for the card colors to make indexing easier
- */
+#include "common.h"
 
 /**
  * Template for the cards that will to be loaded from mantis.txt

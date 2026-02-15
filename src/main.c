@@ -9,26 +9,25 @@
 // gcc -Wall -std=c99 -Iinclude src/*.c -o build/mantis
 
 /* ----- preprocessor directives ----- */
-#include <stdio.h>
-#include <stdbool.h>
 
 /* ----- definitions (i.e., constants, typedefs, structs) ----- */
 
-#include "models.h"
-
 /* ----- function implementations ----- */
 
-#include "persistence.h"
+#include "common.h"
+#include "models.h"
 #include "logic.h"
-#include "rand.h"
-#include "interface.h"
 
 int main()
 {
     initRandom();
 
     printf("Hello, world!\n");
-    playGame();
+
+
+
+
+    initGame();
 
     // prompt
 

@@ -8,19 +8,20 @@
 #ifndef LOGIC_C // Include this to prevent redefinition error
 #define LOGIC_C // Include this to prevent redefinition error
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <time.h>
-
-#include "rand.h"
-#include "persistence.h"
+#include "common.h"
 #include "models.h"
 
-#define DECK_SIZE 84
-#define MAX_PLAYERS 4
-
 /* HELPER FUNCTIONS */
+
+// Search name function
+int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int playerCount) {
+    int nameIdx;
+    int retIdx = -1;
+    for (nameIdx = 0; nameIdx < playerCount && retIdx == -1; nameIdx++)
+        if (strcmp(list[nameIdx], key) == 0)
+            retIdx = nameIdx;
+    return retIdx;
+}
 
 // Load players function
 
@@ -30,7 +31,6 @@ int createDeck(FILE* mantisDeck, Card gameDeck[]) {
 
     char lineBuffer[11];
     int randSeed = randomInt();
-    int valueBuffer;
 
     /* Load deck into memory */
 
@@ -66,21 +66,71 @@ int createDeck(FILE* mantisDeck, Card gameDeck[]) {
 
 // Round simulation
 
+// Game simulation
 
-// Game simulation (final loop)
-int playGame() {
+int playGame(Card* gameDeck, Player* players) {
+    /* Game proper */
+
+    // state vars for game condition
+        // win bool
+        // winner placeholder struct
+
+    // initialize deck (randomized)
+
+    // ROUND simulation loops while condition is not met
+    return 1;
+}
+
+// Initialize game
+
+int initGame() {
+
     /* Game variables */
+
+    int playerCount, playerIdx;
     Card gameDeck[DECK_SIZE];
-    Player players[MAX_PLAYERS];
 
-    /* Loading players */
-    // open players.txt
+    // Load players.txt
     FILE* playersRead = fopen("players.txt", "r");
-    FILE* playersWrite = fopen("players.txt", "w");
-    if (playersRead == NULL || playersWrite == NULL)
-        printf("Error: Could not load players\n");
+    if (playersRead == NULL)
+        printf("Error: Could not read from players.txt\n");
 
-    // get number of players
+    // start players
+
+    printf("How many players? : ");
+    scanf("%d", &playerCount);
+    Player players[playerCount];
+
+    char nameBuffer[MAX_NAME_CHARS];
+
+    playerIdx = 0;
+    do {
+        printf("P%d : ", (playerIdx + 1));
+        scanf("%s", nameBuffer);
+        bool duplicateFound = 0;
+
+        /*** TEMPORARY ***/
+        // check for duplicates
+        for (int name = 0; name < playerIdx; name++) {
+            if (strcmp(players[name].username, nameBuffer) == 0) {
+                printf("Error: Name already listed; please try another name\n");
+                duplicateFound = 1;
+            }
+        }
+        if (!duplicateFound) {
+            strcpy(players[playerIdx].username, nameBuffer);
+            playerIdx++;
+        }
+    } while (playerIdx < playerCount);
+
+
+    // open players.txt
+
+
+    FILE* playersWrite = fopen("players.txt", "w");
+    if (playersWrite == NULL)
+        printf("Error: Could not write to players.txt\n");
+
 
 
     // for (number of players)
@@ -98,28 +148,11 @@ int playGame() {
     else {
         createDeck(mantisDeck, gameDeck);
         fclose(mantisDeck);
-
-        /* FOR DEBUGGING CARD LOADING
-        for (int j = 0; j < DECK_SIZE; j++) {
-            printf("color : %c\nback : %c %c %c\nvalue : %d\n -----\n",
-                    gameDeck[j].color, gameDeck[j].back[0],
-                    gameDeck[j].back[1], gameDeck[j].back[2],
-                    gameDeck[j].value);
-        }
-        */
     }
 
+    /* Play Game */
 
-
-    /* Game proper */
-
-    // state vars for game condition
-        // win bool
-        // winner placeholder struct
-
-    // initialize deck (randomized)
-
-    // ROUND simulation loops while condition is not met
+    playGame(gameDeck, players);
 
     /* Game end */
 
@@ -135,7 +168,6 @@ int playGame() {
 
     return 1; // return for success
 }
-
 
 
 #endif // LOGIC_C; Include this to prevent redefinition error

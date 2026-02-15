@@ -8,10 +8,13 @@
 #ifndef LOGIC_H // Include this to prevent redefinition error
 #define LOGIC_H // Include this to prevent redefinition error
 
-void displayCoodinates(Coordinate points[], int arrSize);
+#include "common.h"
+#include "models.h"
 
+int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int playerCount);
 int createDeck(FILE* mantisDeck, Card gameDeck[]);
 
+int initGame();
 int playGame();
 
 #endif // HELPERS_1_C; Include this to prevent redefinition error
