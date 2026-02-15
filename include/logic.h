@@ -10,4 +10,8 @@
 
 void displayCoodinates(Coordinate points[], int arrSize);
 
+int createDeck(FILE* mantisDeck, Card gameDeck[]);
+
+int playGame();
+
 #endif // HELPERS_1_C; Include this to prevent redefinition error

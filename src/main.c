@@ -25,7 +25,10 @@
 
 int main()
 {
+    initRandom();
+
     printf("Hello, world!\n");
+    playGame();
 
     // prompt
 

@@ -8,20 +8,20 @@
  #ifndef MODELS_H
  #define MODELS_H
 
+ #define BACK_COLORS 3
+ #define MAX_PLAYER_CARDS 6
+
 /**
  * Enum for the card colors to make indexing easier
  */
-enum cardColor {
-  R, O, Y, G, B, I, V
-};
 
 /**
  * Template for the cards that will to be loaded from mantis.txt
  */
 typedef struct {
-    enum cardColor color;   // card's color
-    enum cardColor back[3]; // colors at the card's back
-    int value;              // card's c
+    char color;             // card's color
+    char back[BACK_COLORS]; // colors at the card's back
+    int value;                        // card's color
 } Card;
 
 /**
@@ -29,7 +29,7 @@ typedef struct {
  */
 typedef struct {
     char* username;
-    Card cards[6];
+    Card cards[MAX_PLAYER_CARDS];
     int points;
 } Player;
 
