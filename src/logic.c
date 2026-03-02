@@ -38,8 +38,7 @@
 /* ------------- */
 /* SIMULATE GAME */
 
-int playGame(Card* gameDeck, Player* players) {
-
+int playGame(DrawPile* drawPile, Player players[]) {
 
     // state vars for game condition
         // win bool
@@ -51,13 +50,62 @@ int playGame(Card* gameDeck, Player* players) {
     return 1;
 }
 
+int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
+
+    /* INITIALIZE PLAYER */
+
+    for (int b = 0; b < playerCount; b++)
+        players[b] = (Player){0};
+
+    for (int a = 0; a < playerCount; a++) {
+        populateDeck(drawPile, &players[a].tankPile);
+    }
+
+    /* Display cards */
+
+    printf("DISPLAYING CARDS\n\n");
+    for (int i = 0; i < drawPile->totalCards; i++) {
+
+        printf("\nCard %d : \n", i);
+        printf("\t color: %d\n", drawPile->cards[i].color);
+        printf("\t back : %d %d %d\n", drawPile->cards[i].back[0], drawPile->cards[i].back[1], drawPile->cards[i].back[2]);
+        printf("\t value: %d\n", drawPile->cards[i].value);
+    }
+
+    /* Display player info */
+
+    printf("DISPLAYING PLAYER CARDS\n\n");
+    for (int j = 0; j < playerCount; j++) {
+
+        printf("\nPlayer %d : \n", j);
+
+        // player cards
+        // loop through each color
+
+        for (int k = 0; k < 7; k++) {
+
+            // loop for each color deck
+
+            for (int z = 0; z < players[j].tankPile.cardsPerColor[k]; z++) {
+                printf("\t\nCard %d : \n", k);
+                printf("\t\t color: %d\n", players[j].tankPile.cards[k][z].color);
+                printf("\t\t back : %d %d %d\n", players[j].tankPile.cards[k][z].back[0], players[j].tankPile.cards[k][z].back[1], players[j].tankPile.cards[k][z].back[2]);
+                printf("\t\t value: %d\n", players[j].tankPile.cards[k][z].value);
+            }
+        }
+
+    }
+
+    return 1;
+}
+
 /* --------------- */
 /* INITIALIZE GAME */
 
 int initGame() {
 
     int playerCount, playerIdx;
-    Card gameDeck[DECK_SIZE];
+    DrawPile drawPile = {0};
 
     /* INITIALIZE PLAYERS */
 
@@ -94,13 +142,14 @@ int initGame() {
     if (mantisDeck == NULL)
         printf("Error: Could not load cards\n");
     else {
-        createDeck(mantisDeck, gameDeck);
+        createDeck(mantisDeck, &drawPile);
         fclose(mantisDeck);
     }
 
     /* PLAY GAME */
 
-    playGame(gameDeck, players);
+    // playGame(&drawPile, players);
+    debugGame(&drawPile, players, playerCount);
 
     // Display winner/loser
 

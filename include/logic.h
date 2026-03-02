@@ -16,5 +16,6 @@ int createDeck(FILE* mantisDeck, Card gameDeck[]);
 
 int initGame();
 int playGame();
+int debugGame(DrawPile* drawPile, Player players[], int playerCount);
 
 #endif

@@ -22,18 +22,12 @@ int main()
 {
     initRandom();
 
-    printf("Hello, world!\n");
+    printf("You are now playing Mantis: CLI Edition!\n");
 
-
-
+    // MENU SCREEN
 
     initGame();
 
-    // prompt
-
-    // game loop func
-
-    // prompt loop
 
     return 0;
 }
