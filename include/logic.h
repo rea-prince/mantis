@@ -11,8 +11,9 @@
 #include "common.h"
 #include "models.h"
 
-int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int playerCount);
-int createDeck(FILE* mantisDeck, Card gameDeck[]);
+int stealCard(Player players[], int playerIdx, int stealIdx, Card drawnCard);
+
+int simulatePlayerTurn(Player players[], int playerTurn, DrawPile *drawPile, int playerAction);
 
 int initGame();
 int playGame();

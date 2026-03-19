@@ -19,6 +19,8 @@
 
 /* DEFINITIONS */
 
+#define LINE_SIZE 11
+
 #define DECK_SIZE 84
 #define MIN_PLAYERS 3
 #define MAX_PLAYERS 50
@@ -28,6 +30,8 @@
 
 #define BACK_COLORS 3
 #define CARD_COLORS 7
+#define SCORE_PILE_IDX 7
 #define CARDS_PER_COLOR 12
+
 
 #endif

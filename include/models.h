@@ -20,18 +20,26 @@ enum Color {
     VIOLET
 };
 
+enum Action {
+    SCORE,
+    STEAL
+};
+
+
+typedef char StrName[MAX_NAME_CHARS];
+
 /**
  * Template for the cards that will to be loaded from mantis.txt
  */
 typedef struct {
     enum Color color;             // card's color
     enum Color back[BACK_COLORS]; // colors at the card's back
-    int value;              // card's color
+    int value;                    // card's points
 } Card;
 
 typedef struct {
     Card cards[CARD_COLORS + 1][CARDS_PER_COLOR]; // 7 colors and 1 score pile
-    int cardsPerColor[CARD_COLORS];
+    int cardsPerColor[CARD_COLORS + 1];
     int totalCards;
 } TankPile;
 
@@ -44,7 +52,7 @@ typedef struct {
  * Template for a player
  */
 typedef struct {
-    char username[MAX_NAME_CHARS];
+    StrName username;
     TankPile tankPile;
     int points;
 } Player;

@@ -10,10 +10,17 @@
 
 
 enum Color matchColor(char c);
+char matchColorChar(enum Color c);
+
 int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int playerCount);
+
+int drawCardPopulate(DrawPile* drawPile, TankPile* tankPile);
+Card drawCard(DrawPile* drawPile);
 int createDeck(FILE* mantisDeck, DrawPile* drawPile);
 
-int drawCard(DrawPile* drawPile, TankPile* tankPile);
 int populateDeck(DrawPile* drawPile, TankPile* tankPile);
+
+int computePlayerScore(TankPile tankPile);
+
 
 #endif

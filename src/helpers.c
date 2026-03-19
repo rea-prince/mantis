@@ -1,5 +1,5 @@
 /******************************************************************************
- *  Description     : Helper functions to simplify logic.c
+ *  Description     : Helper functions that don't make decisions for the game flow
  *  Author/s        : Alip, Rafael Prince Naif E.
  *  Section         : S12A
  *  Last Modified   : <date when last revision was made>
@@ -30,22 +30,83 @@ enum Color matchColor(char c) {
     return returnVal;
 }
 
+// match enum to color (char)
+
+char matchColorChar(enum Color c) {
+    char returnVal;
+
+    switch (c) {
+        case RED: returnVal = 'R'; break;
+        case ORANGE: returnVal = 'O'; break;
+        case YELLOW: returnVal = 'Y'; break;
+        case GREEN: returnVal = 'G'; break;
+        case BLUE: returnVal = 'B';  break;
+        case INDIGO: returnVal = 'I'; break;
+        case VIOLET: returnVal = 'V'; break;
+    }
+
+    return returnVal;
+}
+
 // Search name function
 
 int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int playerCount) {
     int nameIdx;
     int retIdx = -1;
-    for (nameIdx = 0; nameIdx < playerCount && retIdx == -1; nameIdx++)
-        if (strcmp(list[nameIdx], key) == 0)
+    for (nameIdx = 0; nameIdx < playerCount && retIdx == -1; nameIdx++) {
+        if (strcmp(list[nameIdx], key) == 0) {
             retIdx = nameIdx;
+        }
+    }
+
     return retIdx;
 }
+
+// Draw cards to populate a tank pile
+
+int drawCardPopulate(DrawPile* drawPile, TankPile* tankPile) {
+
+    /* Get top level card */
+
+    enum Color topColorIdx = drawPile->cards[0].color;
+    enum Color endCardIdx = tankPile->cardsPerColor[topColorIdx];
+
+    /* Append to user cards */
+
+    tankPile->cards[topColorIdx][endCardIdx] = drawPile->cards[0];
+    ++tankPile->cardsPerColor[topColorIdx];
+
+    /* Adjust drawPile */
+
+    int i;
+    for (i = 0; i < drawPile->totalCards - 1; i++) {
+        drawPile->cards[i] = drawPile->cards[i + 1];
+    }
+
+    --drawPile->totalCards;
+
+    return 1;
+}
+
+// Pick out a single card from the draw pile
+//
+Card drawCard(DrawPile* drawPile) {
+    Card drawnCard = drawPile->cards[0];
+
+    int i;
+    for (i = 0; i < drawPile->totalCards - 1; i++) {
+        drawPile->cards[i] = drawPile->cards[i + 1];
+    }
+
+    return drawnCard;
+}
+
 
 // Load deck function from mantis.txt
 
 int createDeck(FILE* mantisDeck, DrawPile* drawPile) {
 
-    char lineBuffer[11];
+    char lineBuffer[LINE_SIZE];
     int randSeed = randomInt();
 
     /* Load deck into memory */
@@ -71,29 +132,6 @@ int createDeck(FILE* mantisDeck, DrawPile* drawPile) {
     return 1;
 }
 
-// Draw Card
-
-int drawCard(DrawPile* drawPile, TankPile* tankPile) {
-
-    /* Get top level card */
-
-    int topColorIdx = drawPile->cards[0].color;
-    int endCardIdx = tankPile->cardsPerColor[topColorIdx];
-
-    /* Append to user cards */
-
-    tankPile->cards[topColorIdx][endCardIdx] = drawPile->cards[0];
-    ++tankPile->cardsPerColor[topColorIdx];
-
-    /* Adjust drawPile */
-
-    int i;
-    for (i = 0; i < drawPile->totalCards - 1; i++)
-        drawPile->cards[i] = drawPile->cards[i + 1];
-    --drawPile->totalCards;
-
-    return 1;
-}
 
 // Populate player deck
 
@@ -102,11 +140,26 @@ int populateDeck(DrawPile* drawPile, TankPile* tankPile) {
     /* Place cards into player tank pile */
 
     int i;
-    for (i = 0; i < 4; i++)
-        drawCard(drawPile, tankPile);
+    for (i = 0; i < 4; i++) {
+        drawCardPopulate(drawPile, tankPile);
+    }
 
     return 1;
 }
+
+// Compute player score
+
+int computePlayerScore(TankPile tankPile) {
+    int i;
+    int total = 0;
+
+    for (i = 0; i < tankPile.cardsPerColor[SCORE_PILE_IDX]; i++) {
+        total += tankPile.cards[SCORE_PILE_IDX][i].value;
+    }
+
+    return total;
+}
+
 
 // Edit and re-sort players.txt
 

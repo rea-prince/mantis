@@ -14,13 +14,119 @@
 
 /* TO-DO */
 
+
+
+/* -------------------- */
+/* SMALLEST POSSIBLE ACTIONS */
+
+
+/* This function steals a card from the player at stealIdx to be put into
+ * the deck of playerIdx based on the drawn card
+ * Case 1 : players[stealIdx] does not have a card with the same color as the one drawn
+ *    - The card is put into that player's deck
+ *    - The player who stole gets nothing
+ * Case 2 : players[stealIdx] has a card of the same color as the one drawn
+ *    - All their cards of that color are taken
+ *    - Cards taken from that player are placed into the stealer's deck
+ *
+ * @param players[] The array of players in the game
+ * @param playerIdx The index of the player whose turn it is
+ * @param stealIdx The index of the player who's being stolen from
+ * @param drawnCard The card drawn from the deck for comparison
+ * @return 1 if the function is successful
+ */
+int stealCard(Player players[], int playerIdx, int stealIdx, Card drawnCard) {
+
+    int i;
+    int numPlayerCards, numStealCards;
+
+    enum Color drawColor = drawnCard.color;
+    if (players[stealIdx].tankPile.cardsPerColor[drawColor] > 0) {
+        numPlayerCards = players[playerIdx].tankPile.cardsPerColor[drawColor];
+        numStealCards = players[stealIdx].tankPile.cardsPerColor[drawColor];
+
+        for (i = 0; i < players[stealIdx].tankPile.cardsPerColor[drawColor]; i++) {
+            players[playerIdx].tankPile.cards[drawColor][numPlayerCards] = players[stealIdx].tankPile.cards[drawColor][numStealCards - 1];
+            ++numPlayerCards;
+            --numStealCards;
+        }
+
+        players[playerIdx].tankPile.cardsPerColor[drawColor] = numPlayerCards;
+        players[stealIdx].tankPile.cardsPerColor[drawColor] = numStealCards;
+
+    } else {
+        players[stealIdx].tankPile.cards[drawColor][0] = drawnCard;
+        ++players[stealIdx].tankPile.cardsPerColor[drawColor];
+    }
+
+    return 1;
+}
+
+// Score
+
+int scoreCard(Player players[], int playerIdx, Card drawnCard) {
+
+    enum Color drawnColor = drawnCard.color;
+
+    // check for cards
+
+    int numPlayerCards = players[playerIdx].tankPile.cardsPerColor[drawnColor];
+
+    if (numPlayerCards > 0) {
+        int numScoreCards = players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
+
+        int i;
+
+        for (i = numPlayerCards - 1; i >= 0 ; i--) {
+            players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = players[playerIdx].tankPile.cards[drawnColor][i];
+            players[playerIdx].tankPile.cards[drawnColor][i] = (Card) {0};
+            ++numScoreCards;
+            --numPlayerCards;
+        }
+
+        players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
+        players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX] = numScoreCards;
+    } else {
+        players[playerIdx].tankPile.cards[drawnColor][0] = drawnCard;
+        ++players[playerIdx].tankPile.cardsPerColor[drawnColor];
+    }
+
+    // update score
+    players[playerIdx].points = computePlayerScore(players[playerIdx].tankPile);
+
+    return 1;
+}
+
+
 /* -------------------- */
 /* SIMULATE PLAYER TURN */
 // take players array, deck array, turn index, player action
 // If steal,
 // If score,
 
+int simulatePlayerTurn(Player players[], int playerTurn, DrawPile *drawPile, enum Action playerAction) {
 
+    Card drawnCard = drawCard(drawPile);
+
+    if (playerAction == SCORE) {
+        // if player chooses to score
+
+
+    } else if (playerAction == STEAL) {
+        // if player chooses to steal
+
+        /* PLACE HOLDER INPUTS */
+        int stealCardIdx;
+
+        scanf("%d", &stealCardIdx);
+        /* END OF PLACEHOLDER */
+
+        stealCard(players, playerTurn, stealCardIdx, drawnCard);
+    }
+
+
+    return 0;
+}
 
 
 
@@ -55,7 +161,7 @@ int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
     /* INITIALIZE PLAYER */
 
     for (int b = 0; b < playerCount; b++)
-        players[b] = (Player){0};
+        players[b] = (Player) {0};
 
     for (int a = 0; a < playerCount; a++) {
         populateDeck(drawPile, &players[a].tankPile);
@@ -87,7 +193,7 @@ int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
             // loop for each color deck
 
             for (int z = 0; z < players[j].tankPile.cardsPerColor[k]; z++) {
-                printf("\t\nCard %d : \n", k);
+                printf("\n\tCard %d %d: \n", k, z);
                 printf("\t\t color: %d\n", players[j].tankPile.cards[k][z].color);
                 printf("\t\t back : %d %d %d\n", players[j].tankPile.cards[k][z].back[0], players[j].tankPile.cards[k][z].back[1], players[j].tankPile.cards[k][z].back[2]);
                 printf("\t\t value: %d\n", players[j].tankPile.cards[k][z].value);
@@ -113,7 +219,7 @@ int initGame() {
     scanf("%d", &playerCount);
     Player players[playerCount];
 
-    char nameBuffer[MAX_NAME_CHARS];
+    StrName nameBuffer;
 
     playerIdx = 0;
     do {
@@ -139,9 +245,9 @@ int initGame() {
     /* LOAD DECK */
 
     FILE* mantisDeck = fopen("mantis.txt", "r");
-    if (mantisDeck == NULL)
+    if (mantisDeck == NULL) {
         printf("Error: Could not load cards\n");
-    else {
+    } else {
         createDeck(mantisDeck, &drawPile);
         fclose(mantisDeck);
     }
@@ -158,11 +264,13 @@ int initGame() {
     // open players.txt
 
     FILE* playersRead = fopen("players.txt", "r");
-    if (playersRead == NULL)
+    if (playersRead == NULL) {
         printf("Error: Could not read from players.txt\n");
+    }
     FILE* playersWrite = fopen("players.txt", "w");
-    if (playersWrite == NULL)
+    if (playersWrite == NULL) {
         printf("Error: Could not write to players.txt\n");
+    }
 
     // append names if non existent
 
