@@ -185,7 +185,6 @@ void takeTurn(GameState* game, enum Action playerAction) {
 
     game->playerTurn = (game->playerTurn + 1) % game->numPlayers;
 
-    // scanf("%*c %*c");
 }
 
 /* -------------- */

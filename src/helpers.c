@@ -162,8 +162,9 @@ void getInput(int* inputDest, enum Action act, GameState game) {
 
         if (scanfRet == 2 && enter == '\n' && *inputDest > 0) {
             // no action, or (person is stealing, input is valid range of players, and not equal to self)
-            if (act == N_ACTION_Y || ((act == STEAL) && (*inputDest <= game.numPlayers) && (*inputDest != *inputDest))) {
+            if (act == N_ACTION_Y || ((act == STEAL) && (*inputDest <= game.numPlayers) && (*inputDest != game.playerTurn + 1))) {
                 valid = true;
+            }
         } else {
             while (scanf("%c", &enter) && enter != '\n'); // flush
             printf("\nError! Please enter a valid input.\n");
