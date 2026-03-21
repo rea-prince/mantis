@@ -14,7 +14,6 @@ char matchColorChar(enum Color c);
 
 int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int playerCount);
 
-int drawCardPopulate(DrawPile* drawPile, TankPile* tankPile);
 Card drawCard(DrawPile* drawPile);
 int createDeck(FILE* mantisDeck, DrawPile* drawPile);
 

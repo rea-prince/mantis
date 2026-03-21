@@ -1,0 +1,431 @@
+You are now playing Mantis: CLI Edition!
+How many players? : P1 : P2 : P3 : DISPLAYING CARDS
+
+
+Card 1 : 
+	 color: V
+	 back : I V R
+	 value: 2
+
+Card 2 : 
+	 color: I
+	 back : O Y I
+	 value: 1
+
+Card 3 : 
+	 color: O
+	 back : O V B
+	 value: 2
+
+Card 4 : 
+	 color: V
+	 back : I V O
+	 value: 2
+
+Card 5 : 
+	 color: R
+	 back : V G R
+	 value: 1
+
+Card 6 : 
+	 color: B
+	 back : V G B
+	 value: 1
+
+Card 7 : 
+	 color: O
+	 back : O Y I
+	 value: 2
+
+Card 8 : 
+	 color: O
+	 back : O G V
+	 value: 2
+
+Card 9 : 
+	 color: I
+	 back : B I V
+	 value: 2
+
+Card 10 : 
+	 color: O
+	 back : O Y R
+	 value: 2
+
+Card 11 : 
+	 color: R
+	 back : I V R
+	 value: 1
+
+Card 12 : 
+	 color: Y
+	 back : B Y R
+	 value: 2
+
+Card 13 : 
+	 color: I
+	 back : B Y I
+	 value: 1
+
+Card 14 : 
+	 color: Y
+	 back : B Y G
+	 value: 3
+
+Card 15 : 
+	 color: I
+	 back : G I Y
+	 value: 1
+
+Card 16 : 
+	 color: B
+	 back : B G I
+	 value: 3
+
+Card 17 : 
+	 color: I
+	 back : I G R
+	 value: 2
+
+Card 18 : 
+	 color: G
+	 back : G Y R
+	 value: 2
+
+Card 19 : 
+	 color: R
+	 back : I G R
+	 value: 2
+
+Card 20 : 
+	 color: B
+	 back : G O B
+	 value: 1
+
+Card 21 : 
+	 color: O
+	 back : R O I
+	 value: 1
+
+Card 22 : 
+	 color: R
+	 back : O Y R
+	 value: 1
+
+Card 23 : 
+	 color: G
+	 back : B G I
+	 value: 2
+
+Card 24 : 
+	 color: B
+	 back : B Y G
+	 value: 2
+
+Card 25 : 
+	 color: V
+	 back : Y V O
+	 value: 1
+
+Card 26 : 
+	 color: O
+	 back : O B R
+	 value: 3
+
+Card 27 : 
+	 color: B
+	 back : B Y I
+	 value: 2
+
+Card 28 : 
+	 color: B
+	 back : B Y O
+	 value: 2
+
+Card 29 : 
+	 color: V
+	 back : V Y I
+	 value: 2
+
+Card 30 : 
+	 color: R
+	 back : O B R
+	 value: 1
+
+Card 31 : 
+	 color: B
+	 back : B R V
+	 value: 2
+
+Card 32 : 
+	 color: I
+	 back : B G I
+	 value: 1
+
+Card 33 : 
+	 color: O
+	 back : I V O
+	 value: 1
+
+Card 34 : 
+	 color: Y
+	 back : O Y R
+	 value: 1
+
+Card 35 : 
+	 color: R
+	 back : G Y R
+	 value: 2
+
+Card 36 : 
+	 color: V
+	 back : V G B
+	 value: 3
+
+Card 37 : 
+	 color: R
+	 back : B R V
+	 value: 3
+
+Card 38 : 
+	 color: O
+	 back : G O B
+	 value: 1
+
+Card 39 : 
+	 color: B
+	 back : I B R
+	 value: 1
+
+Card 40 : 
+	 color: Y
+	 back : B Y I
+	 value: 2
+
+Card 41 : 
+	 color: G
+	 back : G O B
+	 value: 3
+
+Card 42 : 
+	 color: B
+	 back : O V B
+	 value: 1
+
+Card 43 : 
+	 color: Y
+	 back : B Y O
+	 value: 2
+
+Card 44 : 
+	 color: I
+	 back : I B R
+	 value: 3
+
+Card 45 : 
+	 color: R
+	 back : R O I
+	 value: 3
+
+Card 46 : 
+	 color: G
+	 back : I G R
+	 value: 1
+
+Card 47 : 
+	 color: Y
+	 back : V Y R
+	 value: 1
+
+Card 48 : 
+	 color: B
+	 back : B I V
+	 value: 3
+
+Card 49 : 
+	 color: V
+	 back : V G R
+	 value: 3
+
+Card 50 : 
+	 color: O
+	 back : I G O
+	 value: 1
+
+Card 51 : 
+	 color: V
+	 back : V Y R
+	 value: 2
+
+Card 52 : 
+	 color: G
+	 back : I G O
+	 value: 2
+
+Card 53 : 
+	 color: G
+	 back : O G V
+	 value: 1
+
+Card 54 : 
+	 color: R
+	 back : V Y R
+	 value: 1
+
+Card 55 : 
+	 color: V
+	 back : B R V
+	 value: 1
+
+Card 56 : 
+	 color: G
+	 back : G I Y
+	 value: 3
+
+Card 57 : 
+	 color: B
+	 back : O B R
+	 value: 1
+
+Card 58 : 
+	 color: I
+	 back : I G O
+	 value: 3
+
+Card 59 : 
+	 color: R
+	 back : O G R
+	 value: 1
+
+Card 60 : 
+	 color: V
+	 back : B I V
+	 value: 1
+
+Card 61 : 
+	 color: V
+	 back : O V B
+	 value: 1
+
+Card 62 : 
+	 color: Y
+	 back : O Y I
+	 value: 1
+
+Card 63 : 
+	 color: Y
+	 back : V Y I
+	 value: 1
+
+Card 64 : 
+	 color: G
+	 back : V G B
+	 value: 1
+
+Card 65 : 
+	 color: Y
+	 back : G I Y
+	 value: 1
+
+Card 66 : 
+	 color: I
+	 back : I V R
+	 value: 2
+
+Card 67 : 
+	 color: I
+	 back : R O I
+	 value: 1
+
+Card 68 : 
+	 color: G
+	 back : O G R
+	 value: 1
+
+Card 69 : 
+	 color: I
+	 back : I V O
+	 value: 2
+
+Card 70 : 
+	 color: G
+	 back : B Y G
+	 value: 1
+
+Card 71 : 
+	 color: Y
+	 back : G Y R
+	 value: 2
+
+Card 72 : 
+	 color: Y
+	 back : Y V O
+	 value: 3
+DISPLAYING PLAYER CARDS
+
+
+Player 1 : 
+
+	Card R 0: 
+		 color: R
+		 back : I B R
+		 value: 2
+
+	Card O 0: 
+		 color: O
+		 back : O G R
+		 value: 3
+
+	Card G 0: 
+		 color: G
+		 back : G Y V
+		 value: 2
+
+	Card V 0: 
+		 color: V
+		 back : G Y V
+		 value: 1
+
+Player 2 : 
+
+	Card O 0: 
+		 color: O
+		 back : B Y O
+		 value: 1
+
+	Card Y 0: 
+		 color: Y
+		 back : G Y V
+		 value: 1
+
+	Card B 0: 
+		 color: B
+		 back : B Y R
+		 value: 1
+
+	Card I 0: 
+		 color: I
+		 back : V Y I
+		 value: 1
+
+Player 3 : 
+
+	Card R 0: 
+		 color: R
+		 back : B Y R
+		 value: 2
+
+	Card O 0: 
+		 color: O
+		 back : Y V O
+		 value: 1
+
+	Card G 0: 
+		 color: G
+		 back : V G R
+		 value: 1
+
+	Card V 0: 
+		 color: V
+		 back : O G V
+		 value: 1

@@ -62,34 +62,8 @@ int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int pla
     return retIdx;
 }
 
-// Draw cards to populate a tank pile
-
-int drawCardPopulate(DrawPile* drawPile, TankPile* tankPile) {
-
-    /* Get top level card */
-
-    enum Color topColorIdx = drawPile->cards[0].color;
-    enum Color endCardIdx = tankPile->cardsPerColor[topColorIdx];
-
-    /* Append to user cards */
-
-    tankPile->cards[topColorIdx][endCardIdx] = drawPile->cards[0];
-    ++tankPile->cardsPerColor[topColorIdx];
-
-    /* Adjust drawPile */
-
-    int i;
-    for (i = 0; i < drawPile->totalCards - 1; i++) {
-        drawPile->cards[i] = drawPile->cards[i + 1];
-    }
-
-    --drawPile->totalCards;
-
-    return 1;
-}
-
 // Pick out a single card from the draw pile
-//
+
 Card drawCard(DrawPile* drawPile) {
     Card drawnCard = drawPile->cards[0];
 
@@ -109,7 +83,8 @@ Card drawCard(DrawPile* drawPile) {
 int createDeck(FILE* mantisDeck, DrawPile* drawPile) {
 
     char lineBuffer[LINE_SIZE];
-    int randSeed = randomInt();
+    // int randSeed = randomInt();
+    int randSeed = 999; // FOR UNIFORM TESTING
 
     /* Load deck into memory */
 
@@ -143,7 +118,12 @@ int populateDeck(DrawPile* drawPile, TankPile* tankPile) {
 
     int i;
     for (i = 0; i < 4; i++) {
-        drawCardPopulate(drawPile, tankPile);
+        Card drawnCard = drawCard(drawPile);
+        int colorIdx = drawnCard.color;
+        int numCards = tankPile->cardsPerColor[colorIdx];
+
+        tankPile->cards[colorIdx][numCards] = drawnCard;
+        ++tankPile->cardsPerColor[colorIdx];
     }
 
     return 1;
