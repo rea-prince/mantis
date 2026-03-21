@@ -152,23 +152,25 @@ void getInput(int* inputDest, enum Action act, GameState game) {
     bool valid = false;
 
     while (!valid) {
+
         printf(  "\n+----+\n");
         printf(    "| >> | ");
-        scanfRet = scanf("%d%c", inputDest, &enter);
+        scanfRet = scanf("%d", inputDest);
         printf(    "+----+\n");
 
         // > 0 because all provided options are 1-something;
         // input shall be reincremented outside the function
 
-        if (scanfRet == 2 && enter == '\n' && *inputDest > 0) {
-            // no action, or (person is stealing, input is valid range of players, and not equal to self)
-
-            if (((act == N_ACTION_Y) && (*inputDest < N_ACTION_Y)) || ((act == STEAL) && (*inputDest <= game.numPlayers) && (*inputDest != game.playerTurn + 1))) {
+        if ( (scanfRet == 1 && *inputDest > 0) && (
+                    ((act == N_ACTION_Y) && (*inputDest <= N_ACTION_Y)) ||
+                    ((act == STEAL) && (*inputDest <= game.numPlayers) && (*inputDest != game.playerTurn + 1))
+                )
+            ) {
+                // no action, or (person is stealing, input is valid range of players, and not equal to self)
                 valid = true;
-            }
         } else {
-            while (scanf("%c", &enter) && enter != '\n'); // flush
             printf("\nError! Please enter a valid input.\n");
+            while (scanf("%c", &enter) == 1 && enter != '\n');
         }
     }
 
