@@ -165,7 +165,7 @@ void takeTurn(GameState* game, enum Action playerAction) {
         /* PLACE HOLDER INPUTS */
         int stealCardIdx;
 
-        getInput(&stealCardIdx, N_ACTION_Y, *game);
+        getInput(&stealCardIdx, STEAL, *game);
         --stealCardIdx; // offset since enums start at 1
 
         /* END OF PLACEHOLDER */
