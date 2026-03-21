@@ -66,6 +66,7 @@ typedef struct {
     // state of the game
     int rotations;
     int playerTurn;
+    bool gameWon;
     Player winner;
 } GameState;
 

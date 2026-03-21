@@ -37,27 +37,50 @@
  */
 void stealCard(GameState* game, int stealIdx, Card drawnCard) {
 
-    int i;
     int numPlayerCards, numStealCards;
     int playerIdx = game->playerTurn;
 
-    enum Color drawColor = drawnCard.color;
-    if (game->players[stealIdx].tankPile.cardsPerColor[drawColor] > 0) {
-        numPlayerCards = game->players[playerIdx].tankPile.cardsPerColor[drawColor];
-        numStealCards = game->players[stealIdx].tankPile.cardsPerColor[drawColor];
+    enum Color drawnColor = drawnCard.color;
+    if (game->players[stealIdx].tankPile.cardsPerColor[drawnColor] > 0) {
 
-        for (i = 0; i < game->players[stealIdx].tankPile.cardsPerColor[drawColor]; i++) {
-            game->players[playerIdx].tankPile.cards[drawColor][numPlayerCards] = game->players[stealIdx].tankPile.cards[drawColor][numStealCards - 1];
+        int i;
+        int totalPts = 0;
+
+        numPlayerCards = game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
+        numStealCards = game->players[stealIdx].tankPile.cardsPerColor[drawnColor];
+
+        for (i = 0; i < game->players[stealIdx].tankPile.cardsPerColor[drawnColor]; i++) {
+            totalPts += game->players[stealIdx].tankPile.cards[drawnColor][numStealCards - 1].value;
+            game->players[playerIdx].tankPile.cards[drawnColor][numPlayerCards] = game->players[stealIdx].tankPile.cards[drawnColor][numStealCards - 1];
             ++numPlayerCards;
             --numStealCards;
         }
 
-        game->players[playerIdx].tankPile.cardsPerColor[drawColor] = numPlayerCards;
-        game->players[stealIdx].tankPile.cardsPerColor[drawColor] = numStealCards;
+        printf("- Player %d has (%d) %c card/s worth a total of (%d) pts!\n",
+            stealIdx + 1,
+            game->players[stealIdx].tankPile.cardsPerColor[drawnColor],
+            matchColorChar(drawnColor),
+            totalPts
+        );
+        printf("- +%d (%c) cards to Player %d's Tank!\n",
+            game->players[stealIdx].tankPile.cardsPerColor[drawnColor],
+            matchColorChar(drawnColor),
+            playerIdx + 1
+        );
+
+        game->players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
+        game->players[stealIdx].tankPile.cardsPerColor[drawnColor] = numStealCards;
 
     } else {
-        game->players[stealIdx].tankPile.cards[drawColor][0] = drawnCard;
-        ++game->players[stealIdx].tankPile.cardsPerColor[drawColor];
+
+        printf("- Player %d has no %c cards..\n",
+            stealIdx + 1,
+            matchColorChar(drawnColor)
+        );
+        printf("- Adding drawn card to Player %d's Tank\n", stealIdx + 1);
+
+        game->players[stealIdx].tankPile.cards[drawnColor][0] = drawnCard;
+        ++game->players[stealIdx].tankPile.cardsPerColor[drawnColor];
     }
 
 }
@@ -73,23 +96,37 @@ int scoreCard(GameState* game, Card drawnCard) {
     int playerIdx = game->playerTurn;
     int numPlayerCards = game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
 
+
+
     if (numPlayerCards > 0) {
         int numScoreCards = game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
 
         int i;
+        int totalPts = 0;
 
         for (i = numPlayerCards - 1; i >= 0 ; i--) {
+            totalPts += game->players[playerIdx].tankPile.cards[drawnColor][i].value;
             game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = game->players[playerIdx].tankPile.cards[drawnColor][i];
             game->players[playerIdx].tankPile.cards[drawnColor][i] = (Card) {0};
             ++numScoreCards;
             --numPlayerCards;
         }
 
+        printf("- Player %d has (%d) %c card/s worth a total of (%d) pts!\n",
+                game->playerTurn + 1,
+                game->players[game->playerTurn].tankPile.cardsPerColor[drawnColor],
+                matchColorChar(drawnColor), totalPts
+            );
+        printf("- +%d points to Player %d's Score pile!\n", totalPts, playerIdx + 1);
+
         game->players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
         game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX] = numScoreCards;
     } else {
         game->players[playerIdx].tankPile.cards[drawnColor][0] = drawnCard;
         ++game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
+
+        printf("- Player %d has no %c cards...\n", playerIdx + 1, matchColorChar(drawnColor));
+        printf("- Adding drawn card to Player %d's Tank\n", playerIdx + 1);
     }
 
     // update score
@@ -104,19 +141,19 @@ int scoreCard(GameState* game, Card drawnCard) {
 // If steal,
 // If score,
 
-bool takeTurn(GameState* game, enum Action playerAction) {
+void takeTurn(GameState* game, enum Action playerAction) {
 
     Card drawnCard = drawCard(&game->drawPile);
     int i;
-    int score;
-    bool gameWon = false;
+
+
+    printf("- Drawn card color reveal: %c (%d pt/s)!\n", matchColorChar(drawnCard.color), drawnCard.value);
 
     if (playerAction == SCORE) {
         // if player chooses to score
-        score = scoreCard(game, drawnCard);
-        if (score >= WIN_SCORE) {
+        if (scoreCard(game, drawnCard) >= WIN_SCORE) {
             game->winner = game->players[game->playerTurn];
-            gameWon = true;
+            game->gameWon = true;
         }
 
     } else if (playerAction == STEAL) {
@@ -130,7 +167,7 @@ bool takeTurn(GameState* game, enum Action playerAction) {
 
         /* PLACE HOLDER INPUTS */
         int stealCardIdx;
-
+        printf(">> ");
         scanf("%d", &stealCardIdx);
         /* END OF PLACEHOLDER */
 
@@ -138,8 +175,6 @@ bool takeTurn(GameState* game, enum Action playerAction) {
     }
 
     game->playerTurn = (game->playerTurn + 1) % game->numPlayers;
-
-    return gameWon;
 }
 
 /* -------------- */
@@ -148,9 +183,8 @@ bool takeTurn(GameState* game, enum Action playerAction) {
 // Loop through players
 // Call playerTurn()
 
-int playRound(GameState* game) {
+void playRound(GameState* game) {
     int i;
-    bool gameWon = false;
     int input;
 
     /* TEMPORARY OUTPUT */
@@ -168,7 +202,7 @@ int playRound(GameState* game) {
             );
     }
 
-    printf("TOP DECK : %c%c%c (%d cards remaining)\n",
+    printf("\nTOP DECK : %c%c%c (%d cards remaining)\n",
             matchColorChar(game->drawPile.cards[0].back[0]),
             matchColorChar(game->drawPile.cards[0].back[1]),
             matchColorChar(game->drawPile.cards[0].back[2]),
@@ -176,21 +210,19 @@ int playRound(GameState* game) {
         );
 
 
-    for (i = 0; i < game->numPlayers && !gameWon; i++) {
+    for (i = 0; i < game->numPlayers && !game->gameWon; i++) {
         /* TEMPORARY INPUT */
 
-        printf("Player %d, what would you like to do?\n", i + 1);
+        printf("\nPlayer %d, what would you like to do?\n", i + 1);
         printf("\t[1] Try to Score\n");
-        printf("\t[2] Try to Steal\t\t");
+        printf("\t[2] Try to Steal\n");
 
-        printf(">>");
+        printf(">> ");
         scanf("%d", &input);
         --input; // offset since enums start at 1
+        printf("Resolving turn for Player %d...\n", i + 1);
         takeTurn(game, input);
     }
-
-
-    return 1;
 }
 
 
@@ -201,14 +233,17 @@ int playRound(GameState* game) {
 
 int playGame(GameState* game) {
 
-    // state vars for game condition
-        // win bool
-        // winner placeholder struct
+    /* POPULATE DECK */
 
-    // initialize deck (randomized)
+    for (int a = 0; a < game->numPlayers; a++) {
+        populateDeck(&game->drawPile, &game->players[a].tankPile);
+    }
 
+    /* PLAY ROUNDS */
 
-
+    do {
+        playRound(game);
+    } while (game->gameWon == false);
 
     // ROUND simulation loops while condition is not met
     return 1;
@@ -304,6 +339,7 @@ int initGame() {
             playerIdx++;
         }
     } while (playerIdx < game.numPlayers);
+    printf("\n================\n\n");
 
     /* LOAD DECK */
 
@@ -317,8 +353,9 @@ int initGame() {
 
     /* PLAY GAME */
 
-    // playGame(&drawPile, players);
-    debugGame(&game.drawPile, game.players, game.numPlayers);
+    playGame(&game);
+    printf("WINNER: %s with %d points!\n", game.winner.username, game.winner.points);
+    // debugGame(&game.drawPile, game.players, game.numPlayers);
 
     // Display winner/loser
 

@@ -12,10 +12,11 @@
 #include "models.h"
 
 void stealCard(GameState* game, int stealIdx, Card drawnCard);
-int scoreCard(GameState* game, Card drawnCard);
+void scoreCard(GameState* game, Card drawnCard);
 
 void takeTurn(GameState* game, int playerAction);
 
+void playRound(GameState* game);
 int playGame(GameState* game);
 int initGame();
 int debugGame(DrawPile* drawPile, Player players[], int playerCount);
