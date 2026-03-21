@@ -33,5 +33,6 @@
 #define SCORE_PILE_IDX 7
 #define CARDS_PER_COLOR 12
 
+#define WIN_SCORE 20
 
 #endif

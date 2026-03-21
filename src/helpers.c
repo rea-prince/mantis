@@ -98,6 +98,8 @@ Card drawCard(DrawPile* drawPile) {
         drawPile->cards[i] = drawPile->cards[i + 1];
     }
 
+    --drawPile->totalCards;
+
     return drawnCard;
 }
 

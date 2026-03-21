@@ -64,7 +64,7 @@ void stealCard(GameState* game, int stealIdx, Card drawnCard) {
 
 // Score
 
-void scoreCard(GameState* game, Card drawnCard) {
+int scoreCard(GameState* game, Card drawnCard) {
 
     enum Color drawnColor = drawnCard.color;
 
@@ -79,7 +79,7 @@ void scoreCard(GameState* game, Card drawnCard) {
         int i;
 
         for (i = numPlayerCards - 1; i >= 0 ; i--) {
-            game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = players[playerIdx].tankPile.cards[drawnColor][i];
+            game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = game->players[playerIdx].tankPile.cards[drawnColor][i];
             game->players[playerIdx].tankPile.cards[drawnColor][i] = (Card) {0};
             ++numScoreCards;
             --numPlayerCards;
@@ -94,7 +94,7 @@ void scoreCard(GameState* game, Card drawnCard) {
 
     // update score
     game->players[playerIdx].points = computePlayerScore(game->players[playerIdx].tankPile);
-
+    return game->players[playerIdx].points;
 }
 
 
@@ -104,16 +104,29 @@ void scoreCard(GameState* game, Card drawnCard) {
 // If steal,
 // If score,
 
-void takeTurn(GameState* game, enum Action playerAction) {
+bool takeTurn(GameState* game, enum Action playerAction) {
 
     Card drawnCard = drawCard(&game->drawPile);
+    int i;
+    int score;
+    bool gameWon = false;
 
     if (playerAction == SCORE) {
         // if player chooses to score
-        scoreCard(game, drawnCard);
+        score = scoreCard(game, drawnCard);
+        if (score >= WIN_SCORE) {
+            game->winner = game->players[game->playerTurn];
+            gameWon = true;
+        }
 
     } else if (playerAction == STEAL) {
+        /* PLACE HOLDER OUTPUTS */
+
         // if player chooses to steal
+        printf("Who would you like to steal from?\n");
+        for (i = 0; i < game->numPlayers; i++) {
+            printf("[%d] Player %d\n", i + 1, i + 1);
+        }
 
         /* PLACE HOLDER INPUTS */
         int stealCardIdx;
@@ -124,8 +137,9 @@ void takeTurn(GameState* game, enum Action playerAction) {
         stealCard(game, stealCardIdx, drawnCard);
     }
 
-    ++game->playerTurn;
+    game->playerTurn = (game->playerTurn + 1) % game->numPlayers;
 
+    return gameWon;
 }
 
 /* -------------- */
@@ -136,10 +150,43 @@ void takeTurn(GameState* game, enum Action playerAction) {
 
 int playRound(GameState* game) {
     int i;
+    bool gameWon = false;
+    int input;
 
+    /* TEMPORARY OUTPUT */
+
+    // print players' cards
     for (i = 0; i < game->numPlayers; i++) {
-        // scan for input
+        printf("P%d CARDS : R:%d | O:%d | Y:%d | G:%d | B:%d | I:%d | V:%d\n", i + 1,
+                game->players[i].tankPile.cardsPerColor[0],
+                game->players[i].tankPile.cardsPerColor[1],
+                game->players[i].tankPile.cardsPerColor[2],
+                game->players[i].tankPile.cardsPerColor[3],
+                game->players[i].tankPile.cardsPerColor[4],
+                game->players[i].tankPile.cardsPerColor[5],
+                game->players[i].tankPile.cardsPerColor[6]
+            );
+    }
 
+    printf("TOP DECK : %c%c%c (%d cards remaining)\n",
+            matchColorChar(game->drawPile.cards[0].back[0]),
+            matchColorChar(game->drawPile.cards[0].back[1]),
+            matchColorChar(game->drawPile.cards[0].back[2]),
+            game->drawPile.totalCards
+        );
+
+
+    for (i = 0; i < game->numPlayers && !gameWon; i++) {
+        /* TEMPORARY INPUT */
+
+        printf("Player %d, what would you like to do?\n", i + 1);
+        printf("\t[1] Try to Score\n");
+        printf("\t[2] Try to Steal\t\t");
+
+        printf(">>");
+        scanf("%d", &input);
+        --input; // offset since enums start at 1
+        takeTurn(game, input);
     }
 
 
@@ -152,13 +199,16 @@ int playRound(GameState* game) {
 /* ------------- */
 /* SIMULATE GAME */
 
-int playGame(DrawPile* drawPile, Player players[]) {
+int playGame(GameState* game) {
 
     // state vars for game condition
         // win bool
         // winner placeholder struct
 
     // initialize deck (randomized)
+
+
+
 
     // ROUND simulation loops while condition is not met
     return 1;
@@ -181,8 +231,12 @@ int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
     for (int i = 0; i < drawPile->totalCards; i++) {
 
         printf("\nCard %d : \n", i);
-        printf("\t color: %d\n", drawPile->cards[i].color);
-        printf("\t back : %d %d %d\n", drawPile->cards[i].back[0], drawPile->cards[i].back[1], drawPile->cards[i].back[2]);
+        printf("\t color: %c\n", matchColorChar(drawPile->cards[i].color));
+        printf("\t back : %c %c %c\n",
+            matchColorChar(drawPile->cards[i].back[0]),
+            matchColorChar(drawPile->cards[i].back[1]),
+            matchColorChar(drawPile->cards[i].back[2])
+        );
         printf("\t value: %d\n", drawPile->cards[i].value);
     }
 
@@ -202,8 +256,12 @@ int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
 
             for (int z = 0; z < players[j].tankPile.cardsPerColor[k]; z++) {
                 printf("\n\tCard %d %d: \n", k, z);
-                printf("\t\t color: %d\n", players[j].tankPile.cards[k][z].color);
-                printf("\t\t back : %d %d %d\n", players[j].tankPile.cards[k][z].back[0], players[j].tankPile.cards[k][z].back[1], players[j].tankPile.cards[k][z].back[2]);
+                printf("\t\t color: %c\n", matchColorChar(players[j].tankPile.cards[k][z].color));
+                printf("\t\t back : %c %c %c\n",
+                    matchColorChar(players[j].tankPile.cards[k][z].back[0]),
+                    matchColorChar(players[j].tankPile.cards[k][z].back[1]),
+                    matchColorChar(players[j].tankPile.cards[k][z].back[2])
+                );
                 printf("\t\t value: %d\n", players[j].tankPile.cards[k][z].value);
             }
         }
@@ -217,15 +275,13 @@ int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
 /* INITIALIZE GAME */
 
 int initGame() {
-
-    int playerCount, playerIdx;
-    DrawPile drawPile = {0};
+    GameState game = {0};
+    int playerIdx;
 
     /* INITIALIZE PLAYERS */
 
     printf("How many players? : ");
-    scanf("%d", &playerCount);
-    Player players[playerCount];
+    scanf("%d", &game.numPlayers);
 
     StrName nameBuffer;
 
@@ -233,22 +289,23 @@ int initGame() {
     do {
         printf("P%d : ", (playerIdx + 1));
         scanf("%s", nameBuffer);
-        bool duplicateFound = 0;
+        bool duplicateFound = false;
+        int name;
 
         /*** TEMPORARY ***/
         // check for duplicates
-        for (int name = 0; name < playerIdx; name++) {
-            if (strcmp(players[name].username, nameBuffer) == 0) {
+        for (name = 0; name < playerIdx; name++) {
+            if (strcmp(game.players[name].username, nameBuffer) == 0) {
                 printf("Error: Name already listed; please try another name\n");
                 duplicateFound = 1;
             }
         }
         if (!duplicateFound) {
-            strcpy(players[playerIdx].username, nameBuffer);
-            players[playerIdx].points = 0;
+            strcpy(game.players[playerIdx].username, nameBuffer);
+            game.players[playerIdx].points = 0;
             playerIdx++;
         }
-    } while (playerIdx < playerCount);
+    } while (playerIdx < game.numPlayers);
 
     /* LOAD DECK */
 
@@ -256,14 +313,14 @@ int initGame() {
     if (mantisDeck == NULL) {
         printf("Error: Could not load cards\n");
     } else {
-        createDeck(mantisDeck, &drawPile);
+        createDeck(mantisDeck, &game.drawPile);
         fclose(mantisDeck);
     }
 
     /* PLAY GAME */
 
     // playGame(&drawPile, players);
-    debugGame(&drawPile, players, playerCount);
+    debugGame(&game.drawPile, game.players, game.numPlayers);
 
     // Display winner/loser
 
