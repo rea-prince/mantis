@@ -7,12 +7,12 @@ SRCS = $(wildcard src/*.c)
 
 # build
 $(PROJECT_NAME): $(SRCS)
-	@echo "Compiling binaries! ouo"
+	@printf '\nCompiling binaries! o3o\n\n'
 	gcc $(CFLAGS) $(INCLUDE) $^ -o build/$@
-	@echo "Done building! ^-^"
+	@printf '\nDone building! ^-^\n'
 
 clean:
 	rm -rf ./build/$(PROJECT_NAME)
 
-run: ./build/$(PROJECT_NAME)
-	./build/mantis
+run: $(PROJECT_NAME)
+	@cd build && printf '\nPROGRAM STARTING!! \n==================\n\n' && ./$(PROJECT_NAME)
