@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "rand.h"
+#include "interface.h"
 
 /* DEFINITIONS */
 
