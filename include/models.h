@@ -57,5 +57,17 @@ typedef struct {
     int points;
 } Player;
 
+typedef struct {
+    // game variables
+    int numPlayers;
+    Player players[MAX_PLAYERS];
+    DrawPile drawPile;
+
+    // state of the game
+    int rotations;
+    int playerTurn;
+    Player winner;
+} GameState;
+
 
 #endif

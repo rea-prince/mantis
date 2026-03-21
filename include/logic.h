@@ -11,9 +11,10 @@
 #include "common.h"
 #include "models.h"
 
-int stealCard(Player players[], int playerIdx, int stealIdx, Card drawnCard);
+void stealCard(GameState* game, int stealIdx, Card drawnCard);
+void scoreCard(GameState* game, Card drawnCard);
 
-int simulatePlayerTurn(Player players[], int playerTurn, DrawPile *drawPile, int playerAction);
+void takeTurn(GameState* game, int playerAction);
 
 int initGame();
 int playGame();

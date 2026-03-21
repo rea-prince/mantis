@@ -33,68 +33,68 @@
  * @param playerIdx The index of the player whose turn it is
  * @param stealIdx The index of the player who's being stolen from
  * @param drawnCard The card drawn from the deck for comparison
- * @return 1 if the function is successful
+ * @return void
  */
-int stealCard(Player players[], int playerIdx, int stealIdx, Card drawnCard) {
+void stealCard(GameState* game, int stealIdx, Card drawnCard) {
 
     int i;
     int numPlayerCards, numStealCards;
+    int playerIdx = game->playerTurn;
 
     enum Color drawColor = drawnCard.color;
-    if (players[stealIdx].tankPile.cardsPerColor[drawColor] > 0) {
-        numPlayerCards = players[playerIdx].tankPile.cardsPerColor[drawColor];
-        numStealCards = players[stealIdx].tankPile.cardsPerColor[drawColor];
+    if (game->players[stealIdx].tankPile.cardsPerColor[drawColor] > 0) {
+        numPlayerCards = game->players[playerIdx].tankPile.cardsPerColor[drawColor];
+        numStealCards = game->players[stealIdx].tankPile.cardsPerColor[drawColor];
 
-        for (i = 0; i < players[stealIdx].tankPile.cardsPerColor[drawColor]; i++) {
-            players[playerIdx].tankPile.cards[drawColor][numPlayerCards] = players[stealIdx].tankPile.cards[drawColor][numStealCards - 1];
+        for (i = 0; i < game->players[stealIdx].tankPile.cardsPerColor[drawColor]; i++) {
+            game->players[playerIdx].tankPile.cards[drawColor][numPlayerCards] = game->players[stealIdx].tankPile.cards[drawColor][numStealCards - 1];
             ++numPlayerCards;
             --numStealCards;
         }
 
-        players[playerIdx].tankPile.cardsPerColor[drawColor] = numPlayerCards;
-        players[stealIdx].tankPile.cardsPerColor[drawColor] = numStealCards;
+        game->players[playerIdx].tankPile.cardsPerColor[drawColor] = numPlayerCards;
+        game->players[stealIdx].tankPile.cardsPerColor[drawColor] = numStealCards;
 
     } else {
-        players[stealIdx].tankPile.cards[drawColor][0] = drawnCard;
-        ++players[stealIdx].tankPile.cardsPerColor[drawColor];
+        game->players[stealIdx].tankPile.cards[drawColor][0] = drawnCard;
+        ++game->players[stealIdx].tankPile.cardsPerColor[drawColor];
     }
 
-    return 1;
 }
 
 // Score
 
-int scoreCard(Player players[], int playerIdx, Card drawnCard) {
+void scoreCard(GameState* game, Card drawnCard) {
 
     enum Color drawnColor = drawnCard.color;
 
     // check for cards
 
-    int numPlayerCards = players[playerIdx].tankPile.cardsPerColor[drawnColor];
+    int playerIdx = game->playerTurn;
+    int numPlayerCards = game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
 
     if (numPlayerCards > 0) {
-        int numScoreCards = players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
+        int numScoreCards = game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
 
         int i;
 
         for (i = numPlayerCards - 1; i >= 0 ; i--) {
-            players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = players[playerIdx].tankPile.cards[drawnColor][i];
-            players[playerIdx].tankPile.cards[drawnColor][i] = (Card) {0};
+            game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = players[playerIdx].tankPile.cards[drawnColor][i];
+            game->players[playerIdx].tankPile.cards[drawnColor][i] = (Card) {0};
             ++numScoreCards;
             --numPlayerCards;
         }
 
-        players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
-        players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX] = numScoreCards;
+        game->players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
+        game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX] = numScoreCards;
     } else {
-        players[playerIdx].tankPile.cards[drawnColor][0] = drawnCard;
-        ++players[playerIdx].tankPile.cardsPerColor[drawnColor];
+        game->players[playerIdx].tankPile.cards[drawnColor][0] = drawnCard;
+        ++game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
     }
 
     // update score
-    players[playerIdx].points = computePlayerScore(players[playerIdx].tankPile);
+    game->players[playerIdx].points = computePlayerScore(game->players[playerIdx].tankPile);
 
-    return 1;
 }
 
 
@@ -104,13 +104,13 @@ int scoreCard(Player players[], int playerIdx, Card drawnCard) {
 // If steal,
 // If score,
 
-int simulatePlayerTurn(Player players[], int playerTurn, DrawPile *drawPile, enum Action playerAction) {
+void takeTurn(GameState* game, enum Action playerAction) {
 
-    Card drawnCard = drawCard(drawPile);
+    Card drawnCard = drawCard(&game->drawPile);
 
     if (playerAction == SCORE) {
         // if player chooses to score
-
+        scoreCard(game, drawnCard);
 
     } else if (playerAction == STEAL) {
         // if player chooses to steal
@@ -121,14 +121,12 @@ int simulatePlayerTurn(Player players[], int playerTurn, DrawPile *drawPile, enu
         scanf("%d", &stealCardIdx);
         /* END OF PLACEHOLDER */
 
-        stealCard(players, playerTurn, stealCardIdx, drawnCard);
+        stealCard(game, stealCardIdx, drawnCard);
     }
 
+    ++game->playerTurn;
 
-    return 0;
 }
-
-
 
 /* -------------- */
 /* SIMULATE ROUND */
@@ -136,7 +134,17 @@ int simulatePlayerTurn(Player players[], int playerTurn, DrawPile *drawPile, enu
 // Loop through players
 // Call playerTurn()
 
+int playRound(GameState* game) {
+    int i;
 
+    for (i = 0; i < game->numPlayers; i++) {
+        // scan for input
+
+    }
+
+
+    return 1;
+}
 
 
 
