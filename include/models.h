@@ -22,7 +22,8 @@ enum Color {
 
 enum Action {
     SCORE,
-    STEAL
+    STEAL,
+    N_ACTION_Y // flag for no action yet
 };
 
 

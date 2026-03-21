@@ -143,6 +143,36 @@ int computePlayerScore(TankPile tankPile) {
 }
 
 
+
+void getInput(int* inputDest, enum Action act, GameState game) {
+
+    char enter;
+    int scanfRet;
+
+    bool valid = false;
+
+    while (!valid) {
+        printf(  "\n+----+\n");
+        printf(    "| >> | ");
+        scanfRet = scanf("%d%c", inputDest, &enter);
+        printf(    "+----+\n");
+
+        // > 0 because all provided options are 1-something;
+        // input shall be reincremented outside the function
+
+        if (scanfRet == 2 && enter == '\n' && *inputDest > 0) {
+            // no action, or (person is stealing, input is valid range of players, and not equal to self)
+            if (act == N_ACTION_Y || ((act == STEAL) && (*inputDest <= game.numPlayers) && (*inputDest != *inputDest))) {
+                valid = true;
+        } else {
+            while (scanf("%c", &enter) && enter != '\n'); // flush
+            printf("\nError! Please enter a valid input.\n");
+        }
+    }
+
+}
+
+
 // Edit and re-sort players.txt
 
 #endif

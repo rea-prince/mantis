@@ -164,15 +164,15 @@ void takeTurn(GameState* game, enum Action playerAction) {
 
         /* PLACE HOLDER INPUTS */
         int stealCardIdx;
-        printf(  "\n+----+\n");
-        printf(    "| >> | ");
-        scanf("%d", &stealCardIdx);
-        printf(    "+----+\n");
+
+        getInput(&stealCardIdx, N_ACTION_Y, *game);
+        --stealCardIdx; // offset since enums start at 1
+
         /* END OF PLACEHOLDER */
 
         printf("\n+----------------------------------------------------------+\n");
         printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
-        stealCard(game, stealCardIdx - 1, drawnCard);
+        stealCard(game, stealCardIdx, drawnCard);
 
 
     }
@@ -235,12 +235,9 @@ void playRound(GameState* game) {
         printf(  "|\t[2] Try to Steal                                   |\n");
         printf(  "+----------------------------------------------------------+\n");
 
-        printf(  "\n+----+\n");
-        printf(    "| >> | ");
-        scanf("%d", &input);
-        printf(    "+----+\n");
-
+        getInput(&input, N_ACTION_Y, *game);
         --input; // offset since enums start at 1
+
 
         printf("\n+----------------------------------------------------------+\n");
         printf(  "| Resolving turn for Player %d...                           |\n", i + 1);

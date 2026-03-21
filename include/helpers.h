@@ -20,6 +20,6 @@ int createDeck(FILE* mantisDeck, DrawPile* drawPile);
 int populateDeck(DrawPile* drawPile, TankPile* tankPile);
 
 int computePlayerScore(TankPile tankPile);
-
+void getInput(int* inputDest, enum Action act, GameState game);
 
 #endif
