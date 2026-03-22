@@ -194,8 +194,7 @@ void getMenuInput(int* inputDest) {
         // input shall be reincremented outside the function
 
         if ( (scanfRet == 1 && *inputDest >= 0) && *inputDest < N_MENU_Y) {
-                // no action, or (person is stealing, input is valid range of players, and not equal to self)
-                valid = true;
+            valid = true;
         } else {
             printf("\nError! Please enter a valid input.\n");
             while (scanf("%c", &enter) == 1 && enter != '\n'); // flush
@@ -204,6 +203,33 @@ void getMenuInput(int* inputDest) {
 
 }
 
+
+void getTopPlayersInput (int *inputDest) {
+
+    char enter;
+    int scanfRet;
+
+    bool valid = false;
+
+    while (!valid) {
+
+        printf(  "\n+----+\n");
+        printf(    "| >> | ");
+        scanfRet = scanf("%d", inputDest);
+        printf(    "+----+\n");
+
+        if ( (scanfRet == 1 && *inputDest >= 0) && *inputDest < N_SORT_Y) {
+            valid = true;
+        } else {
+            printf("\nError! Please enter a valid input.\n");
+            while (scanf("%c", &enter) == 1 && enter != '\n'); // flush
+        }
+    }
+}
+
+void getSettingsInput(int *inputDest) {
+
+}
 
 // Edit and re-sort players.txt
 

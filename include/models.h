@@ -34,8 +34,15 @@ enum MenuOptions {
     N_MENU_Y // flag for max menu option
 };
 
+enum TopPlayerActions {
+    EXIT_TOP_PLAYERS,
+    SORT_BY_WINS,
+    SORT_BY_SCORE,
+    N_SORT_Y // flag for max menu option
+};
 
 typedef char StrName[MAX_NAME_CHARS];
+typedef char StrList[WIN_SCORE_NAME];
 
 /**
  * Template for the cards that will to be loaded from mantis.txt
@@ -64,6 +71,9 @@ typedef struct {
     StrName username;
     TankPile tankPile;
     int points;
+
+    int wins;
+    int highScore;
 } Player;
 
 typedef struct {

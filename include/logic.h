@@ -18,7 +18,9 @@ void takeTurn(GameState* game, int playerAction);
 
 void playRound(GameState* game);
 int playGame(GameState* game);
-int initGame();
 int debugGame(DrawPile* drawPile, Player players[], int playerCount);
+
+int newGame();
+int topPlayers();
 
 #endif

@@ -47,9 +47,9 @@ int main()
         getMenuInput(&menuInput);
 
         if (menuInput == NEW_GAME) {
-            initGame();
+            newGame();
         } else if (menuInput == TOP_PLAYERS) {
-            // TODO
+            topPlayers();
         } else if (menuInput == GAME_SETTINGS) {
             // TODO
         } else if (menuInput == EXIT_MENU) {

@@ -229,8 +229,8 @@ void playRound(GameState* game) {
         printf(  "+----------+-----------------------------------------------+\n");
 
         printf(  "| Player %d, what would you like to do?                     |\n", i + 1);
-        printf(  "|\t[1] Try to Score                                   |\n");
-        printf(  "|\t[2] Try to Steal                                   |\n");
+        printf(  "|    [1] Try to Score                                      |\n");
+        printf(  "|    [2] Try to Steal                                      |\n");
         printf(  "+----------------------------------------------------------+\n");
 
         getInput(&input, N_ACTION_Y, *game);
@@ -334,7 +334,7 @@ void clearTerminal(void)
     printf("\033[H");
 }
 
-int initGame() {
+int newGame() {
     // iClear(0, 0, 32, 32);
 
     GameState game = {0};
@@ -413,6 +413,66 @@ int initGame() {
     fclose(playersWrite);
 
     return 1; // return for success
+}
+
+int topPlayers() {
+
+    Player playerList[MAX_LOGGED_PLAYERS] = {0};
+    int numPlayers = 0;
+    StrList playersTxtBuffer;
+
+    int input;
+    int i;
+
+    FILE* playersRead = fopen("players.txt", "r");
+
+    if (playersRead == NULL) {
+        printf("Error: Could not read from players.txt\n");
+    } else {
+
+        while (fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead)) {
+            sscanf(playersTxtBuffer, " %d , %d , %s ",
+                    &playerList[numPlayers].wins,
+                    &playerList[numPlayers].highScore,
+                    playerList[numPlayers].username
+                );
+            ++numPlayers;
+        }
+        fclose(playersRead);
+
+        printf("+----------------------------------------------------------+\n");
+        printf("| Sort by:                                                 |\n");
+        printf("|    [1] Most wins                                         |\n");
+        printf("|    [2] Highest score                                     |\n");
+        printf("|    [0] Exit to main menu                                 |\n");
+        printf("+----------------------------------------------------------+\n");
+
+        getTopPlayersInput(&input);
+
+        if (input != EXIT_TOP_PLAYERS) {
+
+            printf("\n+----------------------------------------------------------+\n");
+            printf(  "| HIGH SCORE | WINS | NAME                                 |\n");
+            printf(  "+-----+----------------------------------------------------+\n");
+
+            if (input == SORT_BY_WINS) {
+                for (i = 0; i < 10; i++) {
+
+                }
+            } else if (input == SORT_BY_SCORE) {
+                for (i = 0; i < 10; i++) {
+                    printf("| #%2d |   %2d | %3d  | %-36s |\n",
+                        i + 1,
+                        playerList[i].highScore,
+                        playerList[i].wins,
+                        playerList[i].username);
+                }
+            }
+            printf("+----------------------------------------------------------+\n");
+        }
+
+    }
+    return 1;
 }
 
 
