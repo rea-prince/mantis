@@ -15,7 +15,11 @@
 #include "helpers.h"
 
 
-// Score
+/* Puts the drawn card into the score pile of the player whose turn it is.
+ * @param game Pointer to the current game state struct
+ * @param drawnCard The card drawn by the player from the drawPile
+ * @return Returns the total points of the current player
+ */
 
 int scoreCard(GameState* game, Card drawnCard) {
 
@@ -65,9 +69,9 @@ int scoreCard(GameState* game, Card drawnCard) {
     return game->players[playerIdx].points;
 }
 
-
-/* This function steals a card from the player at stealIdx to be put into
- * the deck of playerIdx based on the drawn card
+/* Steals a card from the player at stealIdx to be put into the deck of
+ * playerIdx based on the drawn card.
+ *
  * Case 1 : players[stealIdx] does not have a card with the same color as the one drawn
  *    - The card is put into that player's deck
  *    - The player who stole gets nothing
@@ -77,9 +81,10 @@ int scoreCard(GameState* game, Card drawnCard) {
  *
  * @param game Pointer to the game state struct
  * @param stealIdx The index of the player who's being stolen from
- * @param drawnCard The card drawn from the deck for comparison
+ * @param drawnCard The card drawn by the player from the drawPile
  * @return void
  */
+
 void stealCard(GameState* game, int stealIdx, Card drawnCard) {
 
     int numPlayerCards, numStealCards;
@@ -130,13 +135,45 @@ void stealCard(GameState* game, int stealIdx, Card drawnCard) {
 
 }
 
-/* -------------------- */
-/* SIMULATE PLAYER TURN */
-// take players array, deck array, turn index, player action
-// If steal,
-// If score,
+/* Simulates a player's turn in the game, then increments the player turn tracker
+ * inside the game state struct.
+ *
+ * Case 1 : Player chooses to score
+ *    - scoreCard() is called
+ *    - All cards fo the same color as drawnCard is placed in
+ *      the player's score pile
+ * Case 2 : Player chooses to steal
+ *    - Player is prompted for further input on who to steal from
+ *    - stealCard() is called on the player to be stolen from
+ *
+ * @param game Pointer to the game state struct
+ * @return void
+ */
 
-void takeTurn(GameState* game, enum Action playerAction) {
+void takeTurn(GameState* game) {
+
+    int playerAction;
+
+    printf("\n+----------+-----------------------------------------------+\n");
+    printf(  "| TOP DECK | %c %c %c (%02d cards remaining)                    |\n",
+            matchColorChar(game->drawPile.cards[0].back[0]),
+            matchColorChar(game->drawPile.cards[0].back[1]),
+            matchColorChar(game->drawPile.cards[0].back[2]),
+            game->drawPile.totalCards
+        );
+    printf(  "+----------+-----------------------------------------------+\n");
+
+    printf(  "| Player %d, what would you like to do?                     |\n", game->playerTurn + 1);
+    printf(  "|    [1] Try to Score                                      |\n");
+    printf(  "|    [2] Try to Steal                                      |\n");
+    printf(  "+----------------------------------------------------------+\n");
+
+    getGameInput(&playerAction, N_ACTION_Y, *game);
+
+    printf("\n+----------------------------------------------------------+\n");
+    printf(  "| Resolving turn for Player %d...                           |\n", game->playerTurn + 1);
+    printf(  "+----------------------------------------------------------+\n");
+
 
     Card drawnCard = drawCard(&game->drawPile);
     int i;
@@ -181,22 +218,28 @@ void takeTurn(GameState* game, enum Action playerAction) {
 
 }
 
-/* -------------- */
-/* SIMULATE ROUND */
+/* Populates the drawPile inside the game struct, and continuously plays
+ * a rotation of turns among players in the game, displaying all
+ * players' card information for each turn taken until a player wins.
+ * Calls takeTurn() on the player whose turn it is.
+ *
+ * @param game Pointer to the game state struct
+ * @return void
+ */
 
-// Loop through players
-// Call playerTurn()
+int playGame(GameState* game) {
 
-void playRound(GameState* game) {
     int i, j;
-    int input;
 
-    /* TEMPORARY OUTPUT */
+    /* POPULATE DECK */
 
+    for (i = 0; i < game->numPlayers; i++) {
+        populateDeck(&game->drawPile, &game->players[i].tankPile);
+    }
 
-    for (i = 0; i < game->numPlayers && !game->gameWon; i++) {
-        /* TEMPORARY INPUT */
-        // print players' cards
+    /* PLAY ROUNDS */
+
+    do {
         printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
         printf("| PLAYER | RED | ORG | YLW | GRN | BLU | IND | VLT | SCORE |\n");
         printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
@@ -213,122 +256,22 @@ void playRound(GameState* game) {
                 );
                 printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
         }
+        takeTurn(game);
 
-        printf("\n+----------+-----------------------------------------------+\n");
-        printf(  "| TOP DECK | %c %c %c (%02d cards remaining)                    |\n",
-                matchColorChar(game->drawPile.cards[0].back[0]),
-                matchColorChar(game->drawPile.cards[0].back[1]),
-                matchColorChar(game->drawPile.cards[0].back[2]),
-                game->drawPile.totalCards
-            );
-        printf(  "+----------+-----------------------------------------------+\n");
-
-        printf(  "| Player %d, what would you like to do?                     |\n", i + 1);
-        printf(  "|    [1] Try to Score                                      |\n");
-        printf(  "|    [2] Try to Steal                                      |\n");
-        printf(  "+----------------------------------------------------------+\n");
-
-        getGameInput(&input, N_ACTION_Y, *game);
-
-        printf("\n+----------------------------------------------------------+\n");
-        printf(  "| Resolving turn for Player %d...                           |\n", i + 1);
-        printf(  "+----------------------------------------------------------+\n");
-
-        takeTurn(game, input);
-    }
-}
-
-
-
-
-/* ------------- */
-/* SIMULATE GAME */
-
-int playGame(GameState* game) {
-
-    /* POPULATE DECK */
-
-    for (int a = 0; a < game->numPlayers; a++) {
-        populateDeck(&game->drawPile, &game->players[a].tankPile);
-    }
-
-    /* PLAY ROUNDS */
-
-    do {
-        playRound(game);
     } while (game->gameWon == false);
 
     // ROUND simulation loops while condition is not met
     return 1;
 }
 
-int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
+/* Starts a new game by clearing the terminal, prompting the user for the
+ * number of players, and checking for duplicates among the players.txt file.
+ *
+ * @return void
+ */
 
-
-    /* Display cards */
-
-    printf("DISPLAYING CARDS\n\n");
-    for (int i = 0; i < drawPile->totalCards; i++) {
-
-        printf("\nCard %d : \n", i + 1);
-        printf("\t color: %c\n", matchColorChar(drawPile->cards[i].color));
-        printf("\t back : %c %c %c\n",
-            matchColorChar(drawPile->cards[i].back[0]),
-            matchColorChar(drawPile->cards[i].back[1]),
-            matchColorChar(drawPile->cards[i].back[2])
-        );
-        printf("\t value: %d\n", drawPile->cards[i].value);
-    }
-
-    /* INITIALIZE PLAYER */
-
-    for (int a = 0; a < playerCount; a++) {
-        populateDeck(drawPile, &players[a].tankPile);
-    }
-
-    /* Display player info */
-
-    printf("DISPLAYING PLAYER CARDS\n\n");
-    for (int j = 0; j < playerCount; j++) {
-
-        printf("\nPlayer %d : \n", j + 1);
-
-        // player cards
-        // loop through each color
-
-        for (int k = 0; k < 7; k++) {
-
-            // loop for each color deck
-
-            for (int z = 0; z < players[j].tankPile.cardsPerColor[k]; z++) {
-                printf("\n\tCard %c %d: \n", matchColorChar(k), z);
-                printf("\t\t color: %c\n", matchColorChar(players[j].tankPile.cards[k][z].color));
-                printf("\t\t back : %c %c %c\n",
-                    matchColorChar(players[j].tankPile.cards[k][z].back[0]),
-                    matchColorChar(players[j].tankPile.cards[k][z].back[1]),
-                    matchColorChar(players[j].tankPile.cards[k][z].back[2])
-                );
-                printf("\t\t value: %d\n", players[j].tankPile.cards[k][z].value);
-            }
-        }
-
-    }
-
-    return 1;
-}
-
-/* --------------- */
-/* INITIALIZE GAME */
-
-void clearTerminal(void)
-{
-    for (int i = 0; i < 50; i++)
-            printf("\n");
-    printf("\033[H");
-}
-
-int newGame() {
-    // iClear(0, 0, 32, 32);
+void newGame() {
+    iClear(0, 0, 60, 60);
 
     GameState game = {0};
     int playerIdx;
@@ -361,7 +304,6 @@ int newGame() {
             playerIdx++;
         }
     } while (playerIdx < game.numPlayers);
-    printf("\n================\n\n");
 
     /* LOAD DECK */
 
@@ -404,11 +346,15 @@ int newGame() {
     // close players.txt
     fclose(playersRead);
     fclose(playersWrite);
-
-    return 1; // return for success
 }
 
-int topPlayers() {
+/* Lists the top players from players.txt according to either most amount
+ * of wins or highest score achieved.
+ *
+ * @return void
+ */
+
+void topPlayers() {
 
     Player playerList[MAX_LOGGED_PLAYERS] = {0};
     int numPlayers = 0;
@@ -469,6 +415,68 @@ int topPlayers() {
         }
 
     }
+}
+
+
+/* REMOVE THIS REMOVE THIS REMOVE THIS */
+/* REMOVE THIS REMOVE THIS REMOVE THIS */
+/* REMOVE THIS REMOVE THIS REMOVE THIS */
+/* REMOVE THIS REMOVE THIS REMOVE THIS */
+/* REMOVE THIS REMOVE THIS REMOVE THIS */
+/* REMOVE THIS REMOVE THIS REMOVE THIS */
+
+int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
+
+
+    /* Display cards */
+
+    printf("DISPLAYING CARDS\n\n");
+    for (int i = 0; i < drawPile->totalCards; i++) {
+
+        printf("\nCard %d : \n", i + 1);
+        printf("\t color: %c\n", matchColorChar(drawPile->cards[i].color));
+        printf("\t back : %c %c %c\n",
+            matchColorChar(drawPile->cards[i].back[0]),
+            matchColorChar(drawPile->cards[i].back[1]),
+            matchColorChar(drawPile->cards[i].back[2])
+        );
+        printf("\t value: %d\n", drawPile->cards[i].value);
+    }
+
+    /* INITIALIZE PLAYER */
+
+    for (int a = 0; a < playerCount; a++) {
+        populateDeck(drawPile, &players[a].tankPile);
+    }
+
+    /* Display player info */
+
+    printf("DISPLAYING PLAYER CARDS\n\n");
+    for (int j = 0; j < playerCount; j++) {
+
+        printf("\nPlayer %d : \n", j + 1);
+
+        // player cards
+        // loop through each color
+
+        for (int k = 0; k < 7; k++) {
+
+            // loop for each color deck
+
+            for (int z = 0; z < players[j].tankPile.cardsPerColor[k]; z++) {
+                printf("\n\tCard %c %d: \n", matchColorChar(k), z);
+                printf("\t\t color: %c\n", matchColorChar(players[j].tankPile.cards[k][z].color));
+                printf("\t\t back : %c %c %c\n",
+                    matchColorChar(players[j].tankPile.cards[k][z].back[0]),
+                    matchColorChar(players[j].tankPile.cards[k][z].back[1]),
+                    matchColorChar(players[j].tankPile.cards[k][z].back[2])
+                );
+                printf("\t\t value: %d\n", players[j].tankPile.cards[k][z].value);
+            }
+        }
+
+    }
+
     return 1;
 }
 

@@ -31,7 +31,7 @@ int main()
 
     /* LOOP MENU SCREEN FOR REPLAYABILITY */
 
-    iClear(0,0,100,50);
+    iClear(0,0,60,60);
 
     while (loadMenu) {
 
