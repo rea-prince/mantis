@@ -18,7 +18,7 @@
 #include "rand.h"
 #include "interface.h"
 
-/* DEFINITIONS */
+/* ARRAY SIZES */
 
 #define LINE_SIZE 11
 
@@ -33,6 +33,8 @@
 #define CARD_COLORS 7
 #define SCORE_PILE_IDX 7
 #define CARDS_PER_COLOR 12
+
+/* DEFINITIONS */
 
 #define WIN_SCORE 20
 

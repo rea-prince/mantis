@@ -24,8 +24,7 @@
  *    - All their cards of that color are taken
  *    - Cards taken from that player are placed into the stealer's deck
  *
- * @param players[] The array of players in the game
- * @param playerIdx The index of the player whose turn it is
+ * @param game Pointer to the game state struct
  * @param stealIdx The index of the player who's being stolen from
  * @param drawnCard The card drawn from the deck for comparison
  * @return void
@@ -337,7 +336,6 @@ void clearTerminal(void)
 
 int initGame() {
     // iClear(0, 0, 32, 32);
-    clearTerminal();
 
     GameState game = {0};
     int playerIdx;

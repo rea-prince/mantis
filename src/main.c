@@ -17,16 +17,46 @@
 #include "common.h"
 #include "models.h"
 #include "logic.h"
+#include "helpers.h"
+#include "interface.h"
 
 int main()
 {
+    int menuInput;
+    bool loadMenu = true;
+
     initRandom();
 
     printf("You are now playing Mantis: CLI Edition!\n");
 
-    // MENU SCREEN
+    /* LOOP MENU SCREEN FOR REPLAYABILITY */
 
-    initGame();
+    iClear(0,0,100,50);
+
+    while (loadMenu) {
+
+        printf("+----------------------------------------------------------+\n");
+        printf("| Main Menu                                                |\n");
+        printf("+----------------------------------------------------------+\n");
+        printf("|    [1] New Game                                          |\n");
+        printf("|    [2] Top Players                                       |\n");
+        printf("|    [3] Settings                                          |\n");
+        printf("|    [0] Exit                                              |\n");
+        printf("+----------------------------------------------------------+\n");
+
+        getMenuInput(&menuInput);
+
+        if (menuInput == NEW_GAME) {
+            initGame();
+        } else if (menuInput == TOP_PLAYERS) {
+            // TODO
+        } else if (menuInput == GAME_SETTINGS) {
+            // TODO
+        } else if (menuInput == EXIT_MENU) {
+            loadMenu = false;
+        }
+    }
+
 
 
     return 0;

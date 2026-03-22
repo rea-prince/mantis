@@ -26,6 +26,14 @@ enum Action {
     N_ACTION_Y // flag for no action yet
 };
 
+enum MenuOptions {
+    EXIT_MENU,
+    NEW_GAME,
+    TOP_PLAYERS,
+    GAME_SETTINGS,
+    N_MENU_Y // flag for max menu option
+};
+
 
 typedef char StrName[MAX_NAME_CHARS];
 
