@@ -21,6 +21,7 @@ enum Color {
 };
 
 enum Action {
+    EXIT_ACTION, // filler for index 0
     SCORE,
     STEAL,
     N_ACTION_Y // flag for no action yet

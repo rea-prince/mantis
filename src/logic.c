@@ -15,6 +15,57 @@
 #include "helpers.h"
 
 
+// Score
+
+int scoreCard(GameState* game, Card drawnCard) {
+
+    enum Color drawnColor = drawnCard.color;
+
+    // check for cards
+
+    int playerIdx = game->playerTurn;
+    int numPlayerCards = game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
+
+
+
+    if (numPlayerCards > 0) {
+        int numScoreCards = game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
+
+        int i;
+        int totalPts = 0;
+
+        for (i = numPlayerCards - 1; i >= 0 ; i--) {
+            totalPts += game->players[playerIdx].tankPile.cards[drawnColor][i].value;
+            game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = game->players[playerIdx].tankPile.cards[drawnColor][i];
+            game->players[playerIdx].tankPile.cards[drawnColor][i] = (Card) {0};
+            ++numScoreCards;
+            --numPlayerCards;
+        }
+        printf("| - Player %d has (%d) %c card/s worth (%d) pts total!         |\n",
+                game->playerTurn + 1,
+                game->players[game->playerTurn].tankPile.cardsPerColor[drawnColor],
+                matchColorChar(drawnColor), totalPts
+            );
+        printf("| - +%d points to Player %d's Score pile!                    |\n", totalPts, playerIdx + 1);
+        printf("+----------------------------------------------------------+\n");
+
+        game->players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
+        game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX] = numScoreCards;
+    } else {
+        game->players[playerIdx].tankPile.cards[drawnColor][0] = drawnCard;
+        ++game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
+
+        printf("| - Player %d has no %c cards...                             |\n", playerIdx + 1, matchColorChar(drawnColor));
+        printf("| - Adding drawn card to Player %d's Tank                   |\n", playerIdx + 1);
+        printf("+----------------------------------------------------------+\n");
+    }
+
+    // update score
+    game->players[playerIdx].points = computePlayerScore(game->players[playerIdx].tankPile);
+    return game->players[playerIdx].points;
+}
+
+
 /* This function steals a card from the player at stealIdx to be put into
  * the deck of playerIdx based on the drawn card
  * Case 1 : players[stealIdx] does not have a card with the same color as the one drawn
@@ -79,57 +130,6 @@ void stealCard(GameState* game, int stealIdx, Card drawnCard) {
 
 }
 
-// Score
-
-int scoreCard(GameState* game, Card drawnCard) {
-
-    enum Color drawnColor = drawnCard.color;
-
-    // check for cards
-
-    int playerIdx = game->playerTurn;
-    int numPlayerCards = game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
-
-
-
-    if (numPlayerCards > 0) {
-        int numScoreCards = game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
-
-        int i;
-        int totalPts = 0;
-
-        for (i = numPlayerCards - 1; i >= 0 ; i--) {
-            totalPts += game->players[playerIdx].tankPile.cards[drawnColor][i].value;
-            game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = game->players[playerIdx].tankPile.cards[drawnColor][i];
-            game->players[playerIdx].tankPile.cards[drawnColor][i] = (Card) {0};
-            ++numScoreCards;
-            --numPlayerCards;
-        }
-        printf("| - Player %d has (%d) %c card/s worth (%d) pts total!         |\n",
-                game->playerTurn + 1,
-                game->players[game->playerTurn].tankPile.cardsPerColor[drawnColor],
-                matchColorChar(drawnColor), totalPts
-            );
-        printf("| - +%d points to Player %d's Score pile!                    |\n", totalPts, playerIdx + 1);
-        printf("+----------------------------------------------------------+\n");
-
-        game->players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
-        game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX] = numScoreCards;
-    } else {
-        game->players[playerIdx].tankPile.cards[drawnColor][0] = drawnCard;
-        ++game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
-
-        printf("| - Player %d has no %c cards...                             |\n", playerIdx + 1, matchColorChar(drawnColor));
-        printf("| - Adding drawn card to Player %d's Tank                   |\n", playerIdx + 1);
-        printf("+----------------------------------------------------------+\n");
-    }
-
-    // update score
-    game->players[playerIdx].points = computePlayerScore(game->players[playerIdx].tankPile);
-    return game->players[playerIdx].points;
-}
-
-
 /* -------------------- */
 /* SIMULATE PLAYER TURN */
 // take players array, deck array, turn index, player action
@@ -164,23 +164,18 @@ void takeTurn(GameState* game, enum Action playerAction) {
         /* PLACE HOLDER INPUTS */
         int stealCardIdx;
 
-        getInput(&stealCardIdx, STEAL, *game);
-        --stealCardIdx; // offset since enums start at 1
+        getGameInput(&stealCardIdx, STEAL, *game);
 
         /* END OF PLACEHOLDER */
 
         printf("\n+----------------------------------------------------------+\n");
         printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
-        stealCard(game, stealCardIdx, drawnCard);
-
-
+        stealCard(game, stealCardIdx - 1, drawnCard);
     }
 
     printf("\n\n+==========================================================+\n");
-    // printf(    "| End of Player %d's turn! Press enter to continue. |\n", game->playerTurn + 1);
     printf(    "| End of Player %d's turn!                                  |\n", game->playerTurn + 1);
     printf(    "+==========================================================+\n\n\n");
-
 
     game->playerTurn = (game->playerTurn + 1) % game->numPlayers;
 
@@ -233,9 +228,7 @@ void playRound(GameState* game) {
         printf(  "|    [2] Try to Steal                                      |\n");
         printf(  "+----------------------------------------------------------+\n");
 
-        getInput(&input, N_ACTION_Y, *game);
-        --input; // offset since enums start at 1
-
+        getGameInput(&input, N_ACTION_Y, *game);
 
         printf("\n+----------------------------------------------------------+\n");
         printf(  "| Resolving turn for Player %d...                           |\n", i + 1);
@@ -457,7 +450,11 @@ int topPlayers() {
 
             if (input == SORT_BY_WINS) {
                 for (i = 0; i < 10; i++) {
-
+                    printf("| #%2d |   %2d | %3d  | %-36s |\n",
+                        i + 1,
+                        playerList[i].highScore,
+                        playerList[i].wins,
+                        playerList[i].username);
                 }
             } else if (input == SORT_BY_SCORE) {
                 for (i = 0; i < 10; i++) {
