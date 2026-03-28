@@ -24,6 +24,7 @@ int main()
 {
     int menuInput;
     bool loadMenu = true;
+    GameState finalGame = {0};
 
     initRandom();
 
@@ -47,7 +48,7 @@ int main()
         getMenuInput(&menuInput);
 
         if (menuInput == NEW_GAME) {
-            newGame();
+            finalGame = newGame();
         } else if (menuInput == TOP_PLAYERS) {
             topPlayers();
         } else if (menuInput == GAME_SETTINGS) {

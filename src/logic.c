@@ -270,11 +270,12 @@ int playGame(GameState* game) {
  * @return void
  */
 
-void newGame() {
+GameState newGame() {
     iClear(0, 0, 60, 60);
 
     GameState game = {0};
     int playerIdx;
+    int i;
 
     /* INITIALIZE PLAYERS */
 
@@ -323,8 +324,14 @@ void newGame() {
 
     printf("WINNER: %s with %d points!\n", game.winner.username, game.winner.points);
 
+    // TODO: Move everything below outside the function
 
     /* LOG PLAYER STATS */
+
+    for (i = 0; i < game.numPlayers; i++) {
+        // search for player in player records array
+        // update if highest
+    }
 
     // open players.txt
 

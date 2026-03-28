@@ -19,7 +19,7 @@ void takeTurn(GameState* game);
 int playGame(GameState* game);
 int debugGame(DrawPile* drawPile, Player players[], int playerCount);
 
-int newGame();
+GameState newGame();
 int topPlayers();
 
 #endif
