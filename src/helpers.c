@@ -282,6 +282,24 @@ void getSettingsInput(int *inputDest) {
 
 }
 
+void savePlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords) {
+    int i;
+    FILE* playersWrite = fopen("players.txt", "w");
+    if (playersWrite == NULL) {
+        printf("Error! There was an error in saving the player records.");
+    } else {
+        fprintf(playersWrite, "wins, highscore, username\n");
+        for (i = 0; i < numPlayerRecords; i++) {
+            fprintf(playersWrite, "%d, %d, %s\n",
+                playerRecords[i].wins,
+                playerRecords[i].highScore,
+                playerRecords[i].username
+            );
+        }
+        fclose(playersWrite);
+    }
+}
+
 
 // Edit and re-sort players.txt
 

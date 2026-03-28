@@ -33,6 +33,8 @@ int main()
     int numPlayerRecords = 0;
     StrList playersTxtBuffer;
 
+    /* LOAD PLAYERS FROM RECORDS */
+
     FILE* playersRead = fopen("players.txt", "r");
 
     if (playersRead == NULL) {
@@ -49,6 +51,8 @@ int main()
         fclose(playersRead);
     }
 
+    /* START MENU SCREEN */
+
     while (loadMenu) {
 
         printf("+----------------------------------------------------------+\n");
@@ -57,26 +61,23 @@ int main()
         printf("|    [1] New Game                                          |\n");
         printf("|    [2] Top Players                                       |\n");
         printf("|    [3] Settings                                          |\n");
-        printf("|    [0] Exit                                              |\n");
+        printf("|    [0] Exit and Save                                     |\n");
         printf("+----------------------------------------------------------+\n");
 
         getMenuInput(&menuInput);
 
         if (menuInput == NEW_GAME) {
             newGame(playerRecords, &numPlayerRecords);
-
-
-
+            savePlayerRecords(playerRecords, numPlayerRecords);
         } else if (menuInput == TOP_PLAYERS) {
             topPlayers(playerRecords, numPlayerRecords);
         } else if (menuInput == GAME_SETTINGS) {
             // TODO
         } else if (menuInput == EXIT_MENU) {
             loadMenu = false;
+            savePlayerRecords(playerRecords, numPlayerRecords);
         }
     }
-
-
 
     return 0;
 }

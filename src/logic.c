@@ -327,7 +327,7 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
         }
         printf("+----------------------------------------------------------+\n");
 
-        // get input; either add new player or choose existing
+        // select player or add new player
 
         do {
             printf(  "\n+----+\n");
@@ -340,6 +340,8 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
                 printf("\nError! Please select a valid player or add a new one.\n");
             }
         } while (option > *numPlayerRecords || option < 0);
+
+        // either initialize new player or use existing player
 
         if (option == 0) {
             printf("+----------------------------------------------------------+\n");
@@ -388,6 +390,8 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
 
     } while (playerIdx < game.numPlayers);
 
+    /* DISPLAY ALL PLAYERS */
+
     printf("+----------------------------------------------------------+\n");
     if (playerIdx > 0) {
         for (i = 0; i < playerIdx; i++) {
@@ -431,7 +435,8 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
             }
         }
 
-        // sort player records (sorted by wins by default)
+        /* SORT PLAYER RECORDS */
+        // sorted by wins by default
         sortPlayersByWins(playerRecords, *numPlayerRecords);
     }
 }
@@ -451,6 +456,7 @@ void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
     printf("|    [1] Most wins                                         |\n");
     printf("|    [2] Highest score                                     |\n");
     printf("|    [0] Exit to main menu                                 |\n");
+    printf("| WARNING: This will also change the order in the records. |\n");
     printf("+----------------------------------------------------------+\n");
 
     getTopPlayersInput(&input);
