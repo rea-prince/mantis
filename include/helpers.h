@@ -5,8 +5,8 @@
  *  Last Modified   : <date when last revision was made>
  ******************************************************************************/
 
-#ifndef HELPERS_C
-#define HELPERS_C
+#ifndef HELPERS_H
+#define HELPERS_H
 
 
 enum Color matchColor(char c);

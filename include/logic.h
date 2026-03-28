@@ -20,6 +20,6 @@ int playGame(GameState* game);
 int debugGame(DrawPile* drawPile, Player players[], int playerCount);
 
 GameState newGame();
-int topPlayers();
+void topPlayers(Player playerList[], int numPlayers);
 
 #endif

@@ -361,67 +361,45 @@ GameState newGame() {
  * @return void
  */
 
-void topPlayers() {
-
-    Player playerList[MAX_LOGGED_PLAYERS] = {0};
-    int numPlayers = 0;
-    StrList playersTxtBuffer;
-
+void topPlayers(Player playerList[], int numPlayers) {
     int input;
     int i;
 
-    FILE* playersRead = fopen("players.txt", "r");
+    printf("+----------------------------------------------------------+\n");
+    printf("| Sort by:                                                 |\n");
+    printf("|    [1] Most wins                                         |\n");
+    printf("|    [2] Highest score                                     |\n");
+    printf("|    [0] Exit to main menu                                 |\n");
+    printf("+----------------------------------------------------------+\n");
 
-    if (playersRead == NULL) {
-        printf("Error: Could not read from players.txt\n");
-    } else {
+    getTopPlayersInput(&input);
 
-        while (fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead)) {
-            sscanf(playersTxtBuffer, " %d , %d , %s ",
-                    &playerList[numPlayers].wins,
-                    &playerList[numPlayers].highScore,
-                    playerList[numPlayers].username
-                );
-            ++numPlayers;
-        }
-        fclose(playersRead);
+    if (input != EXIT_TOP_PLAYERS) {
 
-        printf("+----------------------------------------------------------+\n");
-        printf("| Sort by:                                                 |\n");
-        printf("|    [1] Most wins                                         |\n");
-        printf("|    [2] Highest score                                     |\n");
-        printf("|    [0] Exit to main menu                                 |\n");
-        printf("+----------------------------------------------------------+\n");
+        printf("\n+----------------------------------------------------------+\n");
+        printf(  "| HIGH SCORE | WINS | NAME                                 |\n");
+        printf(  "+-----+----------------------------------------------------+\n");
 
-        getTopPlayersInput(&input);
-
-        if (input != EXIT_TOP_PLAYERS) {
-
-            printf("\n+----------------------------------------------------------+\n");
-            printf(  "| HIGH SCORE | WINS | NAME                                 |\n");
-            printf(  "+-----+----------------------------------------------------+\n");
-
-            if (input == SORT_BY_WINS) {
-                sortPlayersByWins(playerList, numPlayers);
-                for (i = 0; i < 10; i++) {
-                    printf("| #%2d |   %2d | %3d  | %-36s |\n",
-                        i + 1,
-                        playerList[i].highScore,
-                        playerList[i].wins,
-                        playerList[i].username);
-                }
-            } else if (input == SORT_BY_SCORE) {
-                sortPlayersByScore(playerList, numPlayers);
-                for (i = 0; i < 10; i++) {
-                    printf("| #%2d |   %2d | %3d  | %-36s |\n",
-                        i + 1,
-                        playerList[i].highScore,
-                        playerList[i].wins,
-                        playerList[i].username);
-                }
+        if (input == SORT_BY_WINS) {
+            sortPlayersByWins(playerList, numPlayers);
+            for (i = 0; i < 10; i++) {
+                printf("| #%2d |   %2d | %3d  | %-36s |\n",
+                    i + 1,
+                    playerList[i].highScore,
+                    playerList[i].wins,
+                    playerList[i].username);
             }
-            printf("+----------------------------------------------------------+\n");
+        } else if (input == SORT_BY_SCORE) {
+            sortPlayersByScore(playerList, numPlayers);
+            for (i = 0; i < 10; i++) {
+                printf("| #%2d |   %2d | %3d  | %-36s |\n",
+                    i + 1,
+                    playerList[i].highScore,
+                    playerList[i].wins,
+                    playerList[i].username);
+            }
         }
+        printf("+----------------------------------------------------------+\n");
 
     }
 }

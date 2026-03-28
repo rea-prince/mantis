@@ -34,6 +34,27 @@ int main()
 
     iClear(0,0,60,60);
 
+
+    Player playerList[MAX_LOGGED_PLAYERS] = {0};
+    int numPlayerRecords = 0;
+    StrList playersTxtBuffer;
+
+    FILE* playersRead = fopen("players.txt", "r");
+
+    if (playersRead == NULL) {
+        printf("Error: Could not read from players.txt\n");
+    } else {
+        while (fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead)) {
+            sscanf(playersTxtBuffer, " %d , %d , %s ",
+                    &playerList[numPlayerRecords].wins,
+                    &playerList[numPlayerRecords].highScore,
+                    playerList[numPlayerRecords].username
+                );
+            ++numPlayerRecords;
+        }
+        fclose(playersRead);
+    }
+
     while (loadMenu) {
 
         printf("+----------------------------------------------------------+\n");
@@ -50,7 +71,7 @@ int main()
         if (menuInput == NEW_GAME) {
             finalGame = newGame();
         } else if (menuInput == TOP_PLAYERS) {
-            topPlayers();
+            topPlayers(playerList, numPlayerRecords);
         } else if (menuInput == GAME_SETTINGS) {
             // TODO
         } else if (menuInput == EXIT_MENU) {
