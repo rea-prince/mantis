@@ -143,6 +143,57 @@ int computePlayerScore(TankPile tankPile) {
 }
 
 
+void sortPlayersByWins(Player playerList[], int numPlayers) {
+    int i, j, max;
+    Player tempPlayer = {0};
+
+    for (i = 0; i < numPlayers - 1; i++) {
+        max = i;
+
+        for (j = i + 1; j < numPlayers; j++) {
+            if (playerList[j].wins > playerList[max].wins) {
+                max = j;
+            } else if (playerList[j].wins == playerList[max].wins) {
+                if (strcmp(playerList[j].username, playerList[max].username) < 0) {
+                    max = j;
+                }
+            }
+        }
+
+        if (max != i) {
+            tempPlayer = playerList[i];
+            playerList[i] = playerList[max];
+            playerList[max] = tempPlayer;
+        }
+    }
+
+}
+
+void sortPlayersByScore(Player playerList[], int numPlayers) {
+    int i, j, max;
+    Player tempPlayer = {0};
+
+    for (i = 0; i < numPlayers - 1; i++) {
+        max = i;
+
+        for (j = i + 1; j < numPlayers; j++) {
+            if (playerList[j].highScore > playerList[max].highScore) {
+                max = j;
+            } else if (playerList[j].highScore == playerList[max].highScore) {
+                if (strcmp(playerList[j].username, playerList[max].username) < 0) {
+                    max = j;
+                }
+            }
+        }
+
+        if (max != i) {
+            tempPlayer = playerList[i];
+            playerList[i] = playerList[max];
+            playerList[max] = tempPlayer;
+        }
+    }
+
+}
 
 void getGameInput(int* inputDest, enum Action act, GameState game) {
 
@@ -230,6 +281,7 @@ void getTopPlayersInput (int *inputDest) {
 void getSettingsInput(int *inputDest) {
 
 }
+
 
 // Edit and re-sort players.txt
 

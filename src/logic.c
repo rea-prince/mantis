@@ -395,6 +395,7 @@ void topPlayers() {
             printf(  "+-----+----------------------------------------------------+\n");
 
             if (input == SORT_BY_WINS) {
+                sortPlayersByWins(playerList, numPlayers);
                 for (i = 0; i < 10; i++) {
                     printf("| #%2d |   %2d | %3d  | %-36s |\n",
                         i + 1,
@@ -403,6 +404,7 @@ void topPlayers() {
                         playerList[i].username);
                 }
             } else if (input == SORT_BY_SCORE) {
+                sortPlayersByScore(playerList, numPlayers);
                 for (i = 0; i < 10; i++) {
                     printf("| #%2d |   %2d | %3d  | %-36s |\n",
                         i + 1,
