@@ -34,7 +34,7 @@ int main()
 
     /* LOAD PLAYERS FROM RECORDS */
 
-    loadPlayerRecords(playerRecords, numPlayerRecords);
+    loadPlayerRecords(playerRecords, &numPlayerRecords);
 
     /* START MENU SCREEN */
 

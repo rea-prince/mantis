@@ -8,18 +8,15 @@
 #ifndef LOGIC_H
 #define LOGIC_H
 
-#include "common.h"
-#include "models.h"
-
 void stealCard(GameState* game, int stealIdx, Card drawnCard);
 void scoreCard(GameState* game, Card drawnCard);
 
 void takeTurn(GameState* game);
 
 int playGame(GameState* game);
-int debugGame(DrawPile* drawPile, Player players[], int playerCount);
+int debugGame(DrawPile* drawPile, Player players[MAX_PLAYERS], int playerCount);
 
-void newGame(PlayerRecord playerRecords[], int *numPlayerRecords);
-void topPlayers(PlayerRecord playerRecords[], int numPlayers);
+void newGame(PlayerRecord playerRecords[MAX_LOGGED_PLAYERS], int *numPlayerRecords);
+void topPlayers(PlayerRecord playerRecords[MAX_LOGGED_PLAYERS], int numPlayers);
 
 #endif

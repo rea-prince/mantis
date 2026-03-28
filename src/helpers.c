@@ -48,153 +48,6 @@ char matchColorChar(enum Color c) {
     return returnVal;
 }
 
-// Search name function
-
-int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int playerCount) {
-    int nameIdx;
-    int retIdx = -1;
-    for (nameIdx = 0; nameIdx < playerCount && retIdx == -1; nameIdx++) {
-        if (strcmp(list[nameIdx], key) == 0) {
-            retIdx = nameIdx;
-        }
-    }
-
-    return retIdx;
-}
-
-// Pick out a single card from the draw pile
-
-Card drawCard(DrawPile* drawPile) {
-    Card drawnCard = drawPile->cards[0];
-
-    int i;
-    for (i = 0; i < drawPile->totalCards - 1; i++) {
-        drawPile->cards[i] = drawPile->cards[i + 1];
-    }
-
-    --drawPile->totalCards;
-
-    return drawnCard;
-}
-
-
-// Load deck function from mantis.txt
-
-int createDeck(FILE* mantisDeck, DrawPile* drawPile) {
-
-    char lineBuffer[LINE_SIZE];
-    int randSeed = randomInt();
-    // int randSeed = 999; // FOR UNIFORM TESTING
-
-    /* Load deck into memory */
-
-    int cardIdx = 0;
-    while (cardIdx < DECK_SIZE && fgets(lineBuffer, sizeof(lineBuffer), mantisDeck)) {
-        drawPile->cards[cardIdx].color = matchColor(lineBuffer[0]);
-
-        drawPile->cards[cardIdx].back[0] = matchColor(lineBuffer[4]);
-        drawPile->cards[cardIdx].back[1] = matchColor(lineBuffer[5]);
-        drawPile->cards[cardIdx].back[2] = matchColor(lineBuffer[6]);
-
-        drawPile->cards[cardIdx].value = (lineBuffer[8] - 48);
-        cardIdx++;
-    }
-
-    drawPile->totalCards = cardIdx;
-
-    /* Shuffle deck */
-
-    shuffle(drawPile->cards, drawPile->totalCards, sizeof(Card), randSeed);
-
-    return 1;
-}
-
-
-// Populate player deck
-
-int populateDeck(DrawPile* drawPile, TankPile* tankPile) {
-
-    /* Place cards into player tank pile */
-
-    int i;
-    for (i = 0; i < 4; i++) {
-        Card drawnCard = drawCard(drawPile);
-        int colorIdx = drawnCard.color;
-        int numCards = tankPile->cardsPerColor[colorIdx];
-
-        tankPile->cards[colorIdx][numCards] = drawnCard;
-        ++tankPile->cardsPerColor[colorIdx];
-    }
-
-    return 1;
-}
-
-// Compute player score
-
-int computePlayerScore(TankPile tankPile) {
-    int i;
-    int total = 0;
-
-    for (i = 0; i < tankPile.cardsPerColor[SCORE_PILE_IDX]; i++) {
-        total += tankPile.cards[SCORE_PILE_IDX][i].value;
-    }
-
-    return total;
-}
-
-
-void sortPlayersByWins(PlayerRecord playerRecords[], int numPlayers) {
-    int i, j, max;
-    PlayerRecord tempPlayer = {0};
-
-    for (i = 0; i < numPlayers - 1; i++) {
-        max = i;
-
-        for (j = i + 1; j < numPlayers; j++) {
-            if (playerRecords[j].wins > playerRecords[max].wins) {
-                max = j;
-            } else if (playerRecords[j].wins == playerRecords[max].wins) {
-                if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
-                    max = j;
-                }
-            }
-        }
-
-        if (max != i) {
-            tempPlayer = playerRecords[i];
-            playerRecords[i] = playerRecords[max];
-            playerRecords[max] = tempPlayer;
-        }
-    }
-
-}
-
-void sortPlayersByScore(PlayerRecord playerRecords[], int numPlayers) {
-    int i, j, max;
-    PlayerRecord tempPlayer = {0};
-
-    for (i = 0; i < numPlayers - 1; i++) {
-        max = i;
-
-        for (j = i + 1; j < numPlayers; j++) {
-            if (playerRecords[j].highScore > playerRecords[max].highScore) {
-                max = j;
-            } else if (playerRecords[j].highScore == playerRecords[max].highScore) {
-                if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
-                    max = j;
-                }
-            }
-        }
-
-        if (max != i) {
-            tempPlayer = playerRecords[i];
-            playerRecords[i] = playerRecords[max];
-            playerRecords[max] = tempPlayer;
-        }
-    }
-
-}
-
 void getGameInput(int* inputDest, enum Action act, GameState game) {
 
     char enter;
@@ -282,7 +135,139 @@ void getSettingsInput(int *inputDest) {
 
 }
 
-void loadPlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords) {
+// Pick out a single card from the draw pile
+
+Card drawCard(DrawPile* drawPile) {
+    Card drawnCard = drawPile->cards[0];
+
+    int i;
+    for (i = 0; i < drawPile->totalCards - 1; i++) {
+        drawPile->cards[i] = drawPile->cards[i + 1];
+    }
+
+    --drawPile->totalCards;
+
+    return drawnCard;
+}
+
+
+// Load deck function from mantis.txt
+
+int createDeck(FILE* mantisDeck, DrawPile* drawPile) {
+
+    char lineBuffer[LINE_SIZE];
+    int randSeed = randomInt();
+    // int randSeed = 999; // FOR UNIFORM TESTING
+
+    /* Load deck into memory */
+
+    int cardIdx = 0;
+    while (cardIdx < DECK_SIZE && fgets(lineBuffer, sizeof(lineBuffer), mantisDeck)) {
+        drawPile->cards[cardIdx].color = matchColor(lineBuffer[0]);
+
+        drawPile->cards[cardIdx].back[0] = matchColor(lineBuffer[4]);
+        drawPile->cards[cardIdx].back[1] = matchColor(lineBuffer[5]);
+        drawPile->cards[cardIdx].back[2] = matchColor(lineBuffer[6]);
+
+        drawPile->cards[cardIdx].value = (lineBuffer[8] - 48);
+        cardIdx++;
+    }
+
+    drawPile->totalCards = cardIdx;
+
+    /* Shuffle deck */
+
+    shuffle(drawPile->cards, drawPile->totalCards, sizeof(Card), randSeed);
+
+    return 1;
+}
+
+
+// Populate player deck
+
+int populateDeck(DrawPile* drawPile, TankPile* tankPile) {
+
+    /* Place cards into player tank pile */
+
+    int i;
+    for (i = 0; i < 4; i++) {
+        Card drawnCard = drawCard(drawPile);
+        int colorIdx = drawnCard.color;
+        int numCards = tankPile->cardsPerColor[colorIdx];
+
+        tankPile->cards[colorIdx][numCards] = drawnCard;
+        ++tankPile->cardsPerColor[colorIdx];
+    }
+
+    return 1;
+}
+
+// Compute player score
+
+int computePlayerScore(TankPile tankPile) {
+    int i;
+    int total = 0;
+
+    for (i = 0; i < tankPile.cardsPerColor[SCORE_PILE_IDX]; i++) {
+        total += tankPile.cards[SCORE_PILE_IDX][i].value;
+    }
+
+    return total;
+}
+
+
+void sortPlayersByWins(PlayerRecord playerRecords[], int numPlayers) {
+    int i, j, max;
+    PlayerRecord tempPlayer = {0};
+    for (i = 0; i < numPlayers - 1; i++) {
+        max = i;
+
+        for (j = i + 1; j < numPlayers; j++) {
+            if (playerRecords[j].wins > playerRecords[max].wins) {
+                max = j;
+            } else if (playerRecords[j].wins == playerRecords[max].wins) {
+                if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
+                    max = j;
+                }
+            }
+        }
+
+        if (max != i) {
+            tempPlayer = playerRecords[i];
+            playerRecords[i] = playerRecords[max];
+            playerRecords[max] = tempPlayer;
+        }
+    }
+
+}
+
+void sortPlayersByScore(PlayerRecord playerRecords[], int numPlayers) {
+    int i, j, max;
+    PlayerRecord tempPlayer = {0};
+
+    for (i = 0; i < numPlayers - 1; i++) {
+        max = i;
+
+        for (j = i + 1; j < numPlayers; j++) {
+            if (playerRecords[j].highScore > playerRecords[max].highScore) {
+                max = j;
+            } else if (playerRecords[j].highScore == playerRecords[max].highScore) {
+                if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
+                    max = j;
+                }
+            }
+        }
+
+        if (max != i) {
+            tempPlayer = playerRecords[i];
+            playerRecords[i] = playerRecords[max];
+            playerRecords[max] = tempPlayer;
+        }
+    }
+
+}
+
+void loadPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords) {
 
     StrList playersTxtBuffer;
     FILE* playersRead = fopen("players.txt", "r");
@@ -290,13 +275,14 @@ void loadPlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords) {
     if (playersRead == NULL) {
         printf("Error: Could not read from players.txt\n");
     } else {
+        fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead);
         while (fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead)) {
             sscanf(playersTxtBuffer, " %d , %d , %s ",
-                    &playerRecords[numPlayerRecords].wins,
-                    &playerRecords[numPlayerRecords].highScore,
-                    playerRecords[numPlayerRecords].username
+                    &playerRecords[*numPlayerRecords].wins,
+                    &playerRecords[*numPlayerRecords].highScore,
+                    playerRecords[*numPlayerRecords].username
                 );
-            ++numPlayerRecords;
+            ++*numPlayerRecords;
         }
         fclose(playersRead);
     }

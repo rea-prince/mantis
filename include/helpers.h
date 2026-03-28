@@ -8,11 +8,8 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-
 enum Color matchColor(char c);
 char matchColorChar(enum Color c);
-
-int searchName(char list[MAX_LOGGED_PLAYERS][MAX_NAME_CHARS], char* key, int playerCount);
 
 Card drawCard(DrawPile* drawPile);
 int createDeck(FILE* mantisDeck, DrawPile* drawPile);
@@ -29,7 +26,7 @@ void getMenuInput(int* inputDest);
 void getTopPlayersInput (int *inputDest);
 void getSettingsInput(int *inputDest);
 
-void loadPlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords);
+void loadPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords);
 void savePlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords);
 
 #endif
