@@ -72,10 +72,13 @@ typedef struct {
     StrName username;
     TankPile tankPile;
     int points;
+} Player;
 
+typedef struct {
+    StrName username;
     int wins;
     int highScore;
-} Player;
+} PlayerRecord;
 
 typedef struct {
     // game variables
@@ -86,8 +89,8 @@ typedef struct {
     // state of the game
     int rotations;
     int playerTurn;
+    int winner;
     bool gameWon;
-    Player winner;
 } GameState;
 
 

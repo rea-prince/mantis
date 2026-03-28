@@ -83,8 +83,8 @@ Card drawCard(DrawPile* drawPile) {
 int createDeck(FILE* mantisDeck, DrawPile* drawPile) {
 
     char lineBuffer[LINE_SIZE];
-    // int randSeed = randomInt();
-    int randSeed = 999; // FOR UNIFORM TESTING
+    int randSeed = randomInt();
+    // int randSeed = 999; // FOR UNIFORM TESTING
 
     /* Load deck into memory */
 
@@ -143,53 +143,53 @@ int computePlayerScore(TankPile tankPile) {
 }
 
 
-void sortPlayersByWins(Player playerList[], int numPlayers) {
+void sortPlayersByWins(PlayerRecord playerRecords[], int numPlayers) {
     int i, j, max;
-    Player tempPlayer = {0};
+    PlayerRecord tempPlayer = {0};
 
     for (i = 0; i < numPlayers - 1; i++) {
         max = i;
 
         for (j = i + 1; j < numPlayers; j++) {
-            if (playerList[j].wins > playerList[max].wins) {
+            if (playerRecords[j].wins > playerRecords[max].wins) {
                 max = j;
-            } else if (playerList[j].wins == playerList[max].wins) {
-                if (strcmp(playerList[j].username, playerList[max].username) < 0) {
+            } else if (playerRecords[j].wins == playerRecords[max].wins) {
+                if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
                     max = j;
                 }
             }
         }
 
         if (max != i) {
-            tempPlayer = playerList[i];
-            playerList[i] = playerList[max];
-            playerList[max] = tempPlayer;
+            tempPlayer = playerRecords[i];
+            playerRecords[i] = playerRecords[max];
+            playerRecords[max] = tempPlayer;
         }
     }
 
 }
 
-void sortPlayersByScore(Player playerList[], int numPlayers) {
+void sortPlayersByScore(PlayerRecord playerRecords[], int numPlayers) {
     int i, j, max;
-    Player tempPlayer = {0};
+    PlayerRecord tempPlayer = {0};
 
     for (i = 0; i < numPlayers - 1; i++) {
         max = i;
 
         for (j = i + 1; j < numPlayers; j++) {
-            if (playerList[j].highScore > playerList[max].highScore) {
+            if (playerRecords[j].highScore > playerRecords[max].highScore) {
                 max = j;
-            } else if (playerList[j].highScore == playerList[max].highScore) {
-                if (strcmp(playerList[j].username, playerList[max].username) < 0) {
+            } else if (playerRecords[j].highScore == playerRecords[max].highScore) {
+                if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
                     max = j;
                 }
             }
         }
 
         if (max != i) {
-            tempPlayer = playerList[i];
-            playerList[i] = playerList[max];
-            playerList[max] = tempPlayer;
+            tempPlayer = playerRecords[i];
+            playerRecords[i] = playerRecords[max];
+            playerRecords[max] = tempPlayer;
         }
     }
 

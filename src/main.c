@@ -24,7 +24,6 @@ int main()
 {
     int menuInput;
     bool loadMenu = true;
-    GameState finalGame = {0};
 
     initRandom();
 
@@ -34,8 +33,7 @@ int main()
 
     iClear(0,0,60,60);
 
-
-    Player playerRecords[MAX_LOGGED_PLAYERS] = {0};
+    PlayerRecord playerRecords[MAX_LOGGED_PLAYERS] = {0};
     int numPlayerRecords = 0;
     StrList playersTxtBuffer;
 
@@ -69,7 +67,10 @@ int main()
         getMenuInput(&menuInput);
 
         if (menuInput == NEW_GAME) {
-            finalGame = newGame(playerRecords, numPlayerRecords);
+            newGame(playerRecords, numPlayerRecords);
+
+
+
         } else if (menuInput == TOP_PLAYERS) {
             topPlayers(playerRecords, numPlayerRecords);
         } else if (menuInput == GAME_SETTINGS) {

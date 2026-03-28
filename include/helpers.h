@@ -21,8 +21,8 @@ int populateDeck(DrawPile* drawPile, TankPile* tankPile);
 
 int computePlayerScore(TankPile tankPile);
 
-void sortPlayersByScore(Player playerList[], int numPlayers);
-void sortPlayersByWins(Player playerList[], int numPlayers);
+void sortPlayersByScore(PlayerRecord playerRecords[], int numPlayers);
+void sortPlayersByWins(PlayerRecord playerRecords[], int numPlayers);
 
 void getGameInput(int* inputDest, enum Action act, GameState game);
 void getMenuInput(int* inputDest);

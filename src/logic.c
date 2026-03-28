@@ -183,7 +183,7 @@ void takeTurn(GameState* game) {
         printf("\n+----------------------------------------------------------+\n");
         printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
         if (scoreCard(game, drawnCard) >= WIN_SCORE) {
-            game->winner = game->players[game->playerTurn];
+            game->winner = game->playerTurn;
             game->gameWon = true;
         }
 
@@ -265,16 +265,17 @@ int playGame(GameState* game) {
 }
 
 /* Starts a new game by clearing the terminal, prompting the user for the
- * number of players, and checking for duplicates among the players.txt file.
+ * number of players, either adding a new player or choosing from the selction,
+ * and calling playGame() to start
  *
  * @return void
  */
 
-GameState newGame(Player playerRecords[], int numPlayerRecords) {
+void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
     iClear(0, 0, 60, 60);
 
     GameState game = {0};
-    int playerIdx;
+    int playerIdx, i, j;
 
     StrName nameBuffer;
     char flushBuffer;
@@ -296,19 +297,26 @@ GameState newGame(Player playerRecords[], int numPlayerRecords) {
         int name;
         int option;
 
-        printf("Select Player %d:\n", playerIdx + 1);
-
-        printf("[0] <Add new player>\n");
-        for (name = 0; name < numPlayerRecords; name++) {
-            printf("[%d] %s\n", name + 1, playerRecords[name].username);
+        if (playerIdx > 0) {
+            printf("\n");
+            for (i = 0; i < playerIdx; i++) {
+                printf("P%d: %s\n", i + 1, game.players[i].username);
+            }
         }
 
-        printf(">>  ");
+        printf("\nSelect Player %d:\n", playerIdx + 1);
+
+        printf("    [0] <Add new player>\n");
+        for (name = 0; name < numPlayerRecords; name++) {
+            printf("    [%d] %s\n", name + 1, playerRecords[name].username);
+        }
+
+        printf("\n>>  ");
         scanf("%d", &option);
         while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
 
         if (option == 0) {
-            printf("Insert P%d username (36 chars max): \n", (playerIdx + 1));
+            printf("\nInsert P%d username (36 chars max): \n", (playerIdx + 1));
             fgets(nameBuffer, MAX_NAME_CHARS, stdin);
 
             while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
@@ -322,10 +330,14 @@ GameState newGame(Player playerRecords[], int numPlayerRecords) {
                 }
             }
             if (!duplicateFound) {
+                playerRecords[numPlayerRecords] = (PlayerRecord) {0};
+                strcpy(playerRecords[numPlayerRecords].username, nameBuffer);
+
+                game.players[playerIdx] = (Player) {0};
                 strcpy(game.players[playerIdx].username, nameBuffer);
-                printf("Username entered: %s\n", game.players[playerIdx].username);
-                game.players[playerIdx].points = 0;
-                playerIdx++;
+
+                ++numPlayerRecords;
+                ++playerIdx;
             }
 
         } else if (option > 0 && option <= numPlayerRecords) {
@@ -350,10 +362,28 @@ GameState newGame(Player playerRecords[], int numPlayerRecords) {
         playGame(&game);
         // debugGame(&game.drawPile, game.players, game.numPlayers);
 
-        printf("WINNER: %s with %d points!\n", game.winner.username, game.winner.points);
-    }
+        printf("WINNER: %s with %d points!\n", game.players[game.winner].username, game.players[game.winner].points);
 
-    return game;
+        // update player records
+
+        for (i = 0; i < game.numPlayers; i++) {
+            bool playerFound = false;
+
+            for (j = 0; j < numPlayerRecords && !playerFound; j++) {
+               if (strcmp(playerRecords[j].username, game.players[i].username) == 0) {
+                   if (playerRecords[j].highScore  < game.players[i].points) {
+                       playerRecords[j].highScore = game.players[i].points;
+                   }
+                   if (i == game.winner) {
+                       ++playerRecords[j].wins;
+                   }
+               }
+            }
+        }
+
+        // sort player records (sorted by wins by default)
+        sortPlayersByWins(playerRecords, numPlayerRecords);
+    }
 }
 
 /* Lists the top players from players.txt according to either most amount
@@ -362,7 +392,7 @@ GameState newGame(Player playerRecords[], int numPlayerRecords) {
  * @return void
  */
 
-void topPlayers(Player playerList[], int numPlayers) {
+void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
     int input;
     int i;
 
@@ -382,22 +412,22 @@ void topPlayers(Player playerList[], int numPlayers) {
         printf(  "+-----+----------------------------------------------------+\n");
 
         if (input == SORT_BY_WINS) {
-            sortPlayersByWins(playerList, numPlayers);
+            sortPlayersByWins(playerRecords, numPlayers);
             for (i = 0; i < 10; i++) {
                 printf("| #%2d |   %2d | %3d  | %-36s |\n",
                     i + 1,
-                    playerList[i].highScore,
-                    playerList[i].wins,
-                    playerList[i].username);
+                    playerRecords[i].highScore,
+                    playerRecords[i].wins,
+                    playerRecords[i].username);
             }
         } else if (input == SORT_BY_SCORE) {
-            sortPlayersByScore(playerList, numPlayers);
+            sortPlayersByScore(playerRecords, numPlayers);
             for (i = 0; i < 10; i++) {
                 printf("| #%2d |   %2d | %3d  | %-36s |\n",
                     i + 1,
-                    playerList[i].highScore,
-                    playerList[i].wins,
-                    playerList[i].username);
+                    playerRecords[i].highScore,
+                    playerRecords[i].wins,
+                    playerRecords[i].username);
             }
         }
         printf("+----------------------------------------------------------+\n");
