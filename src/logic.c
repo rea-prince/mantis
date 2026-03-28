@@ -270,40 +270,70 @@ int playGame(GameState* game) {
  * @return void
  */
 
-GameState newGame() {
+GameState newGame(Player playerRecords[], int numPlayerRecords) {
     iClear(0, 0, 60, 60);
 
     GameState game = {0};
     int playerIdx;
-    int i;
-
-    /* INITIALIZE PLAYERS */
-
-    printf("How many players? : ");
-    scanf("%d", &game.numPlayers);
 
     StrName nameBuffer;
+    char flushBuffer;
+
+    /* INITIALIZE PLAYERS */
+    do {
+        printf("How many players? : ");
+        scanf("%d", &game.numPlayers);
+        if (game.numPlayers < MIN_PLAYERS) {
+            printf("Please enter a minimum of %d players.\n", MIN_PLAYERS);
+        } else if (game.numPlayers > MAX_PLAYERS) {
+            printf("Please enter a maximum of %d players.\n", MAX_PLAYERS);
+        }
+    } while (game.numPlayers < MIN_PLAYERS || game.numPlayers > MAX_PLAYERS);
 
     playerIdx = 0;
     do {
-        printf("P%d : ", (playerIdx + 1));
-        scanf("%s", nameBuffer);
         bool duplicateFound = false;
         int name;
+        int option;
 
-        /*** TEMPORARY ***/
-        // check for duplicates
-        for (name = 0; name < playerIdx; name++) {
-            if (strcmp(game.players[name].username, nameBuffer) == 0) {
-                printf("Error: Name already listed; please try another name\n");
-                duplicateFound = 1;
-            }
+        printf("Select Player %d:\n", playerIdx + 1);
+
+        printf("[0] <Add new player>\n");
+        for (name = 0; name < numPlayerRecords; name++) {
+            printf("[%d] %s\n", name + 1, playerRecords[name].username);
         }
-        if (!duplicateFound) {
-            strcpy(game.players[playerIdx].username, nameBuffer);
+
+        printf(">>  ");
+        scanf("%d", &option);
+        while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
+
+        if (option == 0) {
+            printf("Insert P%d username (36 chars max): \n", (playerIdx + 1));
+            fgets(nameBuffer, MAX_NAME_CHARS, stdin);
+
+            while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
+
+            /*** TEMPORARY ***/
+            // check for duplicates
+            for (name = 0; name < playerIdx; name++) {
+                if (strcmp(game.players[name].username, nameBuffer) == 0) {
+                    printf("Error: Name already listed; please try another name\n");
+                    duplicateFound = 1;
+                }
+            }
+            if (!duplicateFound) {
+                strcpy(game.players[playerIdx].username, nameBuffer);
+                printf("Username entered: %s\n", game.players[playerIdx].username);
+                game.players[playerIdx].points = 0;
+                playerIdx++;
+            }
+
+        } else if (option > 0 && option <= numPlayerRecords) {
+            strcpy(game.players[playerIdx].username, playerRecords[option - 1].username);
             game.players[playerIdx].points = 0;
             playerIdx++;
         }
+
     } while (playerIdx < game.numPlayers);
 
     /* LOAD DECK */
@@ -314,45 +344,16 @@ GameState newGame() {
     } else {
         createDeck(mantisDeck, &game.drawPile);
         fclose(mantisDeck);
+
+        /* PLAY GAME */
+
+        playGame(&game);
+        // debugGame(&game.drawPile, game.players, game.numPlayers);
+
+        printf("WINNER: %s with %d points!\n", game.winner.username, game.winner.points);
     }
 
-    /* PLAY GAME */
-
-    playGame(&game);
-
-    // debugGame(&game.drawPile, game.players, game.numPlayers);
-
-    printf("WINNER: %s with %d points!\n", game.winner.username, game.winner.points);
-
-    // TODO: Move everything below outside the function
-
-    /* LOG PLAYER STATS */
-
-    for (i = 0; i < game.numPlayers; i++) {
-        // search for player in player records array
-        // update if highest
-    }
-
-    // open players.txt
-
-    FILE* playersRead = fopen("players.txt", "r");
-    if (playersRead == NULL) {
-        printf("Error: Could not read from players.txt\n");
-    }
-    FILE* playersWrite = fopen("players.txt", "w");
-    if (playersWrite == NULL) {
-        printf("Error: Could not write to players.txt\n");
-    }
-
-    // append names if non existent
-
-    // edit scores
-
-    // re-sort players.txt by high score
-
-    // close players.txt
-    fclose(playersRead);
-    fclose(playersWrite);
+    return game;
 }
 
 /* Lists the top players from players.txt according to either most amount

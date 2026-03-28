@@ -35,7 +35,7 @@ int main()
     iClear(0,0,60,60);
 
 
-    Player playerList[MAX_LOGGED_PLAYERS] = {0};
+    Player playerRecords[MAX_LOGGED_PLAYERS] = {0};
     int numPlayerRecords = 0;
     StrList playersTxtBuffer;
 
@@ -46,9 +46,9 @@ int main()
     } else {
         while (fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead)) {
             sscanf(playersTxtBuffer, " %d , %d , %s ",
-                    &playerList[numPlayerRecords].wins,
-                    &playerList[numPlayerRecords].highScore,
-                    playerList[numPlayerRecords].username
+                    &playerRecords[numPlayerRecords].wins,
+                    &playerRecords[numPlayerRecords].highScore,
+                    playerRecords[numPlayerRecords].username
                 );
             ++numPlayerRecords;
         }
@@ -69,9 +69,9 @@ int main()
         getMenuInput(&menuInput);
 
         if (menuInput == NEW_GAME) {
-            finalGame = newGame();
+            finalGame = newGame(playerRecords, numPlayerRecords);
         } else if (menuInput == TOP_PLAYERS) {
-            topPlayers(playerList, numPlayerRecords);
+            topPlayers(playerRecords, numPlayerRecords);
         } else if (menuInput == GAME_SETTINGS) {
             // TODO
         } else if (menuInput == EXIT_MENU) {
