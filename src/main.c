@@ -21,6 +21,9 @@ int main()
     int menuInput;
     bool loadMenu = true;
 
+    PlayerRecord playerRecords[MAX_LOGGED_PLAYERS] = {0};
+    int numPlayerRecords = 0;
+
     initRandom();
 
     printf("You are now playing Mantis: CLI Edition!\n");
@@ -29,27 +32,9 @@ int main()
 
     iClear(0,0,60,60);
 
-    PlayerRecord playerRecords[MAX_LOGGED_PLAYERS] = {0};
-    int numPlayerRecords = 0;
-    StrList playersTxtBuffer;
-
     /* LOAD PLAYERS FROM RECORDS */
 
-    FILE* playersRead = fopen("players.txt", "r");
-
-    if (playersRead == NULL) {
-        printf("Error: Could not read from players.txt\n");
-    } else {
-        while (fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead)) {
-            sscanf(playersTxtBuffer, " %d , %d , %s ",
-                    &playerRecords[numPlayerRecords].wins,
-                    &playerRecords[numPlayerRecords].highScore,
-                    playerRecords[numPlayerRecords].username
-                );
-            ++numPlayerRecords;
-        }
-        fclose(playersRead);
-    }
+    loadPlayerRecords(playerRecords, numPlayerRecords);
 
     /* START MENU SCREEN */
 

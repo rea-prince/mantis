@@ -29,6 +29,7 @@ void getMenuInput(int* inputDest);
 void getTopPlayersInput (int *inputDest);
 void getSettingsInput(int *inputDest);
 
+void loadPlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords);
 void savePlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords);
 
 #endif
