@@ -63,7 +63,7 @@ int main()
         getMenuInput(&menuInput);
 
         if (menuInput == NEW_GAME) {
-            newGame(playerRecords, numPlayerRecords);
+            newGame(playerRecords, &numPlayerRecords);
 
 
 

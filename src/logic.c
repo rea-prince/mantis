@@ -271,18 +271,21 @@ int playGame(GameState* game) {
  * @return void
  */
 
-void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
+void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
     iClear(0, 0, 60, 60);
 
     GameState game = {0};
     int playerIdx, i, j;
+    int recordsDisplacement = 0; // keeping track of players added; for preventing duplicates
 
     StrName nameBuffer;
     char flushBuffer;
 
-    /* INITIALIZE PLAYERS  */
+    bool duplicateFound;
+    int name;
+    int option;
 
-    // request player amount
+    /* REQUEST NUMBER OF PLAYERS */
 
     printf("+----------------------------------------------------------+\n");
     printf("| How many players?                                        |\n");
@@ -300,15 +303,13 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
         }
     } while (game.numPlayers < MIN_PLAYERS || game.numPlayers > MAX_PLAYERS);
 
-    // scan for players
+    /* SCAN FOR PLAYER INPUT */
 
     playerIdx = 0;
     do {
-        bool duplicateFound = false;
-        int name;
-        int option;
+        duplicateFound = false;
 
-        // display recorded players
+        // display current players
 
         printf("+----------------------------------------------------------+\n");
         if (playerIdx > 0) {
@@ -317,18 +318,16 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
             }
         }
 
-        // display all recorded players
-        // TODO : don't display already recorded players
+        // display player records
 
         printf("| Select Player %d:                                         |\n", playerIdx + 1);
         printf("|   0 | <Add new player>                                   |\n");
-        for (name = 0; name < numPlayerRecords; name++) {
+        for (name = 0; name < *numPlayerRecords; name++) {
             printf("| %3d | %-50s |\n", name + 1, playerRecords[name].username);
         }
         printf("+----------------------------------------------------------+\n");
 
         // get input; either add new player or choose existing
-        // TODO : prevent player from selecting themself. How???
 
         do {
             printf(  "\n+----+\n");
@@ -337,10 +336,10 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
             while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
             printf(    "+----+\n\n");
 
-            if (option > numPlayerRecords || option < 0) {
+            if (option > *numPlayerRecords || option < 0) {
                 printf("\nError! Please select a valid player or add a new one.\n");
             }
-        } while (option > numPlayerRecords || option < 0);
+        } while (option > *numPlayerRecords || option < 0);
 
         if (option == 0) {
             printf("+----------------------------------------------------------+\n");
@@ -349,12 +348,12 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
 
             printf(  "\n+----+\n");
             printf(    "| >> | ");
-            fgets(nameBuffer, MAX_NAME_CHARS, stdin);
+            scanf(" %[^\n]", nameBuffer);
             while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
             printf(    "+----+\n\n");
 
-            /*** TEMPORARY ***/
-            // check for duplicates
+            // check for duplicates in current game
+
             for (name = 0; name < playerIdx; name++) {
                 if (strcmp(game.players[name].username, nameBuffer) == 0) {
                     printf("Error: Name already listed; please try another name\n");
@@ -362,29 +361,42 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
                 }
             }
             if (!duplicateFound) {
-                playerRecords[numPlayerRecords] = (PlayerRecord) {0};
-                strcpy(playerRecords[numPlayerRecords].username, nameBuffer);
+
+                // append user to records
+
+                playerRecords[*numPlayerRecords + recordsDisplacement] = (PlayerRecord) {0};
+                strcpy(playerRecords[*numPlayerRecords + recordsDisplacement].username, nameBuffer);
+
+                // initialize player in current game
 
                 game.players[playerIdx] = (Player) {0};
                 strcpy(game.players[playerIdx].username, nameBuffer);
 
-                ++numPlayerRecords;
+                ++recordsDisplacement;
                 ++playerIdx;
             }
 
-        } else if (option > 0 && option <= numPlayerRecords) {
-            // TODO : Check if username is the same incase it's a duplicate
+        } else if (option > 0 && option <= *numPlayerRecords) {
 
-            if (strcmp(game.players[playerIdx].username, playerRecords[option - 1].username)) {
+            // initialize player in current game
 
-            }
-
+            game.players[playerIdx] = (Player) {0};
             strcpy(game.players[playerIdx].username, playerRecords[option - 1].username);
-            game.players[playerIdx].points = 0;
+
             playerIdx++;
         }
 
     } while (playerIdx < game.numPlayers);
+
+    printf("+----------------------------------------------------------+\n");
+    if (playerIdx > 0) {
+        for (i = 0; i < playerIdx; i++) {
+            printf("| P%d: %-52s |\n", i + 1, game.players[i].username);
+        }
+    }
+    printf("+----------------------------------------------------------+\n");
+
+    *numPlayerRecords += recordsDisplacement;
 
     /* LOAD DECK */
 
@@ -407,7 +419,7 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
         for (i = 0; i < game.numPlayers; i++) {
             bool playerFound = false;
 
-            for (j = 0; j < numPlayerRecords && !playerFound; j++) {
+            for (j = 0; j < *numPlayerRecords && !playerFound; j++) {
                if (strcmp(playerRecords[j].username, game.players[i].username) == 0) {
                    if (playerRecords[j].highScore  < game.players[i].points) {
                        playerRecords[j].highScore = game.players[i].points;
@@ -420,7 +432,7 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
         }
 
         // sort player records (sorted by wins by default)
-        sortPlayersByWins(playerRecords, numPlayerRecords);
+        sortPlayersByWins(playerRecords, *numPlayerRecords);
     }
 }
 
