@@ -21,6 +21,10 @@ int main()
     int menuInput;
     bool loadMenu = true;
 
+    GameState game = {0};
+    game.randSeed = -1;
+    game.winningPoints = 20;
+
     PlayerRecord playerRecords[MAX_LOGGED_PLAYERS] = {0};
     int numPlayerRecords = 0;
 
@@ -45,19 +49,20 @@ int main()
         printf("+----------------------------------------------------------+\n");
         printf("|    [1] New Game                                          |\n");
         printf("|    [2] Top Players                                       |\n");
-        printf("|    [3] Settings                                          |\n");
+        printf("|    [3] Game Settings                                     |\n");
         printf("|    [0] Exit and Save                                     |\n");
         printf("+----------------------------------------------------------+\n");
 
         getMenuInput(&menuInput);
 
         if (menuInput == NEW_GAME) {
-            newGame(playerRecords, &numPlayerRecords);
+            newGame(&game, playerRecords, &numPlayerRecords);
             savePlayerRecords(playerRecords, numPlayerRecords);
+            game = (GameState) {0};
         } else if (menuInput == TOP_PLAYERS) {
             topPlayers(playerRecords, numPlayerRecords);
         } else if (menuInput == GAME_SETTINGS) {
-            // TODO
+            gameSettings(&game);
         } else if (menuInput == EXIT_MENU) {
             loadMenu = false;
             savePlayerRecords(playerRecords, numPlayerRecords);

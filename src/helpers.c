@@ -153,31 +153,38 @@ Card drawCard(DrawPile* drawPile) {
 
 // Load deck function from mantis.txt
 
-int createDeck(FILE* mantisDeck, DrawPile* drawPile) {
+int createDeck(FILE* mantisDeck, GameState* game) {
 
     char lineBuffer[LINE_SIZE];
-    int randSeed = randomInt();
+    int randSeed;
+
+    if (game->randSeed == -1) {
+        randSeed = randomInt();
+    } else {
+        randSeed = game->randSeed;
+    }
+
     // int randSeed = 999; // FOR UNIFORM TESTING
 
     /* Load deck into memory */
 
     int cardIdx = 0;
     while (cardIdx < DECK_SIZE && fgets(lineBuffer, sizeof(lineBuffer), mantisDeck)) {
-        drawPile->cards[cardIdx].color = matchColor(lineBuffer[0]);
+        game->drawPile.cards[cardIdx].color = matchColor(lineBuffer[0]);
 
-        drawPile->cards[cardIdx].back[0] = matchColor(lineBuffer[4]);
-        drawPile->cards[cardIdx].back[1] = matchColor(lineBuffer[5]);
-        drawPile->cards[cardIdx].back[2] = matchColor(lineBuffer[6]);
+        game->drawPile.cards[cardIdx].back[0] = matchColor(lineBuffer[4]);
+        game->drawPile.cards[cardIdx].back[1] = matchColor(lineBuffer[5]);
+        game->drawPile.cards[cardIdx].back[2] = matchColor(lineBuffer[6]);
 
-        drawPile->cards[cardIdx].value = (lineBuffer[8] - 48);
+        game->drawPile.cards[cardIdx].value = (lineBuffer[8] - 48);
         cardIdx++;
     }
 
-    drawPile->totalCards = cardIdx;
+    game->drawPile.totalCards = cardIdx;
 
     /* Shuffle deck */
 
-    shuffle(drawPile->cards, drawPile->totalCards, sizeof(Card), randSeed);
+    shuffle(game->drawPile.cards, game->drawPile.totalCards, sizeof(Card), randSeed);
 
     return 1;
 }

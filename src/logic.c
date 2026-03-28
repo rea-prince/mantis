@@ -271,10 +271,9 @@ int playGame(GameState* game) {
  * @return void
  */
 
-void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
+void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecords) {
     iClear(0, 0, 60, 60);
 
-    GameState game = {0};
     int playerIdx, i, j;
     int recordsDisplacement = 0; // keeping track of players added; for preventing duplicates
 
@@ -293,15 +292,15 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
     do {
         printf(  "\n+----+\n");
         printf(    "| >> | ");
-        scanf("%d", &game.numPlayers);
+        scanf("%d", &game->numPlayers);
         printf(    "+----+\n\n");
 
-        if (game.numPlayers < MIN_PLAYERS) {
+        if (game->numPlayers < MIN_PLAYERS) {
             printf("\nPlease enter a minimum of %d players.\n", MIN_PLAYERS);
-        } else if (game.numPlayers > MAX_PLAYERS) {
+        } else if (game->numPlayers > MAX_PLAYERS) {
             printf("\nPlease enter a maximum of %d players.\n", MAX_PLAYERS);
         }
-    } while (game.numPlayers < MIN_PLAYERS || game.numPlayers > MAX_PLAYERS);
+    } while (game->numPlayers < MIN_PLAYERS || game->numPlayers > MAX_PLAYERS);
 
     /* SCAN FOR PLAYER INPUT */
 
@@ -314,7 +313,7 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
         printf("+----------------------------------------------------------+\n");
         if (playerIdx > 0) {
             for (i = 0; i < playerIdx; i++) {
-                printf("| P%d: %-52s |\n", i + 1, game.players[i].username);
+                printf("| P%d: %-52s |\n", i + 1, game->players[i].username);
             }
         }
 
@@ -357,7 +356,7 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
             // check for duplicates in current game
 
             for (name = 0; name < playerIdx; name++) {
-                if (strcmp(game.players[name].username, nameBuffer) == 0) {
+                if (strcmp(game->players[name].username, nameBuffer) == 0) {
                     printf("Error: Name already listed; please try another name\n");
                     duplicateFound = 1;
                 }
@@ -371,8 +370,8 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
 
                 // initialize player in current game
 
-                game.players[playerIdx] = (Player) {0};
-                strcpy(game.players[playerIdx].username, nameBuffer);
+                game->players[playerIdx] = (Player) {0};
+                strcpy(game->players[playerIdx].username, nameBuffer);
 
                 ++recordsDisplacement;
                 ++playerIdx;
@@ -382,20 +381,20 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
 
             // initialize player in current game
 
-            game.players[playerIdx] = (Player) {0};
-            strcpy(game.players[playerIdx].username, playerRecords[option - 1].username);
+            game->players[playerIdx] = (Player) {0};
+            strcpy(game->players[playerIdx].username, playerRecords[option - 1].username);
 
             playerIdx++;
         }
 
-    } while (playerIdx < game.numPlayers);
+    } while (playerIdx < game->numPlayers);
 
     /* DISPLAY ALL PLAYERS */
 
     printf("+----------------------------------------------------------+\n");
     if (playerIdx > 0) {
         for (i = 0; i < playerIdx; i++) {
-            printf("| P%d: %-52s |\n", i + 1, game.players[i].username);
+            printf("| P%d: %-52s |\n", i + 1, game->players[i].username);
         }
     }
     printf("+----------------------------------------------------------+\n");
@@ -408,27 +407,27 @@ void newGame(PlayerRecord playerRecords[], int *numPlayerRecords) {
     if (mantisDeck == NULL) {
         printf("Error: Could not load cards\n");
     } else {
-        createDeck(mantisDeck, &game.drawPile);
+        createDeck(mantisDeck, game);
         fclose(mantisDeck);
 
         /* PLAY GAME */
 
-        playGame(&game);
+        playGame(game);
         // debugGame(&game.drawPile, game.players, game.numPlayers);
 
-        printf("WINNER: %s with %d points!\n", game.players[game.winner].username, game.players[game.winner].points);
+        printf("WINNER: %s with %d points!\n", game->players[game->winner].username, game->players[game->winner].points);
 
         // update player records
 
-        for (i = 0; i < game.numPlayers; i++) {
+        for (i = 0; i < game->numPlayers; i++) {
             bool playerFound = false;
 
             for (j = 0; j < *numPlayerRecords && !playerFound; j++) {
-               if (strcmp(playerRecords[j].username, game.players[i].username) == 0) {
-                   if (playerRecords[j].highScore  < game.players[i].points) {
-                       playerRecords[j].highScore = game.players[i].points;
+               if (strcmp(playerRecords[j].username, game->players[i].username) == 0) {
+                   if (playerRecords[j].highScore  < game->players[i].points) {
+                       playerRecords[j].highScore = game->players[i].points;
                    }
-                   if (i == game.winner) {
+                   if (i == game->winner) {
                        ++playerRecords[j].wins;
                    }
                }
@@ -487,8 +486,55 @@ void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
             }
         }
         printf("+----------------------------------------------------------+\n");
-
     }
+}
+
+void gameSettings(GameState *game) {
+    printf("+----------------------------------------------------------+\n");
+    printf("| Change settings for next match:                          |\n");
+    printf("|    [1] Set winning points                                |\n");
+    printf("|    [2] Set shuffle seed                                  |\n");
+    printf("|    [0] Exit to main menu                                 |\n");
+    printf("+----------------------------------------------------------+\n");
+
+    int input;
+
+    do {
+        printf(  "\n+----+\n");
+        printf(    "| >> | ");
+        scanf("%d", &input);
+        printf(    "+----+\n");
+
+        if (input < 0 || input > 2) {
+            printf("Error! Please enter a valid option.\n");
+        }
+    } while (input < 0 || input > 2);
+
+    if (input == 1) {
+        do {
+            printf(  "\n+---------------------+\n");
+            printf(    "| Set shuffle seed >> | ");
+            scanf("%d", &input);
+            printf(    "+---------------------+\n");
+
+            if (input < 0) {
+                printf("Error! Please enter a positive integer.\n");
+            }
+
+        } while (input < 0);
+    } else if (input == 2) {
+        do {
+            printf(  "\n+-----------------------+\n");
+            printf(    "| Set winning points >> | ");
+            scanf("%d", &input);
+            printf(    "+-----------------------+\n");
+
+            if (input <= 0) {
+                printf("Error! Please enter an integer greater than 0.\n");
+            }
+        } while (input <= 0);
+    }
+
 }
 
 
