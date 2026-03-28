@@ -10,10 +10,6 @@
 
 /* ----- preprocessor directives ----- */
 
-/* ----- definitions (i.e., constants, typedefs, structs) ----- */
-
-/* ----- function implementations ----- */
-
 #include "common.h"
 #include "models.h"
 #include "logic.h"

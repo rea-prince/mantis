@@ -280,16 +280,27 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
     StrName nameBuffer;
     char flushBuffer;
 
-    /* INITIALIZE PLAYERS */
+    /* INITIALIZE PLAYERS  */
+
+    // request player amount
+
+    printf("+----------------------------------------------------------+\n");
+    printf("| How many players?                                        |\n");
+    printf("+----------------------------------------------------------+\n");
     do {
-        printf("How many players? : ");
+        printf(  "\n+----+\n");
+        printf(    "| >> | ");
         scanf("%d", &game.numPlayers);
+        printf(    "+----+\n\n");
+
         if (game.numPlayers < MIN_PLAYERS) {
-            printf("Please enter a minimum of %d players.\n", MIN_PLAYERS);
+            printf("\nPlease enter a minimum of %d players.\n", MIN_PLAYERS);
         } else if (game.numPlayers > MAX_PLAYERS) {
-            printf("Please enter a maximum of %d players.\n", MAX_PLAYERS);
+            printf("\nPlease enter a maximum of %d players.\n", MAX_PLAYERS);
         }
     } while (game.numPlayers < MIN_PLAYERS || game.numPlayers > MAX_PLAYERS);
+
+    // scan for players
 
     playerIdx = 0;
     do {
@@ -297,29 +308,50 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
         int name;
         int option;
 
+        // display recorded players
+
+        printf("+----------------------------------------------------------+\n");
         if (playerIdx > 0) {
-            printf("\n");
             for (i = 0; i < playerIdx; i++) {
-                printf("P%d: %s\n", i + 1, game.players[i].username);
+                printf("| P%d: %-52s |\n", i + 1, game.players[i].username);
             }
         }
 
-        printf("\nSelect Player %d:\n", playerIdx + 1);
+        // display all recorded players
+        // TODO : don't display already recorded players
 
-        printf("    [0] <Add new player>\n");
+        printf("| Select Player %d:                                         |\n", playerIdx + 1);
+        printf("|   0 | <Add new player>                                   |\n");
         for (name = 0; name < numPlayerRecords; name++) {
-            printf("    [%d] %s\n", name + 1, playerRecords[name].username);
+            printf("| %3d | %-50s |\n", name + 1, playerRecords[name].username);
         }
+        printf("+----------------------------------------------------------+\n");
 
-        printf("\n>>  ");
-        scanf("%d", &option);
-        while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
+        // get input; either add new player or choose existing
+        // TODO : prevent player from selecting themself. How???
+
+        do {
+            printf(  "\n+----+\n");
+            printf(    "| >> | ");
+            scanf("%d", &option);
+            while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
+            printf(    "+----+\n\n");
+
+            if (option > numPlayerRecords || option < 0) {
+                printf("\nError! Please select a valid player or add a new one.\n");
+            }
+        } while (option > numPlayerRecords || option < 0);
 
         if (option == 0) {
-            printf("\nInsert P%d username (36 chars max): \n", (playerIdx + 1));
-            fgets(nameBuffer, MAX_NAME_CHARS, stdin);
+            printf("+----------------------------------------------------------+\n");
+            printf("| Insert P%d username (36 chars max):                      |\n", (playerIdx + 1));
+            printf("+----------------------------------------------------------+\n");
 
+            printf(  "\n+----+\n");
+            printf(    "| >> | ");
+            fgets(nameBuffer, MAX_NAME_CHARS, stdin);
             while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
+            printf(    "+----+\n\n");
 
             /*** TEMPORARY ***/
             // check for duplicates
@@ -341,6 +373,12 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
             }
 
         } else if (option > 0 && option <= numPlayerRecords) {
+            // TODO : Check if username is the same incase it's a duplicate
+
+            if (strcmp(game.players[playerIdx].username, playerRecords[option - 1].username)) {
+
+            }
+
             strcpy(game.players[playerIdx].username, playerRecords[option - 1].username);
             game.players[playerIdx].points = 0;
             playerIdx++;
