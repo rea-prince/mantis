@@ -553,7 +553,7 @@ void gameSettings(GameState *game) {
 
     printf("+----------------------------------------------------------+\n");
     printf("| Change settings for next match:                          |\n");
-    printf("|    [1] Set winning points                                |\n");
+    printf("|    [1] Set winning points (140 maximum)                  |\n");
     printf("|    [2] Set shuffle seed                                  |\n");
     printf("|    [0] Exit to main menu                                 |\n");
     printf("+----------------------------------------------------------+\n");
@@ -581,8 +581,8 @@ void gameSettings(GameState *game) {
             while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
             printf(    "+-----------------------+\n");
 
-            if (input <= 0) {
-                printf("\nError! Please enter an integer greater than 0.\n");
+            if (input <= 0 || input > 140) {
+                printf("\nError! Please enter an integer > 0 and <= 140.\n");
             }
         } while (input <= 0);
     } else if (input == 2) {
