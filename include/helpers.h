@@ -30,6 +30,7 @@ int computePlayerScore(TankPile tankPile);
 
 /* DATA PERSISTENCE */
 
+void sortPlayersByPoints(Player players[], int numPlayers);
 void sortPlayersByScore(PlayerRecord playerRecords[], int numPlayers);
 void sortPlayersByWins(PlayerRecord playerRecords[], int numPlayers);
 void loadPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords);

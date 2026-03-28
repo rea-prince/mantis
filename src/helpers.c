@@ -204,6 +204,7 @@ int populateDeck(DrawPile* drawPile, TankPile* tankPile) {
 
         tankPile->cards[colorIdx][numCards] = drawnCard;
         ++tankPile->cardsPerColor[colorIdx];
+        ++tankPile->totalCards;
     }
 
     return 1;
@@ -220,6 +221,36 @@ int computePlayerScore(TankPile tankPile) {
     }
 
     return total;
+}
+
+void sortPlayersByPoints(Player players[], int numPlayers) {
+
+    // find player with most points
+
+    int i, j;
+    int max;
+
+    Player tempPlayer;
+
+    for (i = 0; i < numPlayers - 1; i++) {
+        max = i;
+
+        for (j = i + 1; j < numPlayers; j++) {
+            if (players[j].points > players[max].points) {
+                max = j;
+            } else if (players[j].points == players[max].points) {
+                if (players[j].tankPile.totalCards > players[max].tankPile.totalCards) {
+                    max = j;
+                }
+            }
+
+        }
+        if (max != i) {
+            tempPlayer = players[i];
+            players[i] = players[max];
+            players[max] = tempPlayer;
+        }
+    }
 }
 
 
