@@ -423,9 +423,8 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
         playGame(game);
         // debugGame(&game.drawPile, game.players, game.numPlayers);
 
-        // search for winner/s
+        /* SEARCH FOR WINNER */
 
-        // sort players
         int winners;
 
         sortPlayersByPoints(game->players, game->numPlayers);
