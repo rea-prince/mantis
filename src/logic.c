@@ -182,7 +182,7 @@ void takeTurn(GameState* game) {
             // if player chooses to score
             printf("\n+----------------------------------------------------------+\n");
             printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
-            if (scoreCard(game, drawnCard) >= WIN_SCORE) {
+            if (scoreCard(game, drawnCard) >= game->winningPoints) {
                 game->winner = game->playerTurn;
                 game->gameWon = true;
             }
@@ -220,7 +220,7 @@ void takeTurn(GameState* game) {
     }
 
     printf("\n\n+==========================================================+\n");
-    printf(    "| End of Player %d's turn!                                  |\n", game->playerTurn + 1);
+    printf(    "| End of Player %d's turn!                                  |\n", game->playerTurn);
     printf(    "+==========================================================+\n\n\n");
 
 }
@@ -585,6 +585,9 @@ void gameSettings(GameState *game) {
                 printf("\nError! Please enter an integer > 0 and <= 140.\n");
             }
         } while (input <= 0);
+
+        game->winningPoints = input;
+
     } else if (input == 2) {
         do {
             printf(  "\n+---------------------+\n");
@@ -598,6 +601,9 @@ void gameSettings(GameState *game) {
             }
 
         } while (input < 0);
+
+        game->randSeed = input;
+
     }
 
 }
