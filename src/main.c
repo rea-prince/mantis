@@ -21,6 +21,13 @@ int main()
     int menuInput;
     bool loadMenu = true;
 
+    GameState game = {0};
+    game.randSeed = -1;
+    game.winningPoints = 20;
+
+    PlayerRecord playerRecords[MAX_LOGGED_PLAYERS] = {0};
+    int numPlayerRecords = 0;
+
     initRandom();
 
     printf("You are now playing Mantis: CLI Edition!\n");
@@ -29,54 +36,37 @@ int main()
 
     iClear(0,0,60,60);
 
-    PlayerRecord playerRecords[MAX_LOGGED_PLAYERS] = {0};
-    int numPlayerRecords = 0;
-    StrList playersTxtBuffer;
+    /* LOAD PLAYERS FROM RECORDS */
 
-    FILE* playersRead = fopen("players.txt", "r");
+    loadPlayerRecords(playerRecords, &numPlayerRecords);
 
-    if (playersRead == NULL) {
-        printf("Error: Could not read from players.txt\n");
-    } else {
-        while (fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead)) {
-            sscanf(playersTxtBuffer, " %d , %d , %s ",
-                    &playerRecords[numPlayerRecords].wins,
-                    &playerRecords[numPlayerRecords].highScore,
-                    playerRecords[numPlayerRecords].username
-                );
-            ++numPlayerRecords;
-        }
-        fclose(playersRead);
-    }
+    /* START MENU SCREEN */
 
     while (loadMenu) {
-
         printf("+----------------------------------------------------------+\n");
         printf("| Main Menu                                                |\n");
         printf("+----------------------------------------------------------+\n");
         printf("|    [1] New Game                                          |\n");
         printf("|    [2] Top Players                                       |\n");
-        printf("|    [3] Settings                                          |\n");
-        printf("|    [0] Exit                                              |\n");
+        printf("|    [3] Game Settings                                     |\n");
+        printf("|    [0] Exit and Save                                     |\n");
         printf("+----------------------------------------------------------+\n");
 
         getMenuInput(&menuInput);
 
         if (menuInput == NEW_GAME) {
-            newGame(playerRecords, numPlayerRecords);
-
-
-
+            newGame(&game, playerRecords, &numPlayerRecords);
+            savePlayerRecords(playerRecords, numPlayerRecords);
+            game = (GameState) {0};
         } else if (menuInput == TOP_PLAYERS) {
             topPlayers(playerRecords, numPlayerRecords);
         } else if (menuInput == GAME_SETTINGS) {
-            // TODO
+            gameSettings(&game);
         } else if (menuInput == EXIT_MENU) {
             loadMenu = false;
+            savePlayerRecords(playerRecords, numPlayerRecords);
         }
     }
-
-
 
     return 0;
 }

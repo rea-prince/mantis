@@ -30,8 +30,6 @@ int scoreCard(GameState* game, Card drawnCard) {
     int playerIdx = game->playerTurn;
     int numPlayerCards = game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
 
-
-
     if (numPlayerCards > 0) {
         int numScoreCards = game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
 
@@ -42,6 +40,8 @@ int scoreCard(GameState* game, Card drawnCard) {
             totalPts += game->players[playerIdx].tankPile.cards[drawnColor][i].value;
             game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = game->players[playerIdx].tankPile.cards[drawnColor][i];
             game->players[playerIdx].tankPile.cards[drawnColor][i] = (Card) {0};
+
+            --game->players[playerIdx].tankPile.totalCards;
             ++numScoreCards;
             --numPlayerCards;
         }
@@ -154,67 +154,74 @@ void takeTurn(GameState* game) {
 
     int playerAction;
 
-    printf("\n+----------+-----------------------------------------------+\n");
-    printf(  "| TOP DECK | %c %c %c (%02d cards remaining)                    |\n",
-            matchColorChar(game->drawPile.cards[0].back[0]),
-            matchColorChar(game->drawPile.cards[0].back[1]),
-            matchColorChar(game->drawPile.cards[0].back[2]),
-            game->drawPile.totalCards
-        );
-    printf(  "+----------+-----------------------------------------------+\n");
+    if (game->drawPile.totalCards > 0) {
+        printf("\n+----------+-----------------------------------------------+\n");
+        printf(  "| TOP DECK | %c %c %c (%02d cards remaining)                    |\n",
+                matchColorChar(game->drawPile.cards[0].back[0]),
+                matchColorChar(game->drawPile.cards[0].back[1]),
+                matchColorChar(game->drawPile.cards[0].back[2]),
+                game->drawPile.totalCards
+            );
+        printf(  "+----------+-----------------------------------------------+\n");
 
-    printf(  "| Player %d, what would you like to do?                     |\n", game->playerTurn + 1);
-    printf(  "|    [1] Try to Score                                      |\n");
-    printf(  "|    [2] Try to Steal                                      |\n");
-    printf(  "+----------------------------------------------------------+\n");
+        printf(  "| Player %d, what would you like to do?                     |\n", game->playerTurn + 1);
+        printf(  "|    [1] Try to Score                                      |\n");
+        printf(  "|    [2] Try to Steal                                      |\n");
+        printf(  "+----------------------------------------------------------+\n");
 
-    getGameInput(&playerAction, N_ACTION_Y, *game);
-
-    printf("\n+----------------------------------------------------------+\n");
-    printf(  "| Resolving turn for Player %d...                           |\n", game->playerTurn + 1);
-    printf(  "+----------------------------------------------------------+\n");
-
-
-    Card drawnCard = drawCard(&game->drawPile);
-    int i;
-
-    if (playerAction == SCORE) {
-        // if player chooses to score
-        printf("\n+----------------------------------------------------------+\n");
-        printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
-        if (scoreCard(game, drawnCard) >= WIN_SCORE) {
-            game->winner = game->playerTurn;
-            game->gameWon = true;
-        }
-
-    } else if (playerAction == STEAL) {
-        /* PLACE HOLDER OUTPUTS */
-
-        // if player chooses to steal
-        printf(  "| Who would you like to steal from?                        |\n");
-        for (i = 0; i < game->numPlayers; i++) {
-            if (i != game->playerTurn)
-                printf(  "| [%d] Player %d                                             |\n", i + 1, i + 1);
-        }
-        printf( "+----------------------------------------------------------+\n");
-
-        /* PLACE HOLDER INPUTS */
-        int stealCardIdx;
-
-        getGameInput(&stealCardIdx, STEAL, *game);
-
-        /* END OF PLACEHOLDER */
+        getGameInput(&playerAction, N_ACTION_Y, *game);
 
         printf("\n+----------------------------------------------------------+\n");
-        printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
-        stealCard(game, stealCardIdx - 1, drawnCard);
+        printf(  "| Resolving turn for Player %d...                           |\n", game->playerTurn + 1);
+        printf(  "+----------------------------------------------------------+\n");
+
+        Card drawnCard = drawCard(&game->drawPile);
+        int i;
+
+        if (playerAction == SCORE) {
+            // if player chooses to score
+            printf("\n+----------------------------------------------------------+\n");
+            printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
+            if (scoreCard(game, drawnCard) >= game->winningPoints) {
+                game->winner = game->playerTurn;
+                game->gameWon = true;
+            }
+
+        } else if (playerAction == STEAL) {
+            /* PLACE HOLDER OUTPUTS */
+
+            // if player chooses to steal
+            printf(  "| Who would you like to steal from?                        |\n");
+            for (i = 0; i < game->numPlayers; i++) {
+                if (i != game->playerTurn)
+                    printf(  "| [%d] Player %d                                             |\n", i + 1, i + 1);
+            }
+            printf( "+----------------------------------------------------------+\n");
+
+            /* PLACE HOLDER INPUTS */
+            int stealCardIdx;
+
+            getGameInput(&stealCardIdx, STEAL, *game);
+
+            /* END OF PLACEHOLDER */
+
+            printf("\n+----------------------------------------------------------+\n");
+            printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
+            stealCard(game, stealCardIdx - 1, drawnCard);
+        }
+
+        game->playerTurn = (game->playerTurn + 1) % game->numPlayers;
+
+    } else {
+
+        /* DRAW */
+
+        game->gameWon = true;
     }
 
     printf("\n\n+==========================================================+\n");
-    printf(    "| End of Player %d's turn!                                  |\n", game->playerTurn + 1);
+    printf(    "| End of Player %d's turn!                                  |\n", game->playerTurn);
     printf(    "+==========================================================+\n\n\n");
-
-    game->playerTurn = (game->playerTurn + 1) % game->numPlayers;
 
 }
 
@@ -271,18 +278,20 @@ int playGame(GameState* game) {
  * @return void
  */
 
-void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
+void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecords) {
     iClear(0, 0, 60, 60);
 
-    GameState game = {0};
     int playerIdx, i, j;
+    int recordsDisplacement = 0; // keeping track of players added; for preventing duplicates
 
     StrName nameBuffer;
     char flushBuffer;
 
-    /* INITIALIZE PLAYERS  */
+    bool duplicateFound;
+    int name;
+    int option;
 
-    // request player amount
+    /* REQUEST NUMBER OF PLAYERS */
 
     printf("+----------------------------------------------------------+\n");
     printf("| How many players?                                        |\n");
@@ -290,45 +299,42 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
     do {
         printf(  "\n+----+\n");
         printf(    "| >> | ");
-        scanf("%d", &game.numPlayers);
+        scanf("%d", &game->numPlayers);
+        while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
         printf(    "+----+\n\n");
 
-        if (game.numPlayers < MIN_PLAYERS) {
+        if (game->numPlayers < MIN_PLAYERS) {
             printf("\nPlease enter a minimum of %d players.\n", MIN_PLAYERS);
-        } else if (game.numPlayers > MAX_PLAYERS) {
+        } else if (game->numPlayers > MAX_PLAYERS) {
             printf("\nPlease enter a maximum of %d players.\n", MAX_PLAYERS);
         }
-    } while (game.numPlayers < MIN_PLAYERS || game.numPlayers > MAX_PLAYERS);
+    } while (game->numPlayers < MIN_PLAYERS || game->numPlayers > MAX_PLAYERS);
 
-    // scan for players
+    /* SCAN FOR PLAYER INPUT */
 
     playerIdx = 0;
     do {
-        bool duplicateFound = false;
-        int name;
-        int option;
+        duplicateFound = false;
 
-        // display recorded players
+        // display current players
 
         printf("+----------------------------------------------------------+\n");
         if (playerIdx > 0) {
             for (i = 0; i < playerIdx; i++) {
-                printf("| P%d: %-52s |\n", i + 1, game.players[i].username);
+                printf("| P%d: %-52s |\n", i + 1, game->players[i].username);
             }
         }
 
-        // display all recorded players
-        // TODO : don't display already recorded players
+        // display player records
 
         printf("| Select Player %d:                                         |\n", playerIdx + 1);
         printf("|   0 | <Add new player>                                   |\n");
-        for (name = 0; name < numPlayerRecords; name++) {
+        for (name = 0; name < *numPlayerRecords; name++) {
             printf("| %3d | %-50s |\n", name + 1, playerRecords[name].username);
         }
         printf("+----------------------------------------------------------+\n");
 
-        // get input; either add new player or choose existing
-        // TODO : prevent player from selecting themself. How???
+        // select player or add new player
 
         do {
             printf(  "\n+----+\n");
@@ -337,10 +343,12 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
             while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
             printf(    "+----+\n\n");
 
-            if (option > numPlayerRecords || option < 0) {
+            if (option > *numPlayerRecords || option < 0) {
                 printf("\nError! Please select a valid player or add a new one.\n");
             }
-        } while (option > numPlayerRecords || option < 0);
+        } while (option > *numPlayerRecords || option < 0);
+
+        // either initialize new player or use existing player
 
         if (option == 0) {
             printf("+----------------------------------------------------------+\n");
@@ -349,78 +357,143 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
 
             printf(  "\n+----+\n");
             printf(    "| >> | ");
-            fgets(nameBuffer, MAX_NAME_CHARS, stdin);
+            scanf(" %[^\n]", nameBuffer);
             while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
             printf(    "+----+\n\n");
 
-            /*** TEMPORARY ***/
-            // check for duplicates
+            // check for duplicates in current game
+
             for (name = 0; name < playerIdx; name++) {
-                if (strcmp(game.players[name].username, nameBuffer) == 0) {
-                    printf("Error: Name already listed; please try another name\n");
+                if (strcmp(game->players[name].username, nameBuffer) == 0) {
+                    printf("\nError: Name already listed; please try another name\n");
                     duplicateFound = 1;
                 }
             }
             if (!duplicateFound) {
-                playerRecords[numPlayerRecords] = (PlayerRecord) {0};
-                strcpy(playerRecords[numPlayerRecords].username, nameBuffer);
 
-                game.players[playerIdx] = (Player) {0};
-                strcpy(game.players[playerIdx].username, nameBuffer);
+                // append user to records
 
-                ++numPlayerRecords;
+                playerRecords[*numPlayerRecords + recordsDisplacement] = (PlayerRecord) {0};
+                strcpy(playerRecords[*numPlayerRecords + recordsDisplacement].username, nameBuffer);
+
+                // initialize player in current game
+
+                game->players[playerIdx] = (Player) {0};
+                strcpy(game->players[playerIdx].username, nameBuffer);
+
+                ++recordsDisplacement;
                 ++playerIdx;
             }
 
-        } else if (option > 0 && option <= numPlayerRecords) {
-            // TODO : Check if username is the same incase it's a duplicate
+        } else if (option > 0 && option <= *numPlayerRecords) {
 
-            if (strcmp(game.players[playerIdx].username, playerRecords[option - 1].username)) {
+            // initialize player in current game
 
-            }
+            game->players[playerIdx] = (Player) {0};
+            strcpy(game->players[playerIdx].username, playerRecords[option - 1].username);
 
-            strcpy(game.players[playerIdx].username, playerRecords[option - 1].username);
-            game.players[playerIdx].points = 0;
             playerIdx++;
         }
 
-    } while (playerIdx < game.numPlayers);
+    } while (playerIdx < game->numPlayers);
+
+    /* DISPLAY ALL PLAYERS */
+
+    printf("+----------------------------------------------------------+\n");
+    if (playerIdx > 0) {
+        for (i = 0; i < playerIdx; i++) {
+            printf("| P%d: %-52s |\n", i + 1, game->players[i].username);
+        }
+    }
+    printf("+----------------------------------------------------------+\n");
+
+    *numPlayerRecords += recordsDisplacement;
 
     /* LOAD DECK */
 
     FILE* mantisDeck = fopen("mantis.txt", "r");
     if (mantisDeck == NULL) {
-        printf("Error: Could not load cards\n");
+        printf("\nError: Could not load cards\n");
     } else {
-        createDeck(mantisDeck, &game.drawPile);
+        createDeck(mantisDeck, game);
         fclose(mantisDeck);
 
         /* PLAY GAME */
 
-        playGame(&game);
+        playGame(game);
         // debugGame(&game.drawPile, game.players, game.numPlayers);
 
-        printf("WINNER: %s with %d points!\n", game.players[game.winner].username, game.players[game.winner].points);
+        /* SEARCH FOR WINNER */
 
-        // update player records
+        int winners;
 
-        for (i = 0; i < game.numPlayers; i++) {
+        sortPlayersByPoints(game->players, game->numPlayers);
+
+        if (game->players[0].points > game->players[1].points) {
+
+            // Case 1: player 1 has more points than player 2
+
+            game->winner = 0;
+            printf("WINNER: %s with %d points!\n", game->players[game->winner].username, game->players[game->winner].points);
+        } else if (game->players[0].points == game->players[1].points) {
+
+            // Case 2: player 1 and 2 have equal points
+
+            if (game->players[0].tankPile.totalCards > game->players[1].tankPile.totalCards) {
+
+                // Case 2a: player 1 has more tank cards than player 2
+
+                game->winner = 0;
+                printf("WINNER: %s with %d points!\n", game->players[game->winner].username, game->players[game->winner].points);
+
+            } else {
+
+                // Case 2b: player 1, 2, and possibly others have equal points and tank cards
+
+                winners = 0;
+                int a;
+
+                // count number of winners with such case
+
+                for (a = 0; a < game->numPlayers; a++) {
+                    if (game->players[0].points == game->players[a].points &&
+                        game->players[0].tankPile.totalCards == game->players[a].tankPile.totalCards) {
+                            printf("WINNER/s: %s with %d points!\n", game->players[a].username, game->players[a].points);
+                            ++winners;
+                        }
+                }
+            }
+        }
+
+        // update player (sorted already)
+
+        for (i = 0; i < game->numPlayers; i++) {
             bool playerFound = false;
 
-            for (j = 0; j < numPlayerRecords && !playerFound; j++) {
-               if (strcmp(playerRecords[j].username, game.players[i].username) == 0) {
-                   if (playerRecords[j].highScore  < game.players[i].points) {
-                       playerRecords[j].highScore = game.players[i].points;
+            // match player to records
+
+            for (j = 0; j < *numPlayerRecords && !playerFound; j++) {
+               if (strcmp(playerRecords[j].username, game->players[i].username) == 0) {
+
+                   // update high score
+
+                   if (game->players[i].points > playerRecords[j].highScore) {
+                       playerRecords[j].highScore = game->players[i].points;
                    }
-                   if (i == game.winner) {
+
+                   // count win; (i < winners) in case there's multiple
+
+                   if (i < winners) {
                        ++playerRecords[j].wins;
                    }
+                   playerFound = true;
                }
             }
         }
 
-        // sort player records (sorted by wins by default)
-        sortPlayersByWins(playerRecords, numPlayerRecords);
+        /* SORT PLAYER RECORDS */
+        // sorted by wins by default
+        sortPlayersByWins(playerRecords, *numPlayerRecords);
     }
 }
 
@@ -431,6 +504,8 @@ void newGame(PlayerRecord playerRecords[], int numPlayerRecords) {
  */
 
 void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
+    iClear(0, 0, 60, 60);
+
     int input;
     int i;
 
@@ -439,6 +514,7 @@ void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
     printf("|    [1] Most wins                                         |\n");
     printf("|    [2] Highest score                                     |\n");
     printf("|    [0] Exit to main menu                                 |\n");
+    printf("| WARNING: This will also change the order in the records. |\n");
     printf("+----------------------------------------------------------+\n");
 
     getTopPlayersInput(&input);
@@ -469,8 +545,67 @@ void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
             }
         }
         printf("+----------------------------------------------------------+\n");
+    }
+}
+
+void gameSettings(GameState *game) {
+    iClear(0, 0, 60, 60);
+
+    printf("+----------------------------------------------------------+\n");
+    printf("| Change settings for next match:                          |\n");
+    printf("|    [1] Set winning points (140 maximum)                  |\n");
+    printf("|    [2] Set shuffle seed                                  |\n");
+    printf("|    [0] Exit to main menu                                 |\n");
+    printf("+----------------------------------------------------------+\n");
+
+    int input;
+    char flushBuffer;
+
+    do {
+        printf(  "\n+----+\n");
+        printf(    "| >> | ");
+        scanf("%d", &input);
+        while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
+        printf(    "+----+\n");
+
+        if (input < 0 || input > 2) {
+            printf("\nError! Please enter a valid option.\n");
+        }
+    } while (input < 0 || input > 2);
+
+    if (input == 1) {
+        do {
+            printf(  "\n+-----------------------+\n");
+            printf(    "| Set winning points >> | ");
+            scanf("%d", &input);
+            while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
+            printf(    "+-----------------------+\n");
+
+            if (input <= 0 || input > 140) {
+                printf("\nError! Please enter an integer > 0 and <= 140.\n");
+            }
+        } while (input <= 0);
+
+        game->winningPoints = input;
+
+    } else if (input == 2) {
+        do {
+            printf(  "\n+---------------------+\n");
+            printf(    "| Set shuffle seed >> | ");
+            scanf("%d", &input);
+            while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
+            printf(    "+---------------------+\n");
+
+            if (input < 0) {
+                printf("\nError! Please enter a positive integer.\n");
+            }
+
+        } while (input < 0);
+
+        game->randSeed = input;
 
     }
+
 }
 
 
@@ -505,7 +640,7 @@ int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
         populateDeck(drawPile, &players[a].tankPile);
     }
 
-    /* Display player info */
+    /* DISPLAY PLAYER INFO */
 
     printf("DISPLAYING PLAYER CARDS\n\n");
     for (int j = 0; j < playerCount; j++) {

@@ -91,6 +91,11 @@ typedef struct {
     int playerTurn;
     int winner;
     bool gameWon;
+
+    // settings
+    int randSeed;
+    int winningPoints;
+
 } GameState;
 
 
