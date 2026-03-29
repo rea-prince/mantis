@@ -13,20 +13,21 @@
 
 /* GENERIC PRINT */
 
-void displayCustomBox(char* strInput) {
-    int length = strlen(strInput);
+void displayCustomHeader(char* header) {
     int i;
+    int length = strlen(header);
+    int padding = (CLI_LINE_LEN - 2 - length) / 2;
 
-    printf("\n+");
-    for (i = 0; i < length + 2; i++) {
+    printf("+");
+    for (i = 0; i < CLI_LINE_LEN - 2; i++) {
         printf("-");
     }
     printf("+\n");
 
-    printf("| %s |\n", strInput);
+    printf("| %*s%s%*s |\n", padding - 1, "", header, CLI_LINE_LEN - 3 - length - padding, "");
 
     printf("+");
-    for (i = 0; i < length + 2; i++) {
+    for (i = 0; i < CLI_LINE_LEN - 2; i++) {
         printf("-");
     }
     printf("+\n");
@@ -35,45 +36,45 @@ void displayCustomBox(char* strInput) {
 /* MENU DISPLAYS */
 
 void displayMenuMain() {
-    printf("+----------------------------------------------------------+\n");
-    printf("| Main Menu                                                |\n");
-    printf("+----------------------------------------------------------+\n");
+    displayCustomHeader("Main Menu");
     printf("| Welcome to Mantis: CLI Edition! Please select an option. |\n");
-    printf("|    [1] New Game                                          |\n");
-    printf("|    [2] Top Players                                       |\n");
-    printf("|    [3] Game Settings                                     |\n");
+    printf("|    [1] Start New Game                                    |\n");
+    printf("|    [2] View Top Players                                  |\n");
+    printf("|    [3] Change Game Settings                              |\n");
     printf("|    [0] Exit and Save                                     |\n");
     printf("+----------------------------------------------------------+\n");
 }
 
-void displayMenuTopPlayers() {
-    printf("+----------------------------------------------------------+\n");
+void displayInMenuTopPlayers(int* input) {
+    displayCustomHeader("View Top Players");
     printf("| Sort by:                                                 |\n");
     printf("|    [1] Most wins                                         |\n");
     printf("|    [2] Highest score                                     |\n");
+    printf("|    [3] Show All players                                  |\n");
     printf("|    [0] Exit to main menu                                 |\n");
     printf("| WARNING: This will also change the order in the records. |\n");
     printf("+----------------------------------------------------------+\n");
+    getInput(input, 0, N_SORT_Y, -1);
 }
 
-void displayMenuGameSettings() {
-    printf("+----------------------------------------------------------+\n");
+void displayInMenuGameSettings(int* input) {
+    displayCustomHeader("Change Game Settings");
     printf("| Change settings for next match:                          |\n");
     printf("|    [1] Set winning points                                |\n");
     printf("|    [2] Set shuffle seed                                  |\n");
     printf("|    [3] Toggle debug mode (reveals cards when on)         |\n");
     printf("|    [0] Exit to main menu                                 |\n");
     printf("+----------------------------------------------------------+\n");
+    getInput(input, 0, N_SET_Y, -1);
 }
 
 void displayTopPlayers(PlayerRecord playerRecords[], int numPlayers) {
     int i;
 
-    printf("\n+----------------------------------------------------------+\n");
     printf(  "| HIGH SCORE | WINS | NAME                                 |\n");
     printf(  "+-----+----------------------------------------------------+\n");
 
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < numPlayers; i++) {
         printf("| #%2d |   %2d | %3d  | %-36s |\n",
             i + 1,
             playerRecords[i].highScore,
@@ -85,7 +86,12 @@ void displayTopPlayers(PlayerRecord playerRecords[], int numPlayers) {
 
 /* PLAYER CREATION DISPLAYS */
 
-void displayPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords, int playerIdx) {
+void displayInReqPlayers(int* numPlayers) {
+    displayCustomHeader("How many players?");
+    getInput(numPlayers, MIN_PLAYERS, MAX_PLAYERS + 1, -1);
+}
+
+void displayInPlayerRecords(PlayerRecord playerRecords[], int* numPlayerRecords, int playerIdx, int* option) {
     int name;
 
     printf("+----------------------------------------------------------+\n");
@@ -95,6 +101,8 @@ void displayPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords, i
         printf("| %3d | %-50s |\n", name + 1, playerRecords[name].username);
     }
     printf("+----------------------------------------------------------+\n");
+
+    getInput(option, 0, *numPlayerRecords + 1, -1);
 }
 
 void displayPlayerUsernames(GameState* game, int playerIdx) {
@@ -130,7 +138,7 @@ void displayBackCards(GameState* game) {
     }
 }
 
-void displayTurnInfo(GameState* game, int* playerAction) {
+void displayInTurnInfo(GameState* game, int* playerAction) {
     printf("\n+----------+-----------------------------------------------+\n");
     printf(  "| TOP DECK | %c %c %c (%02d cards remaining)                    |\n",
             matchColorChar(game->drawPile.cards[0].back[0]),
@@ -159,15 +167,70 @@ void displayEndTurn(GameState* game) {
     printf(    "+==========================================================+\n\n\n");
 }
 
+void displayDrawnCard(Card drawnCard) {
+    printf("\n+----------------------------------------------------------+\n");
+    printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
+}
+
+void displayScoreCard(GameState* game, int drawnColor, int totalPts, int playerIdx, int numPlayerCards) {
+    if (numPlayerCards > 0) {
+        printf("| - Player %d has (%d) %c card/s worth (%d) pts total!         |\n",
+                game->playerTurn + 1,
+                game->players[game->playerTurn].tankPile.cardsPerColor[drawnColor],
+                matchColorChar(drawnColor), totalPts
+            );
+        printf("| - +%d points to Player %d's Score pile!                    |\n", totalPts, playerIdx + 1);
+        printf("+----------------------------------------------------------+\n");
+    } else {
+        printf("| - Player %d has no %c cards...                             |\n", playerIdx + 1, matchColorChar(drawnColor));
+        printf("| - Adding drawn card to Player %d's Tank                   |\n", playerIdx + 1);
+        printf("+----------------------------------------------------------+\n");
+    }
+
+}
+
+void displayInStealOptions(GameState* game, int* stealCardIdx) {
+    int i;
+    printf(  "| Who would you like to steal from?                        |\n");
+    for (i = 0; i < game->numPlayers; i++) {
+        if (i != game->playerTurn)
+            printf(  "| [%d] Player %d                                             |\n", i + 1, i + 1);
+    }
+    printf( "+----------------------------------------------------------+\n");
+    getInput(stealCardIdx, 1, game->numPlayers + 1, game->playerTurn + 1);
+}
+
+void displayStealCard(GameState* game, int drawnColor, int playerIdx, int totalPts, int stealIdx) {
+    if (game->players[stealIdx].tankPile.cardsPerColor[drawnColor] > 0) {
+        printf("| - Player %d has (%d) %c card/s worth (%d) pts total!         |\n",
+            stealIdx + 1,
+            game->players[stealIdx].tankPile.cardsPerColor[drawnColor],
+            matchColorChar(drawnColor),
+            totalPts
+        );
+        printf("| - +%d (%c) cards to Player %d's Tank!                       |\n",
+            game->players[stealIdx].tankPile.cardsPerColor[drawnColor],
+            matchColorChar(drawnColor),
+            playerIdx + 1
+        );
+        printf("+----------------------------------------------------------+\n");
+    } else {
+        printf("| - Player %d has no %c cards..                              |\n",
+            stealIdx + 1,
+            matchColorChar(drawnColor)
+        );
+        printf("| - Adding drawn card to Player %d's Tank                   |\n", stealIdx + 1);
+        printf("+----------------------------------------------------------+\n");
+    }
+}
+
 /* DEBUG MODE DISPLAYS */
 
 void displayCards(DrawPile* drawPile) {
 
     int i;
 
-    printf("\n+----------------------------------------------------------+\n");
-    printf(  "|                   DISPLAYING ALL CARDS                   |\n");
-    printf(  "+------+-------+-------+-----------------------------------+\n");
+    displayCustomHeader("DISPLAYING ALL CARDS");
     printf(  "| CARD | FRONT | BACK  | VALUE                             |\n");
     printf(  "+------+-------+-------+-----------------------------------+\n");
 
@@ -188,9 +251,7 @@ void displayPlayerCards(DrawPile* drawPile, Player players[], int numPlayers) {
 
     int j, k, z;
 
-    printf("\n+----------------------------------------------------------+\n");
-    printf(  "|                 DISPLAYING PLAYER CARDS                  |\n");
-    printf(  "+--------+------+-------+----------------------------------+\n");
+    displayCustomHeader("DISPLAYING PLAYER CARDS");
     printf(  "| PLAYER | DECK | FRONT | BACK  | VALUE                    |\n");
     printf(  "+--------+------+-------+----------------------------------+\n");
 
@@ -218,4 +279,18 @@ void displayPlayerCards(DrawPile* drawPile, Player players[], int numPlayers) {
         }
         printf(  "+--------+------+-------+----------------------------------+\n");
     }
+}
+
+/* SETTINGS DISPLAYS */
+
+void displayInSettingsWinningScore(int* input) {
+    displayCustomHeader("Set winning points (140 maximum)");
+
+    getInput(input, 1, MAX_WIN_SCORE + 1, -1);
+}
+
+void displayInSettingsShuffleSeed(int* input) {
+    displayCustomHeader("Set shuffle seed (integer >= 0; i.e. 67)");
+
+    getInput(input, 0, -1, -1);
 }

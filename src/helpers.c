@@ -8,9 +8,6 @@
 #include "common.h"
 #include "models.h"
 
-/* HELPER FUNCTIONS */
-
-
 /**
  *  Matches a character to its correct enum equivalent.
  *
@@ -76,11 +73,11 @@ void getInput(int *inputDest, int min, int max, int exclude) {
     while (!valid) {
         printf("\n+----+\n| >> | ");
         if (fgets(buffer, sizeof(buffer), stdin)) {
+            printf("+----+\n");
 
             // parse integer from the string buffer
 
             if (sscanf(buffer, "%d", inputDest) == 1) {
-                printf("+----+\n");
                 if (*inputDest >= min && (*inputDest < max || max == -1) && (exclude == -1 || *inputDest != exclude)) {
                     valid = true;
                 } else if (*inputDest < min) {

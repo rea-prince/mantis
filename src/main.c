@@ -13,30 +13,30 @@
 
 #include "common.h"
 #include "models.h"
-#include "logic.h"
+
+#include "menu.h"
 #include "helpers.h"
+
 #include "interface.h"
 #include "display.h"
 
 int main() {
-    int menuInput;
-    bool loadMenu = true;
-
     GameState game = {
         .randSeed = -1,
         .winningPoints = 20
     };
-
     PlayerRecord playerRecords[MAX_LOGGED_PLAYERS] = {0};
     int numPlayerRecords = 0;
 
-    initRandom();
+    int menuInput;
+    bool loadMenu = true;
 
-    printf("You are now playing Mantis: CLI Edition!\n");
+    initRandom();
 
     /* LOOP MENU SCREEN FOR REPLAYABILITY */
 
     iClear(0,0,60,60);
+    displayCustomHeader("You are now playing Mantis: CLI Edition!");
 
     /* LOAD PLAYERS FROM RECORDS */
 
@@ -70,6 +70,7 @@ int main() {
             savePlayerRecords(playerRecords, numPlayerRecords);
 
         }
+        iClear(0,0,60,60);
     }
 
     return 0;

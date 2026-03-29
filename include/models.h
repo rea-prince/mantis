@@ -40,6 +40,7 @@ enum MenuTopPlayerOptions {
     EXIT_TOP_PLAYERS,
     SORT_BY_WINS,
     SORT_BY_SCORE,
+    SHOW_ALL,
     N_SORT_Y // flag for max menu option
 };
 
