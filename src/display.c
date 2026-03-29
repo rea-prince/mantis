@@ -170,8 +170,16 @@ void displayBackCards(GameState* game) {
         for (k = 0; k < CARD_COLORS; k++) {
             if (k == 0) {
                 iSetColor(I_COLOR_RED);
-            } else if (k != 1){
-                iSetColor(k);
+            } else if (k == 2){
+                iSetColor(I_COLOR_YELLOW);
+            } else if (k == 3) {
+                iSetColor(I_COLOR_GREEN);
+            } else if (k == 4) {
+                iSetColor(I_COLOR_BLUE);
+            } else if (k == 5){
+                iSetColor(I_COLOR_CYAN);
+            } else if (k == 6){
+                iSetColor(I_COLOR_PURPLE);
             }
 
             printf("  %d  ", game->players[j].tankPile.cardsPerColor[k]);
@@ -180,8 +188,8 @@ void displayBackCards(GameState* game) {
         }
         printf("  %2d   |\n", game->players[j].points);
 
-        printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
     }
+    printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
 }
 
 void displayInTurnInfo(GameState* game, int* playerAction) {

@@ -1,14 +1,14 @@
 wins, highscore, username
-14, 20, Charlie
-13, 21, Delta
-12, 26, Lota
+15, 20, Charlie
+14, 21, Delta
+13, 26, Lota
 9, 25, Bravo
-8, 30, Phi
+9, 30, Phi
 7, 24, Epsilon
+6, 27, Mu
 5, 21, BenjaminButton
-5, 27, Mu
+4, 32, Gamma
 3, 20, Alpha
 3, 20, Eta
-3, 32, Gamma
-1, 5, new player test
+1, 5, new
 0, 18, Nu

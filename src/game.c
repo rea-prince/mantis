@@ -34,6 +34,8 @@ int scoreCard(GameState* game, Card drawnCard) {
     if (numPlayerCards > 0) {
         numScoreCards = game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
 
+        displayScoreCard(game, drawnColor, totalPts, playerIdx, numPlayerCards);
+
         for (i = numPlayerCards - 1; i >= 0 ; i--) {
             totalPts += game->players[playerIdx].tankPile.cards[drawnColor][i].value;
             game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = game->players[playerIdx].tankPile.cards[drawnColor][i];
@@ -43,8 +45,6 @@ int scoreCard(GameState* game, Card drawnCard) {
             ++numScoreCards;
             --numPlayerCards;
         }
-
-        displayScoreCard(game, drawnColor, totalPts, playerIdx, numPlayerCards);
 
         game->players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
         game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX] = numScoreCards;
