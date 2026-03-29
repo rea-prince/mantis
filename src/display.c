@@ -10,6 +10,7 @@
 #include "common.h"
 #include "models.h"
 #include "helpers.h"
+#include "interface.h"
 
 /* GENERIC PRINT */
 
@@ -18,6 +19,7 @@ void displayCustomHeader(char* header) {
     int length = strlen(header);
     int padding = (CLI_LINE_LEN - 2 - length) / 2;
 
+    iSetColor(I_COLOR_RED);
     printf("+");
     for (i = 0; i < CLI_LINE_LEN - 2; i++) {
         printf("-");
@@ -26,11 +28,14 @@ void displayCustomHeader(char* header) {
 
     printf("| %*s%s%*s |\n", padding - 1, "", header, CLI_LINE_LEN - 3 - length - padding, "");
 
+    iSetColor(I_COLOR_PURPLE);
     printf("+");
     for (i = 0; i < CLI_LINE_LEN - 2; i++) {
         printf("-");
     }
     printf("+\n");
+
+    iSetColor(I_COLOR_WHITE);
 }
 
 /* MENU DISPLAYS */
@@ -94,8 +99,8 @@ void displayInReqPlayers(int* numPlayers) {
 void displayInPlayerRecords(PlayerRecord playerRecords[], int* numPlayerRecords, int playerIdx, int* option) {
     int name;
 
-    printf("+----------------------------------------------------------+\n");
-    printf("| Select Player %d:                                         |\n", playerIdx + 1);
+    displayCustomHeader("SELECT PLAYER");
+    printf("| For player %d:                                            |\n", playerIdx + 1);
     printf("|   0 | <Add new player>                                   |\n");
     for (name = 0; name < *numPlayerRecords; name++) {
         printf("| %3d | %-50s |\n", name + 1, playerRecords[name].username);
@@ -107,7 +112,7 @@ void displayInPlayerRecords(PlayerRecord playerRecords[], int* numPlayerRecords,
 
 void displayPlayerUsernames(GameState* game, int playerIdx) {
     int i;
-    printf("+----------------------------------------------------------+\n");
+    displayCustomHeader("CURRENT PLAYERS");
     for (i = 0; i < playerIdx; i++) {
         printf("| P%d: %-52s |\n", i + 1, game->players[i].username);
     }
@@ -118,23 +123,64 @@ void displayPlayerUsernames(GameState* game, int playerIdx) {
 
 void displayBackCards(GameState* game) {
 
-    int j;
+    int j, k;
 
     printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
-    printf("| PLAYER | RED | ORG | YLW | GRN | BLU | IND | VLT | SCORE |\n");
+    printf("| PLAYER |");
+
+    iSetColor(I_COLOR_RED);
+    printf(" RED ");
+    iSetColor(0);
+    printf("|");
+
+    iSetColor(I_COLOR_WHITE);
+    printf(" ORG ");
+    iSetColor(0);
+    printf("|");
+
+    iSetColor(I_COLOR_YELLOW);
+    printf(" YLW ");
+    iSetColor(0);
+    printf("|");
+
+    iSetColor(I_COLOR_GREEN);
+    printf(" GRN ");
+    iSetColor(0);
+    printf("|");
+
+    iSetColor(I_COLOR_BLUE);
+    printf(" BLU ");
+    iSetColor(0);
+    printf("|");
+
+    iSetColor(I_COLOR_CYAN);
+    printf(" IND ");
+    iSetColor(0);
+    printf("|");
+
+    iSetColor(I_COLOR_PURPLE);
+    printf(" VLT ");
+    iSetColor(0);
+    printf("| SCORE |\n");
+
+
     printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
     for (j = 0; j < game->numPlayers; j++) {
-        printf("|   P%d   |  %d  |  %d  |  %d  |  %d  |  %d  |  %d  |  %d  |  %2d   |\n", j + 1,
-                game->players[j].tankPile.cardsPerColor[0],
-                game->players[j].tankPile.cardsPerColor[1],
-                game->players[j].tankPile.cardsPerColor[2],
-                game->players[j].tankPile.cardsPerColor[3],
-                game->players[j].tankPile.cardsPerColor[4],
-                game->players[j].tankPile.cardsPerColor[5],
-                game->players[j].tankPile.cardsPerColor[6],
-                game->players[j].points
-            );
-            printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
+        printf("|   P%d   |", j + 1);
+        for (k = 0; k < CARD_COLORS; k++) {
+            if (k == 0) {
+                iSetColor(I_COLOR_RED);
+            } else if (k != 1){
+                iSetColor(k);
+            }
+
+            printf("  %d  ", game->players[j].tankPile.cardsPerColor[k]);
+            iSetColor(I_COLOR_WHITE);
+            printf("|");
+        }
+        printf("  %2d   |\n", game->players[j].points);
+
+        printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
     }
 }
 

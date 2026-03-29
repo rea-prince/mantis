@@ -236,11 +236,13 @@ void gameSettings(GameState *game) {
 
             displayInSettingsWinningScore(&input);
             game->winningPoints = input;
+            displayCustomHeader("Winning score successfully updated.");
 
         } else if (input == SET_SHUFFLE_SEED) {
 
             displayInSettingsShuffleSeed(&input);
             game->randSeed = input;
+            displayCustomHeader("Shuffle seed successfully updated.");
 
         } else if (input == TOGGLE_DEBUG_MODE) {
             if (game->debugMode) {

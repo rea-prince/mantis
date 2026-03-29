@@ -1,7 +1,11 @@
+
 ![C](https://img.shields.io/badge/C-A8B9CC?style=flat&logo=c&logoColor=black)
 
 ## Mantis: CLI edition
 This program is a CLI version of the Mantis card game with a small twist - cards are assigned an additional property which is a value in points. Instead of cards being 1 point each, they all vary in points!
+
+---
+## How to play
 
 ---
 ## Usage
@@ -14,13 +18,16 @@ git clone https://github.com/rea-prince/mantis.git
 ### Makefile
 1. Open the directory in your terminal.
 2. Run `make` to compile, or `make run` to compile and run!
-3. ... and you're done!
 
 ```sh
 make
 # or
 make run
 ```
+
+3. ... and you're done!
+
+
 
 ### `gcc`
 1. Open the directory in your terminal.

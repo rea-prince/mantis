@@ -5,6 +5,7 @@ Last modified: AUG-15-2020
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "interface.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -12,13 +13,6 @@ Last modified: AUG-15-2020
 
 /* Constants for colors
 for use with iSetColor */
-const int I_COLOR_WHITE = 0;
-const int I_COLOR_RED = 1;
-const int I_COLOR_BLUE = 2;
-const int I_COLOR_GREEN = 3;
-const int I_COLOR_YELLOW = 4;
-const int I_COLOR_CYAN = 5;
-const int I_COLOR_PURPLE = 6;
 
 // For Windows terminal
 #ifdef _WIN32

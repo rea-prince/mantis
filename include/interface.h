@@ -5,6 +5,14 @@ Last modified: AUG-15-2020
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
+#define I_COLOR_WHITE 0
+#define I_COLOR_RED 1
+#define I_COLOR_BLUE 2
+#define I_COLOR_GREEN 3
+#define I_COLOR_YELLOW 4
+#define I_COLOR_CYAN 5
+#define I_COLOR_PURPLE 6
+
 #ifdef _WIN32
 void iMoveCursor(int x, int y);
 
