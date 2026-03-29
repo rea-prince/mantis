@@ -79,7 +79,7 @@ void displayTopPlayers(PlayerRecord playerRecords[], int numPlayers) {
     printf(  "| HIGH SCORE | WINS | NAME                                 |\n");
     printf(  "+-----+----------------------------------------------------+\n");
 
-    for (i = 0; i < numPlayers; i++) {
+    for (i = 0; i < numPlayers && i < MAX_LOGGED_PLAYERS; i++) {
         printf("| #%2d |   %2d | %3d  | %-36s |\n",
             i + 1,
             playerRecords[i].highScore,
@@ -102,7 +102,7 @@ void displayInPlayerRecords(PlayerRecord playerRecords[], int* numPlayerRecords,
     displayCustomHeader("SELECT PLAYER");
     printf("| For player %d:                                            |\n", playerIdx + 1);
     printf("|   0 | <Add new player>                                   |\n");
-    for (name = 0; name < *numPlayerRecords; name++) {
+    for (name = 0; name < *numPlayerRecords && name < MAX_LOGGED_PLAYERS; name++) {
         printf("| %3d | %-50s |\n", name + 1, playerRecords[name].username);
     }
     printf("+----------------------------------------------------------+\n");

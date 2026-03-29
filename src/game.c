@@ -135,8 +135,6 @@ void takeTurn(GameState* game) {
 
     if (game->drawPile.totalCards > 0) {
 
-        /*  */
-
         displayInTurnInfo(game, &playerAction);
 
         Card drawnCard = drawCard(&game->drawPile);

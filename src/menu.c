@@ -39,7 +39,6 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
 
     playerIdx = 0;
     do {
-        duplicateFound = false;
 
         // display current players
 
@@ -54,37 +53,49 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
         // either initialize new player or use existing player
 
         if (option == 0) {
-            displayCustomHeader("Insert Username (36 characters maximum)");
+            do {
+                duplicateFound = false;
 
-            printf(  "\n+----+\n");
-            printf(    "| >> | ");
-            scanf(" %[^\n]", nameBuffer);
-            while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
-            printf(    "+----+\n\n");
+                displayCustomHeader("Insert Username (36 characters maximum)");
 
-            // check for duplicates in current game
+                printf(  "\n+----+\n");
+                printf(    "| >> | ");
+                scanf(" %[^\n]", nameBuffer);
+                while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
+                printf(    "+----+\n\n");
 
-            for (name = 0; name < playerIdx; name++) {
-                if (strcmp(game->players[name].username, nameBuffer) == 0) {
-                    printf("\nError: Name already listed; please try another name\n");
-                    duplicateFound = 1;
+                // check for duplicates in current game
+
+                for (name = 0; name < playerIdx; name++) {
+                    if (strcmp(game->players[name].username, nameBuffer) == 0) {
+                        printf("\n\nError: Name already listed; please try another name\n\n");
+                        duplicateFound = true;
+                    }
                 }
-            }
-            if (!duplicateFound) {
 
-                // append user to records
+                // check for duplicates in player records
 
-                playerRecords[*numPlayerRecords + recordsDisplacement] = (PlayerRecord) {0};
-                strcpy(playerRecords[*numPlayerRecords + recordsDisplacement].username, nameBuffer);
+                for (name = 0; name < *numPlayerRecords; name++) {
+                    if (strcmp(playerRecords[name].username, nameBuffer) == 0) {
+                        printf("\n\nError: Name already listed; please try another name\n\n");
+                        duplicateFound = true;
+                    }
+                }
 
-                // initialize player in current game
+            } while (duplicateFound);
 
-                game->players[playerIdx] = (Player) {0};
-                strcpy(game->players[playerIdx].username, nameBuffer);
+            // append user to records
 
-                ++recordsDisplacement;
-                ++playerIdx;
-            }
+            playerRecords[*numPlayerRecords + recordsDisplacement] = (PlayerRecord) {0};
+            strcpy(playerRecords[*numPlayerRecords + recordsDisplacement].username, nameBuffer);
+
+            // initialize player in current game
+
+            game->players[playerIdx] = (Player) {0};
+            strcpy(game->players[playerIdx].username, nameBuffer);
+
+            ++recordsDisplacement;
+            ++playerIdx;
 
         } else if (option > 0 && option <= *numPlayerRecords) {
 

@@ -81,19 +81,19 @@ void getInput(int *inputDest, int min, int max, int exclude) {
                 if (*inputDest >= min && (*inputDest < max || max == -1) && (exclude == -1 || *inputDest != exclude)) {
                     valid = true;
                 } else if (*inputDest < min) {
-                    printf("\nError! Please enter a minimum of %d (inclusive)\n", min);
+                    printf("\n\nError! Please enter a minimum of %d (inclusive)\n\n", min);
                 } else if (*inputDest >= max) {
-                    printf("\nError! Please enter a maximum of %d (exclusive)\n", max);
+                    printf("\n\nError! Please enter a maximum of %d (exclusive)\n\n", max);
                 } else if (*inputDest == exclude) {
-                    printf("\nError! Please enter a value excluding %d\n", exclude);
+                    printf("\n\nError! Please enter a value excluding %d\n\n", exclude);
                 } else {
-                    printf("\nError! Please enter a valid input.\n");
+                    printf("\n\nError! Please enter a valid input.\n\n");
                 }
             } else {
-                printf("\nError! Please enter only 1 input.\n");
+                printf("\n\nError! Please enter only 1 input.\n\n");
             }
         } else {
-            printf("\nError! Please provide an input.\n");
+            printf("\n\nError! Please provide an input.\n\n");
         }
     }
 }
@@ -329,7 +329,7 @@ void loadPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords) {
     FILE* playersRead = fopen(F_PLAYER_RECORDS, "r");
 
     if (playersRead == NULL) {
-        printf("Error: Could not read from players.txt\n");
+        printf("\n\nError: Could not read from players.txt\n\n");
     } else {
         fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead);
         while (fgets(playersTxtBuffer, sizeof(playersTxtBuffer), playersRead)) {
@@ -356,7 +356,7 @@ void savePlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords) {
     int i;
     FILE* playersWrite = fopen(F_PLAYER_RECORDS, "w");
     if (playersWrite == NULL) {
-        printf("Error! There was an error in saving the player records.");
+        printf("\n\nError! There was an error in saving the player records.\n\n");
     } else {
         fprintf(playersWrite, "wins, highscore, username\n");
         for (i = 0; i < numPlayerRecords; i++) {
