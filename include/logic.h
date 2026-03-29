@@ -16,7 +16,7 @@ void takeTurn(GameState* game);
 
 /* GAME START */
 
-int playGame(GameState* game);
+void playGame(GameState* game);
 
 /* MENU OPTIONS */
 

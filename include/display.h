@@ -8,15 +8,30 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-/* DEBUG DISPLAYS */
+void displayCustomBox(char* strInput);
 
-void displayCards(DrawPile* drawPile);
-void displayPlayerCards(DrawPile* drawPile, Player players[], int numPlayers);
+/* MENU DISPLAYS */
+
+void displayMenuTopPlayers();
+void displayMenuGameSettings();
+void displayMenuMain();
+void displayTopPlayers(PlayerRecord playerRecords[], int numPlayers);
+
+/* PLAYER CREATION DISPLAYS */
+
+void displayPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords, int playerIdx);
+void displayPlayerUsernames(GameState* game, int playerIdx);
 
 /* GAMEPLAY DISPLAYS */
 
 void displayBackCards(GameState* game);
+void displayTurn(GameState* game, int* playerAction);
+void displayTurnInfo(GameState* game, int* playerAction);
+void displayEndTurn(GameState* game);
 
-/* MENU DISPLAYS */
+/* DEBUG DISPLAYS */
+
+void displayCards(DrawPile* drawPile);
+void displayPlayerCards(DrawPile* drawPile, Player players[], int numPlayers);
 
 #endif

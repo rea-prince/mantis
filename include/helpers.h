@@ -20,8 +20,8 @@ void getInput(int *inputDest, int min, int max, int exclude);
 /* DECK CONTROL */
 
 Card drawCard(DrawPile* drawPile);
-int createDeck(FILE* mantisDeck, GameState* game);
-int populateDeck(DrawPile* drawPile, TankPile* tankPile);
+void createDeck(FILE* mantisDeck, GameState* game);
+void populateDeck(DrawPile* drawPile, TankPile* tankPile);
 int computePlayerScore(TankPile tankPile);
 
 /* DATA SORTING */

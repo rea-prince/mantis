@@ -23,12 +23,10 @@
 #define LINE_SIZE 11
 
 #define DECK_SIZE 84
-#define MIN_PLAYERS 3
-#define MAX_PLAYERS 6
 
 #define MAX_NAME_CHARS 37
-#define MAX_LOGGED_PLAYERS 100
-#define WIN_SCORE_NAME 51
+#define MAX_STR_LEN 51
+#define CLI_LINE_LEN 60
 
 #define BACK_COLORS 3
 #define CARD_COLORS 7
@@ -37,6 +35,13 @@
 
 /* DEFINITIONS */
 
+#define MIN_PLAYERS 3
+#define MAX_PLAYERS 6
+
 #define MAX_WIN_SCORE 140
+#define MAX_LOGGED_PLAYERS 100
+
+#define F_PLAYER_RECORDS "players.txt"
+#define F_MANTIS_DECK "mantis.txt"
 
 #endif

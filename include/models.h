@@ -36,15 +36,23 @@ enum MenuOptions {
     N_MENU_Y // flag for max menu option
 };
 
-enum TopPlayerActions {
+enum MenuTopPlayerOptions {
     EXIT_TOP_PLAYERS,
     SORT_BY_WINS,
     SORT_BY_SCORE,
     N_SORT_Y // flag for max menu option
 };
 
+enum MenuGameSettingsOptions {
+    EXIT_GAME_SETTINGS,
+    SET_WINNING_SCORE,
+    SET_SHUFFLE_SEED,
+    TOGGLE_DEBUG_MODE,
+    N_SET_Y // flag for max menu option
+};
+
 typedef char StrName[MAX_NAME_CHARS];
-typedef char StrList[WIN_SCORE_NAME];
+typedef char StrList[MAX_STR_LEN];
 
 /**
  * Template for the cards that will to be loaded from mantis.txt

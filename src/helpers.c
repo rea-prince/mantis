@@ -10,7 +10,13 @@
 
 /* HELPER FUNCTIONS */
 
-// Match char to color
+
+/**
+ *  Matches a character to its correct enum equivalent.
+ *
+ *  @param c Character to be matched
+ *  @return returnVal The enum equivalent of the color that was matched
+ */
 
 enum Color matchColor(char c) {
     enum Color returnVal;
@@ -28,7 +34,12 @@ enum Color matchColor(char c) {
     return returnVal;
 }
 
-// match enum to color (char)
+/**
+ *  Matches an enum value to its character equivalent
+ *
+ *  @param c Enum to be matched
+ *  @return returnVal The character equivalent of the color that was matched
+ */
 
 char matchColorChar(enum Color c) {
     char returnVal;
@@ -47,6 +58,17 @@ char matchColorChar(enum Color c) {
     return returnVal;
 }
 
+/**
+ *  Gets user input and restrains it according to min, max, and exclude.
+ *  Ensures buffer is cleared after input is scanned.
+ *
+ *  @param inputDest Pointer to the input destination
+ *  @param min Minimum number for input to be valid (inclusive)
+ *  @param max Maximum value for input to be valid (exclusive)
+ *  @param exclude Input to be excluded to be valid
+ *  @return Void
+ */
+
 void getInput(int *inputDest, int min, int max, int exclude) {
     StrList buffer;
     bool valid = false;
@@ -58,20 +80,35 @@ void getInput(int *inputDest, int min, int max, int exclude) {
             // parse integer from the string buffer
 
             if (sscanf(buffer, "%d", inputDest) == 1) {
+                printf("+----+\n");
                 if (*inputDest >= min && (*inputDest < max || max == -1) && (exclude == -1 || *inputDest != exclude)) {
                     valid = true;
+                } else if (*inputDest < min) {
+                    printf("\nError! Please enter a minimum of %d (inclusive)\n", min);
+                } else if (*inputDest >= max) {
+                    printf("\nError! Please enter a maximum of %d (exclusive)\n", max);
+                } else if (*inputDest == exclude) {
+                    printf("\nError! Please enter a value excluding %d\n", exclude);
+                } else {
+                    printf("\nError! Please enter a valid input.\n");
                 }
+            } else {
+                printf("\nError! Please enter only 1 input.\n");
             }
-        }
-        printf("+----+\n");
-
-        if (!valid) {
-            printf("\nError! Please enter a valid input.\n");
+        } else {
+            printf("\nError! Please provide an input.\n");
         }
     }
 }
 
-// Pick out a single card from the draw pile
+/**
+ *  Draws the card at the top of the deck, adjusts each succeeding card into
+ *  position, decrements the total cards in the draw pile, and returns the
+ *  card that was drawn.
+ *
+ *  @param drawPile Pointer to the DrawPile to be drawn from
+ *  @return drawnCard The card that was drawn from the pile
+ */
 
 Card drawCard(DrawPile* drawPile) {
     Card drawnCard = drawPile->cards[0];
@@ -86,10 +123,15 @@ Card drawCard(DrawPile* drawPile) {
     return drawnCard;
 }
 
+/**
+ *  Loads cards from a file into the game's drawPile.
+ *
+ *  @param mantisDeck File pointer to the file containing card information
+ *  @param game Pointer to the current game state struct
+ *  @return Void
+ */
 
-// Load deck function from mantis.txt
-
-int createDeck(FILE* mantisDeck, GameState* game) {
+void createDeck(FILE* mantisDeck, GameState* game) {
 
     char lineBuffer[LINE_SIZE];
     int randSeed;
@@ -124,14 +166,18 @@ int createDeck(FILE* mantisDeck, GameState* game) {
     }
 
     shuffle(game->drawPile.cards, game->drawPile.totalCards, sizeof(Card), randSeed);
-
-    return 1;
 }
 
 
-// Populate player deck
+/**
+ *  Populates the TankPile with cards drawn from the DrawPile.
+ *
+ *  @param drawPile Pointer to the DrawPile to draw cards from
+ *  @param tankPile Pointer to the tankPile to put drawn cards into
+ *  @return Void
+ */
 
-int populateDeck(DrawPile* drawPile, TankPile* tankPile) {
+void populateDeck(DrawPile* drawPile, TankPile* tankPile) {
 
     /* Place cards into player tank pile */
 
@@ -145,11 +191,16 @@ int populateDeck(DrawPile* drawPile, TankPile* tankPile) {
         ++tankPile->cardsPerColor[colorIdx];
         ++tankPile->totalCards;
     }
-
-    return 1;
 }
 
 // Compute player score
+
+/**
+ *  Sums the value of all cards from a given TankPile.
+ *
+ *  @param tankPile The TankPile to sum the points from
+ *  @return total Total points of the given TankPile
+ */
 
 int computePlayerScore(TankPile tankPile) {
     int i;
@@ -161,6 +212,14 @@ int computePlayerScore(TankPile tankPile) {
 
     return total;
 }
+
+/**
+ *  Sorts players according to total points and tank cards.
+ *
+ *  @param players[] Array of players to sort
+ *  @param numPlayers Number of players in the array
+ *  @return Void
+ */
 
 void sortPlayersByPoints(Player players[], int numPlayers) {
 
@@ -192,6 +251,13 @@ void sortPlayersByPoints(Player players[], int numPlayers) {
     }
 }
 
+/**
+ *  Sorts player records according to their total wins.
+ *
+ *  @param playerRecords[] Array of player records to sort
+ *  @param numPlayers Number of players in the array
+ *  @return Void
+ */
 
 void sortPlayersByWins(PlayerRecord playerRecords[], int numPlayers) {
     int i, j, max;
@@ -217,6 +283,14 @@ void sortPlayersByWins(PlayerRecord playerRecords[], int numPlayers) {
     }
 
 }
+
+/**
+ *  Sorts player records according to their high scores.
+ *
+ *  @param playerRecords[] Array of player records to sort
+ *  @param numPlayers Number of players in the array
+ *  @return Void
+ */
 
 void sortPlayersByScore(PlayerRecord playerRecords[], int numPlayers) {
     int i, j, max;
@@ -244,10 +318,18 @@ void sortPlayersByScore(PlayerRecord playerRecords[], int numPlayers) {
 
 }
 
+/**
+ *  Loads existing player records from a text file into a PlayerRecord array.
+ *
+ *  @param playerRecords[] Array for which to store existing records in
+ *  @param numPlayerRecords Pointer to the number of elements in the array
+ *  @return Void
+ */
+
 void loadPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords) {
 
     StrList playersTxtBuffer;
-    FILE* playersRead = fopen("players.txt", "r");
+    FILE* playersRead = fopen(F_PLAYER_RECORDS, "r");
 
     if (playersRead == NULL) {
         printf("Error: Could not read from players.txt\n");
@@ -265,9 +347,17 @@ void loadPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords) {
     }
 }
 
+/**
+ *  Saves player records into a text file.
+ *
+ *  @param playerRecords[] Array from which to read records
+ *  @param numPlayerRecords Pointer to the number of elements in the array
+ *  @return Void
+ */
+
 void savePlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords) {
     int i;
-    FILE* playersWrite = fopen("players.txt", "w");
+    FILE* playersWrite = fopen(F_PLAYER_RECORDS, "w");
     if (playersWrite == NULL) {
         printf("Error! There was an error in saving the player records.");
     } else {

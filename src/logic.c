@@ -12,12 +12,12 @@
 #include "helpers.h"
 #include "display.h"
 
-/* Puts the drawn card into the score pile of the player whose turn it is.
+/**
+ *  Puts the drawn card into the score pile of the player whose turn it is.
  *
- * @param game Pointer to the current game state struct
- * @param drawnCard The card drawn by the player from the drawPile
- *
- * @return Returns the total points of the current player
+ *  @param game Pointer to the current game state struct
+ *  @param drawnCard The card drawn by the player from the drawPile
+ *  @return Returns the total points of the current player
  */
 
 int scoreCard(GameState* game, Card drawnCard) {
@@ -68,21 +68,21 @@ int scoreCard(GameState* game, Card drawnCard) {
     return game->players[playerIdx].points;
 }
 
-/* Steals a card from the player at stealIdx to be put into the deck of
- * playerIdx based on the drawn card.
+/**
+ *  Steals a card from the player at stealIdx to be put into the deck of
+ *  playerIdx based on the drawn card.
  *
- * Case 1 : players[stealIdx] does not have a card with the same color as the one drawn
- *    - The card is put into that player's deck
- *    - The player who stole gets nothing
- * Case 2 : players[stealIdx] has a card of the same color as the one drawn
- *    - All their cards of that color are taken
- *    - Cards taken from that player are placed into the stealer's deck
+ *  Case 1 : players[stealIdx] does not have a card with the same color as the one drawn
+ *     - The card is put into that player's deck
+ *     - The player who stole gets nothing
+ *  Case 2 : players[stealIdx] has a card of the same color as the one drawn
+ *     - All their cards of that color are taken
+ *     - Cards taken from that player are placed into the stealer's deck
  *
- * @param game Pointer to the game state struct
- * @param stealIdx The index of the player who's being stolen from
- * @param drawnCard The card drawn by the player from the drawPile
- *
- * @return void
+ *  @param game Pointer to the game state struct
+ *  @param stealIdx The index of the player who's being stolen from
+ *  @param drawnCard The card drawn by the player from the drawPile
+ *  @return void
  */
 
 void stealCard(GameState* game, int stealIdx, Card drawnCard) {
@@ -135,19 +135,20 @@ void stealCard(GameState* game, int stealIdx, Card drawnCard) {
 
 }
 
-/* Simulates a player's turn in the game, then increments the player turn tracker
- * inside the game state struct.
+/**
+ *  Simulates a player's turn in the game, then increments the player turn tracker
+ *  inside the game state struct.
  *
- * Case 1 : Player chooses to score
- *    - scoreCard() is called
- *    - All cards fo the same color as drawnCard is placed in
- *      the player's score pile
- * Case 2 : Player chooses to steal
- *    - Player is prompted for further input on who to steal from
- *    - stealCard() is called on the player to be stolen from
+ *  Case 1 : Player chooses to score
+ *     - scoreCard() is called
+ *     - All cards fo the same color as drawnCard is placed in
+ *       the player's score pile
+ *  Case 2 : Player chooses to steal
+ *     - Player is prompted for further input on who to steal from
+ *     - stealCard() is called on the player to be stolen from
  *
- * @param game Pointer to the game state struct
- * @return void
+ *  @param game Pointer to the game state struct
+ *  @return Void
  */
 
 void takeTurn(GameState* game) {
@@ -155,26 +156,8 @@ void takeTurn(GameState* game) {
     int playerAction;
 
     if (game->drawPile.totalCards > 0) {
-        printf("\n+----------+-----------------------------------------------+\n");
-        printf(  "| TOP DECK | %c %c %c (%02d cards remaining)                    |\n",
-                matchColorChar(game->drawPile.cards[0].back[0]),
-                matchColorChar(game->drawPile.cards[0].back[1]),
-                matchColorChar(game->drawPile.cards[0].back[2]),
-                game->drawPile.totalCards
-            );
-        printf(  "+----------+--+--------------------------------------------+\n");
-        printf(  "| PLAYER TURN | %-42s |\n",game->players[game->playerTurn].username);
-        printf(  "+-------------+--------------------------------------------+\n");
-        printf(  "| Player %d, what would you like to do?                     |\n", game->playerTurn + 1);
-        printf(  "|    [1] Try to Score                                      |\n");
-        printf(  "|    [2] Try to Steal                                      |\n");
-        printf(  "+----------------------------------------------------------+\n");
 
-        getInput(&playerAction, 1, N_ACTION_Y, -1);
-
-        printf("\n+----------------------------------------------------------+\n");
-        printf(  "| Resolving turn for Player %d...                           |\n", game->playerTurn + 1);
-        printf(  "+----------------------------------------------------------+\n");
+        displayTurnInfo(game, &playerAction);
 
         Card drawnCard = drawCard(&game->drawPile);
         int i;
@@ -220,23 +203,20 @@ void takeTurn(GameState* game) {
         game->gameWon = true;
     }
 
-    printf("\n\n+==========================================================+\n");
-    printf(    "| End of Player %d's turn!                                  |\n", game->playerTurn);
-    printf(    "+==========================================================+\n\n\n");
-
+    displayEndTurn(game);
 }
 
-/* Populates the drawPile inside the game struct, and continuously plays
- * a rotation of turns among players in the game, displaying all
- * players' card information for each turn taken until a player wins.
- * Calls takeTurn() on the player whose turn it is.
+/**
+ *  Populates the drawPile inside the game struct, and continuously plays
+ *  a rotation of turns among players in the game, displaying all
+ *  players' card information for each turn taken until a player wins.
+ *  Calls takeTurn() on the player whose turn it is.
  *
- * @param game Pointer to the game state struct
- *
- * @return void
+ *  @param game Pointer to the game state struct
+ *  @return Void
  */
 
-int playGame(GameState* game) {
+void playGame(GameState* game) {
 
     int i;
 
@@ -267,16 +247,13 @@ int playGame(GameState* game) {
         takeTurn(game);
 
     } while (game->gameWon == false);
-
-    // ROUND simulation loops while condition is not met
-    return 1;
 }
 
-/* Starts a new game by clearing the terminal, prompting the user for the
- * number of players, either adding a new player or choosing from the selction,
- * and calling playGame() to start
- *
- * @return void
+/**
+ *  Starts a new game by clearing the terminal, prompting the user for the
+ *  number of players, either adding a new player or choosing from the selction,
+ *  and calling playGame() to start
+ *  @return Void
  */
 
 void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecords) {
@@ -294,9 +271,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
 
     /* REQUEST NUMBER OF PLAYERS */
 
-    printf("+----------------------------------------------------------+\n");
-    printf("| How many players? (%d minimum; %d maximum)                 |\n", MIN_PLAYERS, MAX_PLAYERS);
-    printf("+----------------------------------------------------------+\n");
+    displayCustomBox("How many players?");
 
     getInput(&game->numPlayers, MIN_PLAYERS, MAX_PLAYERS + 1, -1);
 
@@ -308,21 +283,11 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
 
         // display current players
 
-        printf("+----------------------------------------------------------+\n");
         if (playerIdx > 0) {
-            for (i = 0; i < playerIdx; i++) {
-                printf("| P%d: %-52s |\n", i + 1, game->players[i].username);
-            }
+            displayPlayerUsernames(game, playerIdx);
         }
 
-        // display player records
-
-        printf("| Select Player %d:                                         |\n", playerIdx + 1);
-        printf("|   0 | <Add new player>                                   |\n");
-        for (name = 0; name < *numPlayerRecords; name++) {
-            printf("| %3d | %-50s |\n", name + 1, playerRecords[name].username);
-        }
-        printf("+----------------------------------------------------------+\n");
+        displayPlayerRecords(playerRecords, numPlayerRecords, playerIdx);
 
         // select player or add new player
 
@@ -379,19 +344,13 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
 
     /* DISPLAY ALL PLAYERS */
 
-    printf("+----------------------------------------------------------+\n");
-    if (playerIdx > 0) {
-        for (i = 0; i < playerIdx; i++) {
-            printf("| P%d: %-52s |\n", i + 1, game->players[i].username);
-        }
-    }
-    printf("+----------------------------------------------------------+\n");
+    displayPlayerUsernames(game, playerIdx);
 
     *numPlayerRecords += recordsDisplacement;
 
     /* LOAD DECK */
 
-    FILE* mantisDeck = fopen("mantis.txt", "r");
+    FILE* mantisDeck = fopen(F_MANTIS_DECK, "r");
     if (mantisDeck == NULL) {
         printf("\nError: Could not load cards\n");
     } else {
@@ -476,99 +435,62 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
     }
 }
 
-/* Lists the top players from players.txt according to either most amount
- * of wins or highest score achieved.
+/**
+ *  Lists the top players from players.txt according to either most amount
+ *  of wins or highest score achieved.
  *
- * @return void
+ *  @return Void
  */
 
 void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
     iClear(0, 0, 60, 60);
 
     int input;
-    int i;
 
-    printf("+----------------------------------------------------------+\n");
-    printf("| Sort by:                                                 |\n");
-    printf("|    [1] Most wins                                         |\n");
-    printf("|    [2] Highest score                                     |\n");
-    printf("|    [0] Exit to main menu                                 |\n");
-    printf("| WARNING: This will also change the order in the records. |\n");
-    printf("+----------------------------------------------------------+\n");
+    displayMenuTopPlayers();
 
     getInput(&input, 0, N_SORT_Y, -1);
 
     if (input != EXIT_TOP_PLAYERS) {
-
-        printf("\n+----------------------------------------------------------+\n");
-        printf(  "| HIGH SCORE | WINS | NAME                                 |\n");
-        printf(  "+-----+----------------------------------------------------+\n");
-
         if (input == SORT_BY_WINS) {
             sortPlayersByWins(playerRecords, numPlayers);
-            for (i = 0; i < 10; i++) {
-                printf("| #%2d |   %2d | %3d  | %-36s |\n",
-                    i + 1,
-                    playerRecords[i].highScore,
-                    playerRecords[i].wins,
-                    playerRecords[i].username);
-            }
         } else if (input == SORT_BY_SCORE) {
             sortPlayersByScore(playerRecords, numPlayers);
-            for (i = 0; i < 10; i++) {
-                printf("| #%2d |   %2d | %3d  | %-36s |\n",
-                    i + 1,
-                    playerRecords[i].highScore,
-                    playerRecords[i].wins,
-                    playerRecords[i].username);
-            }
         }
-        printf("+----------------------------------------------------------+\n");
+        displayTopPlayers(playerRecords, numPlayers);
     }
 }
 
 void gameSettings(GameState *game) {
     iClear(0, 0, 60, 60);
 
-    printf("+----------------------------------------------------------+\n");
-    printf("| Change settings for next match:                          |\n");
-    printf("|    [1] Set winning points (140 maximum)                  |\n");
-    printf("|    [2] Set shuffle seed                                  |\n");
-    printf("|    [3] Toggle debug mode (reveals cards when on)         |\n");
-    printf("|    [0] Exit to main menu                                 |\n");
-    printf("+----------------------------------------------------------+\n");
+    displayMenuGameSettings();
 
     int input;
 
-    getInput(&input, 0, N_MENU_Y, -1);
+    getInput(&input, 0, N_SET_Y, -1);
 
-    if (input == 1) {
-        printf(  "\n+----------------------------------+\n");
-        printf(    "| Set winning points (140 maximum) |\n");
-        printf(    "+----------------------------------+\n");
+    if (input == SET_WINNING_SCORE) {
+        displayCustomBox("Set winning points (140 maximum)");
 
         getInput(&input, 1, MAX_WIN_SCORE + 1, -1);
 
         game->winningPoints = input;
 
-    } else if (input == 2) {
-        printf(  "\n+------------------------------------------+\n");
-        printf(    "| Set shuffle seed (integer >= 0; i.e. 67) |\n");
-        printf(    "+------------------------------------------+\n");
+    } else if (input == SET_SHUFFLE_SEED) {
+        displayCustomBox("Set shuffle seed (integer >= 0; i.e. 67)");
 
         getInput(&input, 0, -1, -1);
 
         game->randSeed = input;
-    } else if (input == 3) {
-        printf(  "\n+---------------------------------+\n");
+    } else if (input == TOGGLE_DEBUG_MODE) {
         if (game->debugMode) {
             game->debugMode = false;
-            printf(    "| Debug mode has been turned off. |\n");
+            displayCustomBox("Debug mode has been turned off.");
         } else {
             game->debugMode = true;
-            printf(    "| Debug mode has been turned on.  |\n");
+            displayCustomBox("Debug mode has been turned on.");
         }
-        printf(    "+---------------------------------+\n");
     }
 
 }
