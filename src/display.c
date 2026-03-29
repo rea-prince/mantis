@@ -2,7 +2,7 @@
  *  Description     : Functions for making the game more visually appealing
  *  Author/s        : Alip, Rafael Prince Naif E.
  *  Section         : S12A / S22
- *  Last Modified   : March 29, 2026
+ *  Last Modified   : March 30, 2026
  ******************************************************************************/
 
 #include "common.h"
@@ -11,6 +11,13 @@
 #include "interface.h"
 
 /* GENERIC PRINT */
+
+/**
+ *  Displays a 60 character long header with a custom message.
+ *
+ *  @param header String of characters to print
+ *  @return Void
+ */
 
 void displayCustomHeader(char* header) {
     int i;
@@ -38,6 +45,13 @@ void displayCustomHeader(char* header) {
 
 /* MENU DISPLAYS */
 
+
+/**
+ *  Displays possible options from the main menu.
+ *
+ *  @return Void
+ */
+
 void displayMenuMain() {
     displayCustomHeader("Main Menu");
     printf("| Welcome to Mantis: CLI Edition! Please select an option. |\n");
@@ -47,6 +61,13 @@ void displayMenuMain() {
     printf("|    [0] Exit and Save                                     |\n");
     printf("+----------------------------------------------------------+\n");
 }
+
+/**
+ *  Displays possible options after selecting "View Top Players."
+ *
+ *  @param input Pointer to the user input destination
+ *  @return Void
+ */
 
 void displayInMenuTopPlayers(int* input) {
     displayCustomHeader("View Top Players");
@@ -60,6 +81,13 @@ void displayInMenuTopPlayers(int* input) {
     getInput(input, 0, N_SORT_Y, -1);
 }
 
+/**
+ *  Displays possible options after selecting "Change Game Settings."
+ *
+ *  @param input Pointer to the user input destination
+ *  @return Void
+ */
+
 void displayInMenuGameSettings(int* input) {
     displayCustomHeader("Change Game Settings");
     printf("| Change settings for next match:                          |\n");
@@ -70,6 +98,14 @@ void displayInMenuGameSettings(int* input) {
     printf("+----------------------------------------------------------+\n");
     getInput(input, 0, N_SET_Y, -1);
 }
+
+/**
+ *  Displays all players from the playerRecords[] array.
+ *
+ *  @param playerRecords[] Array of player records
+ *  @param numPlayers Number of players in the array
+ *  @return Void
+ */
 
 void displayTopPlayers(PlayerRecord playerRecords[], int numPlayers) {
     int i;
@@ -89,10 +125,27 @@ void displayTopPlayers(PlayerRecord playerRecords[], int numPlayers) {
 
 /* PLAYER CREATION DISPLAYS */
 
+/**
+ *  Requests number of players from user.
+ *
+ *  @param input Pointer to the user input destination
+ *  @return Void
+ */
+
 void displayInReqPlayers(int* numPlayers) {
     displayCustomHeader("How many players?");
     getInput(numPlayers, MIN_PLAYERS, MAX_PLAYERS + 1, -1);
 }
+
+/**
+ *  Displays possible options after selecting "Change Game Settings."
+ *
+ *  @param playerRecords[] Array of player records
+ *  @param numPlayers Number of players in the array
+ *  @param playerIdx Index of player to select
+ *  @param option Pointer to the user input destination
+ *  @return Void
+ */
 
 void displayInPlayerRecords(PlayerRecord playerRecords[], int* numPlayerRecords, int playerIdx, int* option) {
     int name;
@@ -108,6 +161,13 @@ void displayInPlayerRecords(PlayerRecord playerRecords[], int* numPlayerRecords,
     getInput(option, 0, *numPlayerRecords + 1, -1);
 }
 
+/**
+ *  Lists the usernames of players who have already been added to the current session.
+ *  @param game Pointer to the current game state
+ *  @param playerIdx The number of players already initialized
+ *  @return Void
+ */
+
 void displayPlayerUsernames(GameState* game, int playerIdx) {
     int i;
     displayCustomHeader("CURRENT PLAYERS");
@@ -118,6 +178,14 @@ void displayPlayerUsernames(GameState* game, int playerIdx) {
 }
 
 /* GAMEPLAY DISPLAYS */
+
+/**
+ *  Prints a color-coded table representing every player's tank pile counts
+ *  and their current score pile totals.
+ *
+ *  @param game Pointer to the current game state
+ *  @return Void
+ */
 
 void displayBackCards(GameState* game) {
 
@@ -190,6 +258,15 @@ void displayBackCards(GameState* game) {
     printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
 }
 
+/**
+ *  Displays the turn header, the current player, the hints (back colors)
+ *  of the top card in the deck, and prompts for the Turn Action.
+ *
+ *  @param game Pointer to the current game state
+ *  @param playerAction Pointer to store the user's choice (SCORE or STEAL)
+ *  @return Void
+ */
+
 void displayInTurnInfo(GameState* game, int* playerAction) {
     printf("\n+-------------+--------------------------------------------+\n");
     printf(  "| PLAYER TURN | %-42s |\n",game->players[game->playerTurn].username);
@@ -214,25 +291,51 @@ void displayInTurnInfo(GameState* game, int* playerAction) {
     printf(  "+----------------------------------------------------------+\n");
 }
 
+/**
+ *  Displays a separator marking the conclusion of a player's turn logic.
+ *
+ *  @param game Pointer to the current game state
+ *  @return Void
+ */
+
 void displayEndTurn(GameState* game) {
     printf("\n\n+==========================================================+\n");
-    printf(    "| End of Player %d's turn!                                  |\n", game->playerTurn);
+    printf(    "| End of Player %d's turn!                                  |\n", game->playerTurn + 1);
     printf(    "+==========================================================+\n\n\n");
 }
+
+/**
+ *  Reveals the front-facing color and point value of the card just drawn.
+ *
+ *  @param drawnCard The card struct to be revealed
+ *  @return Void
+ */
 
 void displayDrawnCard(Card drawnCard) {
     printf("\n+----------------------------------------------------------+\n");
     printf(  "| - Drawn card color reveal: %c (%d pt/s)!                   |\n", matchColorChar(drawnCard.color), drawnCard.value);
 }
 
-void displayScoreCard(GameState* game, int drawnColor, int totalPts, int playerIdx, int numPlayerCards) {
+/**
+ *  Prints the results of a Score action, showing how many cards were moved
+ *  to the score pile or if the drawn card was added to the tank instead.
+ *
+ *  @param game Pointer to the game state
+ *  @param drawnColor The color of the drawn card
+ *  @param totalPts Total points calculated from the match
+ *  @param playerIdx Index of the active player
+ *  @param numPlayerCards Number of matching cards found in the tank
+ *  @return Void
+ */
+
+void displayScoreCard(GameState* game, int drawnColor, int totalPts, int totalWithDrawn, int playerIdx, int numPlayerCards) {
     if (numPlayerCards > 0) {
         printf("| - Player %d has (%d) %c card/s worth (%d) pts total!         |\n",
                 game->playerTurn + 1,
                 game->players[game->playerTurn].tankPile.cardsPerColor[drawnColor],
                 matchColorChar(drawnColor), totalPts
             );
-        printf("| - +%d points to Player %d's Score pile!                    |\n", totalPts, playerIdx + 1);
+        printf("| - +%d points to Player %d's Score pile!                    |\n", totalWithDrawn, playerIdx + 1);
         printf("+----------------------------------------------------------+\n");
     } else {
         printf("| - Player %d has no %c cards...                             |\n", playerIdx + 1, matchColorChar(drawnColor));
@@ -241,6 +344,15 @@ void displayScoreCard(GameState* game, int drawnColor, int totalPts, int playerI
     }
 
 }
+
+/**
+ *  Prompts the active player to choose an opponent to steal from,
+ *  excluding themselves from the list.
+ *
+ *  @param game Pointer to the game state
+ *  @param stealCardIdx Pointer to store the chosen opponent's index
+ *  @return Void
+ */
 
 void displayInStealOptions(GameState* game, int* stealCardIdx) {
     int i;
@@ -252,6 +364,17 @@ void displayInStealOptions(GameState* game, int* stealCardIdx) {
     printf( "+----------------------------------------------------------+\n");
     getInput(stealCardIdx, 1, game->numPlayers + 1, game->playerTurn + 1);
 }
+
+/**
+ *  Displays the outcome of a Steal attempt, indicating if cards were
+ *  successfully taken or if the drawn card was gifted to the opponent.
+ *
+ *  @param game Pointer to the game state
+ *  @param drawnColor Color of the drawn card
+ *  @param playerIdx Index of the player attempting the steal
+ *  @param stealIdx Index of the targeted opponent
+ *  @return Void
+ */
 
 void displayStealCard(GameState* game, int drawnColor, int playerIdx, int stealIdx) {
     if (game->players[stealIdx].tankPile.cardsPerColor[drawnColor] > 0) {
@@ -279,6 +402,14 @@ void displayStealCard(GameState* game, int drawnColor, int playerIdx, int stealI
 
 /* DEBUG MODE DISPLAYS */
 
+/**
+ *  Prints the full contents of the Draw Pile, showing front colors,
+ *  back colors, and values for all remaining cards.
+ *
+ *  @param drawPile Pointer to the deck
+ *  @return Void
+ */
+
 void displayCards(DrawPile* drawPile) {
 
     int i;
@@ -299,6 +430,15 @@ void displayCards(DrawPile* drawPile) {
     }
     printf(  "+------+-------+-------+-----------------------------------+\n");
 }
+
+/**
+ *  Prints the full contents of every player's tank and score piles.
+ *
+ *  @param drawPile Pointer to the deck
+ *  @param players[] Array of active players
+ *  @param numPlayers Total number of players in the game
+ *  @return Void
+ */
 
 void displayPlayerCards(DrawPile* drawPile, Player players[], int numPlayers) {
 
@@ -336,11 +476,24 @@ void displayPlayerCards(DrawPile* drawPile, Player players[], int numPlayers) {
 
 /* SETTINGS DISPLAYS */
 
+/**
+ *  Prompts the user to input a new winning point threshold.
+ *
+ *  @param input Pointer to store the new winning score value
+ *  @return Void
+ */
+
 void displayInSettingsWinningScore(int* input) {
     displayCustomHeader("Set winning points (140 maximum)");
 
     getInput(input, 1, MAX_WIN_SCORE + 1, -1);
 }
+
+/**
+ *  Prompts the user to input a seed value for the random number generator.
+ *  @param input Pointer to store the integer seed
+ *  @return Void
+ */
 
 void displayInSettingsShuffleSeed(int* input) {
     displayCustomHeader("Set shuffle seed (integer >= 0; i.e. 67)");

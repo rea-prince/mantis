@@ -4,7 +4,7 @@
  *                    from the smallest possible interactions
  *  Author/s        : Alip, Rafael Prince Naif E.
  *  Section         : S12A / S22
- *  Last Modified   : March 29, 2026
+ *  Last Modified   : March 30, 2026
  ******************************************************************************/
 
 #include "common.h"
@@ -33,12 +33,16 @@ int scoreCard(GameState* game, Card drawnCard) {
 
     int i;
     int totalPts = 0;
+    int totalWithDrawn;
 
     if (numPlayerCards > 0) {
         numScoreCards = game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
 
+        // place all same-color cards into score pile
+
         for (i = numPlayerCards - 1; i >= 0 ; i--) {
             totalPts += game->players[playerIdx].tankPile.cards[drawnColor][i].value;
+
             game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = game->players[playerIdx].tankPile.cards[drawnColor][i];
             game->players[playerIdx].tankPile.cards[drawnColor][i] = (Card) {0};
 
@@ -47,16 +51,25 @@ int scoreCard(GameState* game, Card drawnCard) {
             --numPlayerCards;
         }
 
-        displayScoreCard(game, drawnColor, totalPts, playerIdx, game->players[playerIdx].tankPile.cardsPerColor[drawnColor]);
+        // place drawn card into score pile
+
+        game->players[playerIdx].tankPile.cards[SCORE_PILE_IDX][numScoreCards] = drawnCard;
+        ++numScoreCards;
+
+        totalWithDrawn = totalPts + drawnCard.value;
+
+        displayScoreCard(game, drawnColor, totalPts, totalWithDrawn, playerIdx, game->players[playerIdx].tankPile.cardsPerColor[drawnColor]);
 
         game->players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
         game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX] = numScoreCards;
     } else {
 
-        displayScoreCard(game, drawnColor, totalPts, playerIdx, numPlayerCards);
+        displayScoreCard(game, drawnColor, totalPts, 0, playerIdx, numPlayerCards);
 
         game->players[playerIdx].tankPile.cards[drawnColor][0] = drawnCard;
+
         ++game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
+        ++game->players[playerIdx].tankPile.totalCards;
     }
 
     // update score
@@ -103,6 +116,9 @@ void stealCard(GameState* game, int stealIdx, Card drawnCard) {
 
         for (i = 0; i < game->players[stealIdx].tankPile.cardsPerColor[drawnColor]; i++) {
             game->players[playerIdx].tankPile.cards[drawnColor][numPlayerCards] = game->players[stealIdx].tankPile.cards[drawnColor][numStealCards - 1];
+
+            ++game->players[playerIdx].tankPile.totalCards;
+            --game->players[stealIdx].tankPile.totalCards;
             ++numPlayerCards;
             --numStealCards;
         }
@@ -110,6 +126,7 @@ void stealCard(GameState* game, int stealIdx, Card drawnCard) {
         // append drawn card to current player's deck
 
         game->players[playerIdx].tankPile.cards[drawnColor][numPlayerCards] = drawnCard;
+        ++game->players[playerIdx].tankPile.totalCards;
         ++numPlayerCards;
 
         displayStealCard(game, drawnColor, playerIdx, stealIdx);
@@ -121,7 +138,9 @@ void stealCard(GameState* game, int stealIdx, Card drawnCard) {
         displayStealCard(game, drawnColor, playerIdx, stealIdx);
 
         game->players[stealIdx].tankPile.cards[drawnColor][0] = drawnCard;
+
         ++game->players[stealIdx].tankPile.cardsPerColor[drawnColor];
+        ++game->players[stealIdx].tankPile.totalCards;
     }
 
 }
@@ -173,6 +192,8 @@ void takeTurn(GameState* game) {
             stealCard(game, stealCardIdx - 1, drawnCard);
         }
 
+        displayEndTurn(game);
+
         game->playerTurn = (game->playerTurn + 1) % game->numPlayers;
 
     } else {
@@ -181,9 +202,9 @@ void takeTurn(GameState* game) {
 
         game->gameWon = true;
         game->winner = -1;
-    }
 
-    displayEndTurn(game);
+        displayEndTurn(game);
+    }
 }
 
 /**

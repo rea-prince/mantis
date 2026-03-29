@@ -41,7 +41,7 @@
 
 #define MAX_WIN_SCORE 140
 
-#define F_PLAYER_RECORDS "data/players.txt"
-#define F_MANTIS_DECK "data/mantis.txt"
+#define F_PLAYER_RECORDS "players.txt"
+#define F_MANTIS_DECK "mantis.txt"
 
 #endif

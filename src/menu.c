@@ -2,7 +2,7 @@
  *  Description     : Functions executed directly from the main menu
  *  Author/s        : Alip, Rafael Prince Naif E.
  *  Section         : S12A / S22
- *  Last Modified   : March 29, 2026
+ *  Last Modified   : March 30, 2026
  ******************************************************************************/
 
 #include "common.h"
@@ -16,9 +16,9 @@
  *  number of players, either adding a new player or choosing from the selction,
  *  and calling playGame() to start
  *
- *  @param game
- *  @param playerRecords[]
- *  @param numPlayerRecords
+ *  @pre game points to an initialized GameState
+ *  @param playerRecords[] Array of player records
+ *  @param numPlayerRecords Number of players in the playerRecords array
  *  @return Void
  */
 
@@ -232,6 +232,8 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int* numPlayerRecord
  *  Lists the top players from players.txt according to either most amount
  *  of wins or highest score achieved.
  *
+ *  @param playerRecords[] Array of player records
+ *  @param numPlayers Number of players in the array
  *  @return Void
  */
 
@@ -264,7 +266,7 @@ void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
 /**
  *  Allows player to change settings in the game state
  *
- *  @param game
+ *  @pre game points to an initialized GameState
  *  @return Void
  */
 
