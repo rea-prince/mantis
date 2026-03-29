@@ -3,14 +3,13 @@
  *                    performing game logic. Functions are arranged starting
  *                    from the smallest possible interactions
  *  Author/s        : Alip, Rafael Prince Naif E.
- *  Section         : S12A
- *  Last Modified   : <date when last revision was made>
+ *  Section         : S12A / S22
+ *  Last Modified   : March 29, 2026
  ******************************************************************************/
 
 #include "common.h"
 #include "models.h"
 #include "helpers.h"
-
 
 /* Puts the drawn card into the score pile of the player whose turn it is.
  * @param game Pointer to the current game state struct

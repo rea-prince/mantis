@@ -1,8 +1,8 @@
 /******************************************************************************
  *  Description     : Helper functions that don't make decisions for the game flow
  *  Author/s        : Alip, Rafael Prince Naif E.
- *  Section         : S12A
- *  Last Modified   : <date when last revision was made>
+ *  Section         : S12A / S22
+ *  Last Modified   : March 29, 2026
  ******************************************************************************/
 
 #include "common.h"

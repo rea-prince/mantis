@@ -1,8 +1,9 @@
 /******************************************************************************
- *  Description     : <short description of the project>
+ *  Description     : This serves as the entry point of the program, calling all
+ *                    necessary functions to run the game.
  *  Author/s        : Alip, Rafael Prince Naif E.
- *  Section         : S12A
- *  Last Modified   : February 15, 2026
+ *  Section         : S12A / S22
+ *  Last Modified   : March 29, 2026
  *  Acknowledgments : <list of references used in the making of this project>
  ******************************************************************************/
 

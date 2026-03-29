@@ -1,8 +1,8 @@
 /******************************************************************************
  *  Description     : Headers for helper.c
  *  Author/s        : Alip, Rafael Prince Naif E.
- *  Section         : S12A
- *  Last Modified   : <date when last revision was made>
+ *  Section         : S12A / S22
+ *  Last Modified   : March 29, 2026
  ******************************************************************************/
 
 #ifndef HELPERS_H
@@ -24,11 +24,14 @@ int createDeck(FILE* mantisDeck, GameState* game);
 int populateDeck(DrawPile* drawPile, TankPile* tankPile);
 int computePlayerScore(TankPile tankPile);
 
-/* DATA PERSISTENCE */
+/* DATA SORTING */
 
 void sortPlayersByPoints(Player players[], int numPlayers);
 void sortPlayersByScore(PlayerRecord playerRecords[], int numPlayers);
 void sortPlayersByWins(PlayerRecord playerRecords[], int numPlayers);
+
+/* DATA PERSISTENCE */
+
 void loadPlayerRecords(PlayerRecord playerRecords[], int *numPlayerRecords);
 void savePlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords);
 
