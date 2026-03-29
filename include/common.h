@@ -37,6 +37,6 @@
 
 /* DEFINITIONS */
 
-#define WIN_SCORE 20
+#define MAX_WIN_SCORE 140
 
 #endif

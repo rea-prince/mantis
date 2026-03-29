@@ -290,21 +290,10 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
     /* REQUEST NUMBER OF PLAYERS */
 
     printf("+----------------------------------------------------------+\n");
-    printf("| How many players?                                        |\n");
+    printf("| How many players? (%d minimum; %d maximum)                 |\n", MIN_PLAYERS, MAX_PLAYERS);
     printf("+----------------------------------------------------------+\n");
-    do {
-        printf(  "\n+----+\n");
-        printf(    "| >> | ");
-        scanf("%d", &game->numPlayers);
-        while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
-        printf(    "+----+\n\n");
 
-        if (game->numPlayers < MIN_PLAYERS) {
-            printf("\nPlease enter a minimum of %d players.\n", MIN_PLAYERS);
-        } else if (game->numPlayers > MAX_PLAYERS) {
-            printf("\nPlease enter a maximum of %d players.\n", MAX_PLAYERS);
-        }
-    } while (game->numPlayers < MIN_PLAYERS || game->numPlayers > MAX_PLAYERS);
+    getInput(&game->numPlayers, MIN_PLAYERS, MAX_PLAYERS + 1, -1);
 
     /* SCAN FOR PLAYER INPUT */
 
@@ -332,17 +321,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
 
         // select player or add new player
 
-        do {
-            printf(  "\n+----+\n");
-            printf(    "| >> | ");
-            scanf("%d", &option);
-            while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
-            printf(    "+----+\n\n");
-
-            if (option > *numPlayerRecords || option < 0) {
-                printf("\nError! Please select a valid player or add a new one.\n");
-            }
-        } while (option > *numPlayerRecords || option < 0);
+        getInput(&option, 0, *numPlayerRecords + 1, -1);
 
         // either initialize new player or use existing player
 
@@ -555,41 +534,26 @@ void gameSettings(GameState *game) {
     printf("+----------------------------------------------------------+\n");
 
     int input;
-    char flushBuffer;
 
     getInput(&input, 0, N_MENU_Y, -1);
 
     if (input == 1) {
-        do {
-            printf(  "\n+-----------------------+\n");
-            printf(    "| Set winning points >> | ");
-            scanf("%d", &input);
-            while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
-            printf(    "+-----------------------+\n");
+        printf(  "\n+----------------------------------+\n");
+        printf(    "| Set winning points (140 maximum) |\n");
+        printf(    "+----------------------------------+\n");
 
-            if (input <= 0 || input > 140) {
-                printf("\nError! Please enter an integer > 0 and <= 140.\n");
-            }
-        } while (input <= 0);
+        getInput(&input, 1, MAX_WIN_SCORE + 1, -1);
 
         game->winningPoints = input;
 
     } else if (input == 2) {
-        do {
-            printf(  "\n+---------------------+\n");
-            printf(    "| Set shuffle seed >> | ");
-            scanf("%d", &input);
-            while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
-            printf(    "+---------------------+\n");
+        printf(  "\n+------------------------------------------+\n");
+        printf(    "| Set shuffle seed (integer >= 0; i.e. 67) |\n");
+        printf(    "+------------------------------------------+\n");
 
-            if (input < 0) {
-                printf("\nError! Please enter a positive integer.\n");
-            }
-
-        } while (input < 0);
+        getInput(&input, 0, -1, -1);
 
         game->randSeed = input;
-
     }
 
 }

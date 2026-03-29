@@ -47,6 +47,7 @@ int main()
         printf("+----------------------------------------------------------+\n");
         printf("| Main Menu                                                |\n");
         printf("+----------------------------------------------------------+\n");
+        printf("| Welcome to Mantis: CLI Edition! Please select an option. |\n");
         printf("|    [1] New Game                                          |\n");
         printf("|    [2] Top Players                                       |\n");
         printf("|    [3] Game Settings                                     |\n");

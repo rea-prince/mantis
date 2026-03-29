@@ -48,26 +48,25 @@ char matchColorChar(enum Color c) {
 }
 
 void getInput(int *inputDest, int min, int max, int exclude) {
-    char enter;
-    int scanfRet;
+    StrList buffer;
     bool valid = false;
 
     while (!valid) {
+        printf("\n+----+\n| >> | ");
+        if (fgets(buffer, sizeof(buffer), stdin)) {
 
-        printf("\n+----+\n");
-        printf("| >> | ");
-        scanfRet = scanf("%d", inputDest);
+            // parse integer from the string buffer
+
+            if (sscanf(buffer, "%d", inputDest) == 1) {
+                if (*inputDest >= min && (*inputDest < max || max == -1) && (exclude == -1 || *inputDest != exclude)) {
+                    valid = true;
+                }
+            }
+        }
         printf("+----+\n");
 
-        if (scanfRet == 1 &&
-            *inputDest >= min &&
-            *inputDest < max &&
-            (exclude == -1 || *inputDest != exclude)
-        ) {
-            valid = true;
-        } else {
+        if (!valid) {
             printf("\nError! Please enter a valid input.\n");
-            while (scanf("%c", &enter) == 1 && enter != '\n');
         }
     }
 }
