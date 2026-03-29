@@ -193,16 +193,17 @@ void displayBackCards(GameState* game) {
 }
 
 void displayInTurnInfo(GameState* game, int* playerAction) {
-    printf("\n+----------+-----------------------------------------------+\n");
+    printf("\n+-------------+--------------------------------------------+\n");
+    printf(  "| PLAYER TURN | %-42s |\n",game->players[game->playerTurn].username);
+    printf(  "+----------+--+--------------------------------------------+\n");
     printf(  "| TOP DECK | %c %c %c (%02d cards remaining)                    |\n",
             matchColorChar(game->drawPile.cards[0].back[0]),
             matchColorChar(game->drawPile.cards[0].back[1]),
             matchColorChar(game->drawPile.cards[0].back[2]),
             game->drawPile.totalCards
         );
-    printf(  "+----------+--+--------------------------------------------+\n");
-    printf(  "| PLAYER TURN | %-42s |\n",game->players[game->playerTurn].username);
-    printf(  "+-------------+--------------------------------------------+\n");
+    printf(  "+----------+-----------------------------------------------+\n");
+
     printf(  "| Player %d, what would you like to do?                     |\n", game->playerTurn + 1);
     printf(  "|    [1] Try to Score                                      |\n");
     printf(  "|    [2] Try to Steal                                      |\n");

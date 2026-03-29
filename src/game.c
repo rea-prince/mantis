@@ -34,7 +34,7 @@ int scoreCard(GameState* game, Card drawnCard) {
     if (numPlayerCards > 0) {
         numScoreCards = game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
 
-        displayScoreCard(game, drawnColor, totalPts, playerIdx, numPlayerCards);
+
 
         for (i = numPlayerCards - 1; i >= 0 ; i--) {
             totalPts += game->players[playerIdx].tankPile.cards[drawnColor][i].value;
@@ -45,6 +45,8 @@ int scoreCard(GameState* game, Card drawnCard) {
             ++numScoreCards;
             --numPlayerCards;
         }
+
+        displayScoreCard(game, drawnColor, totalPts, playerIdx, game->players[playerIdx].tankPile.cardsPerColor[drawnColor]);
 
         game->players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
         game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX] = numScoreCards;
@@ -165,6 +167,7 @@ void takeTurn(GameState* game) {
         /* DRAW */
 
         game->gameWon = true;
+        game->winner = -1;
     }
 
     displayEndTurn(game);

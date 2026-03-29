@@ -132,40 +132,48 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
 
         int winners;
 
-        sortPlayersByPoints(game->players, game->numPlayers);
+        if (game->winner != -1) {
 
-        if (game->players[0].points > game->players[1].points) {
-
-            // Case 1: player 1 has more points than player 2
-
-            game->winner = 0;
             printf("WINNER: %s with %d points!\n\n", game->players[game->winner].username, game->players[game->winner].points);
-        } else if (game->players[0].points == game->players[1].points) {
 
-            // Case 2: player 1 and 2 have equal points
+        } else  {
 
-            if (game->players[0].tankPile.totalCards > game->players[1].tankPile.totalCards) {
+            sortPlayersByPoints(game->players, game->numPlayers);
 
-                // Case 2a: player 1 has more tank cards than player 2
+            if (game->winner == -1 && game->players[0].points > game->players[1].points) {
+
+                // Case 1: player 1 has more points than player 2
 
                 game->winner = 0;
                 printf("WINNER: %s with %d points!\n\n", game->players[game->winner].username, game->players[game->winner].points);
 
-            } else {
+            } else if (game->winner == -1 && game->players[0].points == game->players[1].points) {
 
-                // Case 2b: player 1, 2, and possibly others have equal points and tank cards
+                // Case 2: player 1 and 2 have equal points
 
-                winners = 0;
-                int a;
+                if (game->players[0].tankPile.totalCards > game->players[1].tankPile.totalCards) {
 
-                // count number of winners with such case
+                    // Case 2a: player 1 has more tank cards than player 2
 
-                for (a = 0; a < game->numPlayers; a++) {
-                    if (game->players[0].points == game->players[a].points &&
-                        game->players[0].tankPile.totalCards == game->players[a].tankPile.totalCards) {
-                            printf("WINNER/s: %s with %d points!\n\n", game->players[a].username, game->players[a].points);
-                            ++winners;
-                        }
+                    game->winner = 0;
+                    printf("WINNER: %s with %d points!\n\n", game->players[game->winner].username, game->players[game->winner].points);
+
+                } else {
+
+                    // Case 2b: player 1, 2, and possibly others have equal points and tank cards
+
+                    winners = 0;
+                    int a;
+
+                    // count number of winners with such case
+
+                    for (a = 0; a < game->numPlayers; a++) {
+                        if (game->players[0].points == game->players[a].points &&
+                            game->players[0].tankPile.totalCards == game->players[a].tankPile.totalCards) {
+                                printf("WINNER/s: %s with %d points!\n\n", game->players[a].username, game->players[a].points);
+                                ++winners;
+                            }
+                    }
                 }
             }
         }
@@ -186,11 +194,12 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
                        playerRecords[j].highScore = game->players[i].points;
                    }
 
-                   // count win; (i < winners) in case there's multiple
+                   // update wins
 
-                   if (i < winners) {
+                   if (game->winner == i || (game->winner == -1 && i < winners)) {
                        ++playerRecords[j].wins;
                    }
+
                    playerFound = true;
                }
             }
