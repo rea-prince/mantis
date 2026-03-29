@@ -28,7 +28,9 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
     char flushBuffer;
 
     bool duplicateFound;
+    bool exceedsCharacteLimit;
     int name;
+    int usernameLength;
     int option;
 
     /* REQUEST NUMBER OF PLAYERS */
@@ -55,6 +57,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
         if (option == 0) {
             do {
                 duplicateFound = false;
+                exceedsCharacteLimit = false;
 
                 displayCustomHeader("Insert Username (36 characters maximum)");
 
@@ -64,25 +67,35 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
                 while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
                 printf(    "+----+\n\n");
 
+
+                usernameLength = strlen(nameBuffer);
+
+                // check for length
+
+                if (usernameLength > MAX_NAME_CHARS) {
+                    printf("\n\nError! Username exceeds 36 character limit by %d chars.\n\n", usernameLength - MAX_NAME_CHARS);
+                    exceedsCharacteLimit = true;
+                }
+
                 // check for duplicates in current game
 
-                for (name = 0; name < playerIdx; name++) {
+                for (name = 0; name < playerIdx && !exceedsCharacteLimit; name++) {
                     if (strcmp(game->players[name].username, nameBuffer) == 0) {
-                        printf("\n\nError: Name already listed; please try another name\n\n");
+                        printf("\n\nError! Name already listed; please try another name.\n\n");
                         duplicateFound = true;
                     }
                 }
 
                 // check for duplicates in player records
 
-                for (name = 0; name < *numPlayerRecords; name++) {
+                for (name = 0; name < *numPlayerRecords && !exceedsCharacteLimit; name++) {
                     if (strcmp(playerRecords[name].username, nameBuffer) == 0) {
-                        printf("\n\nError: Name already listed; please try another name\n\n");
+                        printf("\n\nError! Name already listed; please try another name.\n\n");
                         duplicateFound = true;
                     }
                 }
 
-            } while (duplicateFound);
+            } while (duplicateFound || exceedsCharacteLimit);
 
             // append user to records
 
@@ -136,7 +149,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
 
             printf("WINNER: %s with %d points!\n\n", game->players[game->winner].username, game->players[game->winner].points);
 
-        } else  {
+        } else {
 
             sortPlayersByPoints(game->players, game->numPlayers);
 
@@ -178,7 +191,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
             }
         }
 
-        // update player (sorted already)
+        // update player
 
         for (i = 0; i < game->numPlayers; i++) {
             bool playerFound = false;
@@ -194,7 +207,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
                        playerRecords[j].highScore = game->players[i].points;
                    }
 
-                   // update wins
+                   // update wins (pre-sorted if multiple winners)
 
                    if (game->winner == i || (game->winner == -1 && i < winners)) {
                        ++playerRecords[j].wins;

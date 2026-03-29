@@ -13,6 +13,8 @@
  *
  *  @param c Character to be matched
  *  @return returnVal The enum equivalent of the color that was matched
+ *
+ *  @pre c is a valid character that represents a number
  */
 
 enum Color matchColor(char c) {
@@ -25,7 +27,7 @@ enum Color matchColor(char c) {
         case 'B': returnVal = BLUE;  break;
         case 'I': returnVal = INDIGO; break;
         case 'V': returnVal = VIOLET; break;
-        default: returnVal = N_INVALID_COLOR; break;
+        default: returnVal = RED; break;
     }
 
     return returnVal;
@@ -36,6 +38,8 @@ enum Color matchColor(char c) {
  *
  *  @param c Enum to be matched
  *  @return returnVal The character equivalent of the color that was matched
+ *
+ *  @pre c is a valid integer that matches a color
  */
 
 char matchColorChar(enum Color c) {
@@ -49,7 +53,7 @@ char matchColorChar(enum Color c) {
         case BLUE: returnVal = 'B';  break;
         case INDIGO: returnVal = 'I'; break;
         case VIOLET: returnVal = 'V'; break;
-        case N_INVALID_COLOR: returnVal = 'R'; break; // default value
+        default: returnVal = 'R'; break; // default value
     }
 
     return returnVal;
@@ -72,6 +76,7 @@ void getInput(int *inputDest, int min, int max, int exclude) {
 
     while (!valid) {
         printf("\n+----+\n| >> | ");
+
         if (fgets(buffer, sizeof(buffer), stdin)) {
             printf("+----+\n");
 
@@ -90,7 +95,7 @@ void getInput(int *inputDest, int min, int max, int exclude) {
                     printf("\n\nError! Please enter a valid input.\n\n");
                 }
             } else {
-                printf("\n\nError! Please enter only 1 input.\n\n");
+                printf("\n\nError! Please enter a valid integer input.\n\n");
             }
         } else {
             printf("\n\nError! Please provide an input.\n\n");
@@ -105,17 +110,25 @@ void getInput(int *inputDest, int min, int max, int exclude) {
  *
  *  @param drawPile Pointer to the DrawPile to be drawn from
  *  @return drawnCard The card that was drawn from the pile
+ *
+ *  @pre drawPile points to an initialized DrawPile
+ *  @pre drawPile->totalCards is > 0
  */
 
 Card drawCard(DrawPile* drawPile) {
-    Card drawnCard = drawPile->cards[0];
+    Card drawnCard = {0};
 
     int i;
-    for (i = 0; i < drawPile->totalCards - 1; i++) {
-        drawPile->cards[i] = drawPile->cards[i + 1];
-    }
 
-    --drawPile->totalCards;
+    if (drawPile->totalCards > 0) {
+        drawnCard = drawPile->cards[0];
+
+        for (i = 0; i < drawPile->totalCards - 1; i++) {
+            drawPile->cards[i] = drawPile->cards[i + 1];
+        }
+
+        --drawPile->totalCards;
+    }
 
     return drawnCard;
 }
@@ -126,6 +139,10 @@ Card drawCard(DrawPile* drawPile) {
  *  @param mantisDeck File pointer to the file containing card information
  *  @param game Pointer to the current game state struct
  *  @return Void
+ *
+ *  @pre mantisDeck is a valid file pointer != NULL
+ *  @pre mantisDeck has at least 12 cards
+ *  @pre game points to an initialized GameState
  */
 
 void createDeck(FILE* mantisDeck, GameState* game) {
@@ -165,13 +182,15 @@ void createDeck(FILE* mantisDeck, GameState* game) {
     shuffle(game->drawPile.cards, game->drawPile.totalCards, sizeof(Card), randSeed);
 }
 
-
 /**
  *  Populates the TankPile with cards drawn from the DrawPile.
  *
  *  @param drawPile Pointer to the DrawPile to draw cards from
  *  @param tankPile Pointer to the tankPile to put drawn cards into
  *  @return Void
+ *
+ *  @pre drawPile points to an initialized DrawPile with 84 cards
+ *  @pre tankPile points to an empty TankPile
  */
 
 void populateDeck(DrawPile* drawPile, TankPile* tankPile) {
@@ -197,6 +216,8 @@ void populateDeck(DrawPile* drawPile, TankPile* tankPile) {
  *
  *  @param tankPile The TankPile to sum the points from
  *  @return total Total points of the given TankPile
+ *
+ *
  */
 
 int computePlayerScore(TankPile tankPile) {
@@ -266,9 +287,14 @@ void sortPlayersByWins(PlayerRecord playerRecords[], int numPlayers) {
             if (playerRecords[j].wins > playerRecords[max].wins) {
                 max = j;
             } else if (playerRecords[j].wins == playerRecords[max].wins) {
-                if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
+                if (playerRecords[j].highScore > playerRecords[max].highScore) {
                     max = j;
-                }
+                } else if ((playerRecords[j].wins == playerRecords[max].wins) &&
+                           (playerRecords[j].highScore == playerRecords[max].highScore)) {
+                            if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
+                                max = j;
+                            }
+                        }
             }
         }
 
@@ -300,9 +326,14 @@ void sortPlayersByScore(PlayerRecord playerRecords[], int numPlayers) {
             if (playerRecords[j].highScore > playerRecords[max].highScore) {
                 max = j;
             } else if (playerRecords[j].highScore == playerRecords[max].highScore) {
-                if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
+                if (playerRecords[j].wins > playerRecords[max].wins) {
                     max = j;
-                }
+                } else if ((playerRecords[j].highScore == playerRecords[max].highScore) &&
+                           (playerRecords[j].wins == playerRecords[max].wins)) {
+                               if (strcmp(playerRecords[j].username, playerRecords[max].username) < 0) {
+                                   max = j;
+                               }
+                           }
             }
         }
 

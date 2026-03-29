@@ -59,6 +59,7 @@ int main() {
         } else if (menuInput == TOP_PLAYERS) {
 
             topPlayers(playerRecords, numPlayerRecords);
+            savePlayerRecords(playerRecords, numPlayerRecords);
             iClear(0,0,60,60);
 
         } else if (menuInput == GAME_SETTINGS) {

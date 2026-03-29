@@ -18,6 +18,9 @@
  *  @param game Pointer to the current game state struct
  *  @param drawnCard The card drawn by the player from the drawPile
  *  @return Returns the total points of the current player
+ *
+ *  @pre game points to an initialized GameState
+ *  @pre drawnCard is a valid card
  */
 
 int scoreCard(GameState* game, Card drawnCard) {
@@ -33,8 +36,6 @@ int scoreCard(GameState* game, Card drawnCard) {
 
     if (numPlayerCards > 0) {
         numScoreCards = game->players[playerIdx].tankPile.cardsPerColor[SCORE_PILE_IDX];
-
-
 
         for (i = numPlayerCards - 1; i >= 0 ; i--) {
             totalPts += game->players[playerIdx].tankPile.cards[drawnColor][i].value;
@@ -79,6 +80,9 @@ int scoreCard(GameState* game, Card drawnCard) {
  *  @param stealIdx The index of the player who's being stolen from
  *  @param drawnCard The card drawn by the player from the drawPile
  *  @return void
+ *
+ *  @pre game Points to a GameState that has been initialized
+ *  @pre stealIdx is within the range of players and not equal to itself
  */
 
 void stealCard(GameState* game, int stealIdx, Card drawnCard) {
@@ -86,28 +90,35 @@ void stealCard(GameState* game, int stealIdx, Card drawnCard) {
     int numPlayerCards, numStealCards;
     int playerIdx = game->playerTurn;
     int i;
-    int totalPts = 0;
 
     enum Color drawnColor = drawnCard.color;
     if (game->players[stealIdx].tankPile.cardsPerColor[drawnColor] > 0) {
 
+        // get current player and stealIdx player's number of cards
+
         numPlayerCards = game->players[playerIdx].tankPile.cardsPerColor[drawnColor];
         numStealCards = game->players[stealIdx].tankPile.cardsPerColor[drawnColor];
 
+        // transfer cards from current player to stealIdx player
+
         for (i = 0; i < game->players[stealIdx].tankPile.cardsPerColor[drawnColor]; i++) {
-            totalPts += game->players[stealIdx].tankPile.cards[drawnColor][numStealCards - 1].value;
             game->players[playerIdx].tankPile.cards[drawnColor][numPlayerCards] = game->players[stealIdx].tankPile.cards[drawnColor][numStealCards - 1];
             ++numPlayerCards;
             --numStealCards;
         }
 
-        displayStealCard(game, drawnColor, playerIdx, totalPts, stealIdx);
+        // append drawn card to current player's deck
+
+        game->players[playerIdx].tankPile.cards[drawnColor][numPlayerCards] = drawnCard;
+        ++numPlayerCards;
+
+        displayStealCard(game, drawnColor, playerIdx, stealIdx);
 
         game->players[playerIdx].tankPile.cardsPerColor[drawnColor] = numPlayerCards;
         game->players[stealIdx].tankPile.cardsPerColor[drawnColor] = numStealCards;
 
     } else {
-        displayStealCard(game, drawnColor, playerIdx, totalPts, stealIdx);
+        displayStealCard(game, drawnColor, playerIdx, stealIdx);
 
         game->players[stealIdx].tankPile.cards[drawnColor][0] = drawnCard;
         ++game->players[stealIdx].tankPile.cardsPerColor[drawnColor];
@@ -129,17 +140,21 @@ void stealCard(GameState* game, int stealIdx, Card drawnCard) {
  *
  *  @param game Pointer to the game state struct
  *  @return Void
+ *
+ *  @pre game Points to a GameState that has been initialized
  */
 
 void takeTurn(GameState* game) {
 
     int playerAction;
+    Card drawnCard;
+    int stealCardIdx;
 
     if (game->drawPile.totalCards > 0) {
 
         displayInTurnInfo(game, &playerAction);
 
-        Card drawnCard = drawCard(&game->drawPile);
+        drawnCard = drawCard(&game->drawPile);
 
         if (playerAction == SCORE) {
 
@@ -151,8 +166,6 @@ void takeTurn(GameState* game) {
             }
 
         } else if (playerAction == STEAL) {
-
-            int stealCardIdx;
 
             displayInStealOptions(game, &stealCardIdx);
             displayDrawnCard(drawnCard);
@@ -181,6 +194,8 @@ void takeTurn(GameState* game) {
  *
  *  @param game Pointer to the game state struct
  *  @return Void
+ *
+ *  @pre game Points to a GameState that has been initialized
  */
 
 void playGame(GameState* game) {

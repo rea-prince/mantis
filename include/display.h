@@ -36,7 +36,7 @@ void displayDrawnCard(Card drawnCard);
 void displayScoreCard(GameState* game, int drawnColor, int totalPts, int playerIdx, int numPlayerCards);
 
 void displayInStealOptions(GameState* game, int* stealCardIdx);
-void displayStealCard(GameState* game, int drawnColor, int playerIdx, int totalPts, int stealIdx);
+void displayStealCard(GameState* game, int drawnColor, int playerIdx, int stealIdx);
 
 /* DEBUG DISPLAYS */
 

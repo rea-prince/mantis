@@ -5,8 +5,6 @@
  *  Last Modified   : March 29, 2026
  ******************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
 #include "common.h"
 #include "models.h"
 #include "helpers.h"
@@ -255,13 +253,13 @@ void displayInStealOptions(GameState* game, int* stealCardIdx) {
     getInput(stealCardIdx, 1, game->numPlayers + 1, game->playerTurn + 1);
 }
 
-void displayStealCard(GameState* game, int drawnColor, int playerIdx, int totalPts, int stealIdx) {
+void displayStealCard(GameState* game, int drawnColor, int playerIdx, int stealIdx) {
     if (game->players[stealIdx].tankPile.cardsPerColor[drawnColor] > 0) {
-        printf("| - Player %d has (%d) %c card/s worth (%d) pts total!         |\n",
+        printf("+----------------------------------------------------------+\n");
+        printf("| - Player %d has (%d) %c card/s!                             |\n",
             stealIdx + 1,
             game->players[stealIdx].tankPile.cardsPerColor[drawnColor],
-            matchColorChar(drawnColor),
-            totalPts
+            matchColorChar(drawnColor)
         );
         printf("| - +%d (%c) cards to Player %d's Tank!                       |\n",
             game->players[stealIdx].tankPile.cardsPerColor[drawnColor],
