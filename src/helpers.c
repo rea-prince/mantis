@@ -94,14 +94,6 @@ int createDeck(FILE* mantisDeck, GameState* game) {
     char lineBuffer[LINE_SIZE];
     int randSeed;
 
-    if (game->randSeed == -1) {
-        randSeed = randomInt();
-    } else {
-        randSeed = game->randSeed;
-    }
-
-    // int randSeed = 999; // FOR UNIFORM TESTING
-
     /* Load deck into memory */
 
     int cardIdx = 0;
@@ -124,6 +116,12 @@ int createDeck(FILE* mantisDeck, GameState* game) {
     game->drawPile.totalCards = cardIdx;
 
     /* Shuffle deck */
+
+    if (game->randSeed == -1) {
+        randSeed = randomInt();
+    } else {
+        randSeed = game->randSeed;
+    }
 
     shuffle(game->drawPile.cards, game->drawPile.totalCards, sizeof(Card), randSeed);
 

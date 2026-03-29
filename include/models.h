@@ -90,7 +90,6 @@ typedef struct {
     DrawPile drawPile;
 
     // state of the game
-    int rotations;
     int playerTurn;
     int winner;
     bool gameWon;
@@ -98,7 +97,7 @@ typedef struct {
     // settings
     int randSeed;
     int winningPoints;
-
+    bool debugMode;
 } GameState;
 
 

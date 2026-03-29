@@ -17,6 +17,7 @@ void takeTurn(GameState* game);
 /* GAME START */
 
 int playGame(GameState* game);
+int debugMode(DrawPile* drawPile, Player players[], int playerCount);
 
 /* MENU OPTIONS */
 

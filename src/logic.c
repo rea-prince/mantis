@@ -12,8 +12,10 @@
 #include "helpers.h"
 
 /* Puts the drawn card into the score pile of the player whose turn it is.
+ *
  * @param game Pointer to the current game state struct
  * @param drawnCard The card drawn by the player from the drawPile
+ *
  * @return Returns the total points of the current player
  */
 
@@ -78,6 +80,7 @@ int scoreCard(GameState* game, Card drawnCard) {
  * @param game Pointer to the game state struct
  * @param stealIdx The index of the player who's being stolen from
  * @param drawnCard The card drawn by the player from the drawPile
+ *
  * @return void
  */
 
@@ -158,8 +161,9 @@ void takeTurn(GameState* game) {
                 matchColorChar(game->drawPile.cards[0].back[2]),
                 game->drawPile.totalCards
             );
-        printf(  "+----------+-----------------------------------------------+\n");
-
+        printf(  "+----------+--+--------------------------------------------+\n");
+        printf(  "| PLAYER TURN | %-42s |\n",game->players[game->playerTurn].username);
+        printf(  "+-------------+--------------------------------------------+\n");
         printf(  "| Player %d, what would you like to do?                     |\n", game->playerTurn + 1);
         printf(  "|    [1] Try to Score                                      |\n");
         printf(  "|    [2] Try to Steal                                      |\n");
@@ -221,12 +225,88 @@ void takeTurn(GameState* game) {
 
 }
 
+/* Displays cards from the drawPile and each player's tankPile.
+ * This function is exclusively used for debugging.
+ *
+ * @param drawPile
+ * @param players
+ * @param playerCount
+ *
+ * @return void
+ */
+
+int debugMode(DrawPile* drawPile, Player players[], int playerCount) {
+
+    /* DISPLAY DRAWPILE CARDS */
+
+    int i, a, j, k, z;
+
+    printf("\n+----------------------------------------------------------+\n");
+    printf(  "|                   DISPLAYING ALL CARDS                   |\n");
+    printf(  "+------+-------+-------+-----------------------------------+\n");
+    printf(  "| CARD | FRONT | BACK  | VALUE                             |\n");
+    printf(  "+------+-------+-------+-----------------------------------+\n");
+
+    for (i = 0; i < drawPile->totalCards; i++) {
+        printf("| %4d |   %c   | %c %c %c | %-33d |\n",
+            i + 1,
+            matchColorChar(drawPile->cards[i].color),
+            matchColorChar(drawPile->cards[i].back[0]),
+            matchColorChar(drawPile->cards[i].back[1]),
+            matchColorChar(drawPile->cards[i].back[2]),
+            drawPile->cards[i].value
+        );
+    }
+    printf(  "+------+-------+-------+-----------------------------------+\n");
+
+    /* INITIALIZE PLAYERS */
+
+    for (a = 0; a < playerCount; a++) {
+        populateDeck(drawPile, &players[a].tankPile);
+    }
+
+    /* DISPLAY PLAYER INFO */
+
+    printf("\n+----------------------------------------------------------+\n");
+    printf(  "|                 DISPLAYING PLAYER CARDS                  |\n");
+    printf(  "+--------+------+-------+----------------------------------+\n");
+    printf(  "| PLAYER | DECK | FRONT | BACK  | VALUE                    |\n");
+    printf(  "+--------+------+-------+----------------------------------+\n");
+    for (j = 0; j < playerCount; j++) {
+        // player cards
+
+        // loop through each color
+
+        for (k = 0; k < CARD_COLORS; k++) {
+
+            // loop for each color deck
+
+            for (z = 0; z < players[j].tankPile.cardsPerColor[k]; z++) {
+                printf("| %4d   | %3d  |   %c   | %c %c %c | %-24d |\n",
+                    j + 1,
+                    k + 1,
+                    matchColorChar(players[j].tankPile.cards[k][z].color),
+                    matchColorChar(players[j].tankPile.cards[k][z].back[0]),
+                    matchColorChar(players[j].tankPile.cards[k][z].back[1]),
+                    matchColorChar(players[j].tankPile.cards[k][z].back[2]),
+                    players[j].tankPile.cards[k][z].value
+                );
+            }
+        }
+
+    }
+
+    return 1;
+}
+
+
 /* Populates the drawPile inside the game struct, and continuously plays
  * a rotation of turns among players in the game, displaying all
  * players' card information for each turn taken until a player wins.
  * Calls takeTurn() on the player whose turn it is.
  *
  * @param game Pointer to the game state struct
+ *
  * @return void
  */
 
@@ -236,8 +316,12 @@ int playGame(GameState* game) {
 
     /* POPULATE DECK */
 
-    for (i = 0; i < game->numPlayers; i++) {
-        populateDeck(&game->drawPile, &game->players[i].tankPile);
+    if (game->debugMode) {
+        debugMode(&game->drawPile, game->players, game->numPlayers);
+    } else {
+        for (i = 0; i < game->numPlayers; i++) {
+            populateDeck(&game->drawPile, &game->players[i].tankPile);
+        }
     }
 
     /* PLAY ROUNDS */
@@ -396,7 +480,6 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
         /* PLAY GAME */
 
         playGame(game);
-        // debugGame(&game.drawPile, game.players, game.numPlayers);
 
         /* SEARCH FOR WINNER */
 
@@ -530,6 +613,7 @@ void gameSettings(GameState *game) {
     printf("| Change settings for next match:                          |\n");
     printf("|    [1] Set winning points (140 maximum)                  |\n");
     printf("|    [2] Set shuffle seed                                  |\n");
+    printf("|    [3] Toggle debug mode (reveals cards when on)         |\n");
     printf("|    [0] Exit to main menu                                 |\n");
     printf("+----------------------------------------------------------+\n");
 
@@ -554,6 +638,16 @@ void gameSettings(GameState *game) {
         getInput(&input, 0, -1, -1);
 
         game->randSeed = input;
+    } else if (input == 3) {
+        printf(  "\n+---------------------------------+\n");
+        if (game->debugMode) {
+            game->debugMode = false;
+            printf(    "| Debug mode has been turned off. |\n");
+        } else {
+            game->debugMode = true;
+            printf(    "| Debug mode has been turned on.  |\n");
+        }
+        printf(    "+---------------------------------+\n");
     }
 
 }
