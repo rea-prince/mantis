@@ -10,6 +10,7 @@
 #include "common.h"
 #include "models.h"
 #include "helpers.h"
+#include "display.h"
 
 /* Puts the drawn card into the score pile of the player whose turn it is.
  *
@@ -225,81 +226,6 @@ void takeTurn(GameState* game) {
 
 }
 
-/* Displays cards from the drawPile and each player's tankPile.
- * This function is exclusively used for debugging.
- *
- * @param drawPile
- * @param players
- * @param playerCount
- *
- * @return void
- */
-
-int debugMode(DrawPile* drawPile, Player players[], int playerCount) {
-
-    /* DISPLAY DRAWPILE CARDS */
-
-    int i, a, j, k, z;
-
-    printf("\n+----------------------------------------------------------+\n");
-    printf(  "|                   DISPLAYING ALL CARDS                   |\n");
-    printf(  "+------+-------+-------+-----------------------------------+\n");
-    printf(  "| CARD | FRONT | BACK  | VALUE                             |\n");
-    printf(  "+------+-------+-------+-----------------------------------+\n");
-
-    for (i = 0; i < drawPile->totalCards; i++) {
-        printf("| %4d |   %c   | %c %c %c | %-33d |\n",
-            i + 1,
-            matchColorChar(drawPile->cards[i].color),
-            matchColorChar(drawPile->cards[i].back[0]),
-            matchColorChar(drawPile->cards[i].back[1]),
-            matchColorChar(drawPile->cards[i].back[2]),
-            drawPile->cards[i].value
-        );
-    }
-    printf(  "+------+-------+-------+-----------------------------------+\n");
-
-    /* INITIALIZE PLAYERS */
-
-    for (a = 0; a < playerCount; a++) {
-        populateDeck(drawPile, &players[a].tankPile);
-    }
-
-    /* DISPLAY PLAYER INFO */
-
-    printf("\n+----------------------------------------------------------+\n");
-    printf(  "|                 DISPLAYING PLAYER CARDS                  |\n");
-    printf(  "+--------+------+-------+----------------------------------+\n");
-    printf(  "| PLAYER | DECK | FRONT | BACK  | VALUE                    |\n");
-    printf(  "+--------+------+-------+----------------------------------+\n");
-    for (j = 0; j < playerCount; j++) {
-        // player cards
-
-        // loop through each color
-
-        for (k = 0; k < CARD_COLORS; k++) {
-
-            // loop for each color deck
-
-            for (z = 0; z < players[j].tankPile.cardsPerColor[k]; z++) {
-                printf("| %4d   | %3d  |   %c   | %c %c %c | %-24d |\n",
-                    j + 1,
-                    k + 1,
-                    matchColorChar(players[j].tankPile.cards[k][z].color),
-                    matchColorChar(players[j].tankPile.cards[k][z].back[0]),
-                    matchColorChar(players[j].tankPile.cards[k][z].back[1]),
-                    matchColorChar(players[j].tankPile.cards[k][z].back[2]),
-                    players[j].tankPile.cards[k][z].value
-                );
-            }
-        }
-
-    }
-
-    return 1;
-}
-
-
 /* Populates the drawPile inside the game struct, and continuously plays
  * a rotation of turns among players in the game, displaying all
  * players' card information for each turn taken until a player wins.
@@ -312,37 +238,32 @@ int debugMode(DrawPile* drawPile, Player players[], int playerCount) {
 
 int playGame(GameState* game) {
 
-    int i, j;
+    int i;
+
+    /* DISPLAY CARDS */
+
+    if (game->debugMode) {
+        displayCards(&game->drawPile);
+    }
 
     /* POPULATE DECK */
 
-    if (game->debugMode) {
-        debugMode(&game->drawPile, game->players, game->numPlayers);
-    } else {
-        for (i = 0; i < game->numPlayers; i++) {
-            populateDeck(&game->drawPile, &game->players[i].tankPile);
-        }
+    for (i = 0; i < game->numPlayers; i++) {
+        populateDeck(&game->drawPile, &game->players[i].tankPile);
     }
 
     /* PLAY ROUNDS */
 
     do {
-        printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
-        printf("| PLAYER | RED | ORG | YLW | GRN | BLU | IND | VLT | SCORE |\n");
-        printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
-        for (j = 0; j < game->numPlayers; j++) {
-            printf("|   P%d   |  %d  |  %d  |  %d  |  %d  |  %d  |  %d  |  %d  |  %2d   |\n", j + 1,
-                    game->players[j].tankPile.cardsPerColor[0],
-                    game->players[j].tankPile.cardsPerColor[1],
-                    game->players[j].tankPile.cardsPerColor[2],
-                    game->players[j].tankPile.cardsPerColor[3],
-                    game->players[j].tankPile.cardsPerColor[4],
-                    game->players[j].tankPile.cardsPerColor[5],
-                    game->players[j].tankPile.cardsPerColor[6],
-                    game->players[j].points
-                );
-                printf("+--------+-----+-----+-----+-----+-----+-----+-----+-------+\n");
+
+        /* DISPLAY CARDS */
+
+        if (game->debugMode) {
+            displayPlayerCards(&game->drawPile, game->players, game->numPlayers);
         }
+
+        displayBackCards(game);
+
         takeTurn(game);
 
     } while (game->gameWon == false);
