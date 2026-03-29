@@ -52,7 +52,7 @@ int main()
         printf("|    [0] Exit and Save                                     |\n");
         printf("+----------------------------------------------------------+\n");
 
-        getMenuInput(&menuInput);
+        getInput(&menuInput, EXIT_ACTION, N_MENU_Y, -1);
 
         if (menuInput == NEW_GAME) {
             newGame(&game, playerRecords, &numPlayerRecords);

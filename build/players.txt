@@ -1,13 +1,14 @@
 wins, highscore, username
-1, 32, Gamma
-7, 30, Phi
-4, 27, Mu
+14, 20, Charlie
+13, 21, Delta
 12, 26, Lota
 9, 25, Bravo
+8, 30, Phi
 7, 24, Epsilon
 5, 21, BenjaminButton
-12, 21, Delta
+5, 27, Mu
 3, 20, Alpha
-14, 20, Charlie
 3, 20, Eta
+3, 32, Gamma
+1, 5, new player test
 0, 18, Nu

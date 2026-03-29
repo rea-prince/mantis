@@ -5,9 +5,6 @@
  *  Last Modified   : <date when last revision was made>
  ******************************************************************************/
 
-#ifndef HELPERS_C
-#define HELPERS_C
-
 #include "common.h"
 #include "models.h"
 
@@ -25,6 +22,7 @@ enum Color matchColor(char c) {
         case 'B': returnVal = BLUE;  break;
         case 'I': returnVal = INDIGO; break;
         case 'V': returnVal = VIOLET; break;
+        default: returnVal = N_INVALID_COLOR; break;
     }
 
     return returnVal;
@@ -43,96 +41,35 @@ char matchColorChar(enum Color c) {
         case BLUE: returnVal = 'B';  break;
         case INDIGO: returnVal = 'I'; break;
         case VIOLET: returnVal = 'V'; break;
+        case N_INVALID_COLOR: returnVal = 'R'; break; // default value
     }
 
     return returnVal;
 }
 
-void getGameInput(int* inputDest, enum Action act, GameState game) {
-
+void getInput(int *inputDest, int min, int max, int exclude) {
     char enter;
     int scanfRet;
-
     bool valid = false;
 
     while (!valid) {
 
-        printf(  "\n+----+\n");
-        printf(    "| >> | ");
+        printf("\n+----+\n");
+        printf("| >> | ");
         scanfRet = scanf("%d", inputDest);
-        printf(    "+----+\n");
+        printf("+----+\n");
 
-        // > 0 because all provided options are 1-something;
-        // input shall be reincremented outside the function
-
-        if ( (scanfRet == 1 && *inputDest > EXIT_ACTION) && (
-                    ((act == N_ACTION_Y) && (*inputDest < N_ACTION_Y)) ||
-                    ((act == STEAL) && (*inputDest <= game.numPlayers) && (*inputDest != game.playerTurn + 1))
-                )
-            ) {
-                // score, or (person is stealing, input is valid range of players, and not equal to self)
-                valid = true;
-        } else {
-            printf("\nError! Please enter a valid input.\n");
-            while (scanf("%c", &enter) == 1 && enter != '\n'); // flush
-        }
-    }
-
-}
-
-void getMenuInput(int* inputDest) {
-
-    char enter;
-    int scanfRet;
-
-    bool valid = false;
-
-    while (!valid) {
-
-        printf(  "\n+----+\n");
-        printf(    "| >> | ");
-        scanfRet = scanf("%d", inputDest);
-        printf(    "+----+\n");
-
-        // > 0 because all provided options are 1-something;
-        // input shall be reincremented outside the function
-
-        if ( (scanfRet == 1 && *inputDest >= 0) && *inputDest < N_MENU_Y) {
+        if (scanfRet == 1 &&
+            *inputDest >= min &&
+            *inputDest < max &&
+            (exclude == -1 || *inputDest != exclude)
+        ) {
             valid = true;
         } else {
             printf("\nError! Please enter a valid input.\n");
-            while (scanf("%c", &enter) == 1 && enter != '\n'); // flush
+            while (scanf("%c", &enter) == 1 && enter != '\n');
         }
     }
-
-}
-
-
-void getTopPlayersInput (int *inputDest) {
-
-    char enter;
-    int scanfRet;
-
-    bool valid = false;
-
-    while (!valid) {
-
-        printf(  "\n+----+\n");
-        printf(    "| >> | ");
-        scanfRet = scanf("%d", inputDest);
-        printf(    "+----+\n");
-
-        if ( (scanfRet == 1 && *inputDest >= 0) && *inputDest < N_SORT_Y) {
-            valid = true;
-        } else {
-            printf("\nError! Please enter a valid input.\n");
-            while (scanf("%c", &enter) == 1 && enter != '\n'); // flush
-        }
-    }
-}
-
-void getSettingsInput(int *inputDest) {
-
 }
 
 // Pick out a single card from the draw pile
@@ -169,14 +106,19 @@ int createDeck(FILE* mantisDeck, GameState* game) {
     /* Load deck into memory */
 
     int cardIdx = 0;
+    char f, b1, b2, b3;
+
     while (cardIdx < DECK_SIZE && fgets(lineBuffer, sizeof(lineBuffer), mantisDeck)) {
-        game->drawPile.cards[cardIdx].color = matchColor(lineBuffer[0]);
+        sscanf(lineBuffer, "%c | %c %c %c %d",
+            &f, &b1, &b2, &b3, &game->drawPile.cards[cardIdx].value
+        );
 
-        game->drawPile.cards[cardIdx].back[0] = matchColor(lineBuffer[4]);
-        game->drawPile.cards[cardIdx].back[1] = matchColor(lineBuffer[5]);
-        game->drawPile.cards[cardIdx].back[2] = matchColor(lineBuffer[6]);
+        game->drawPile.cards[cardIdx].color = matchColor(f);
 
-        game->drawPile.cards[cardIdx].value = (lineBuffer[8] - 48);
+        game->drawPile.cards[cardIdx].back[0] = matchColor(b1);
+        game->drawPile.cards[cardIdx].back[1] = matchColor(b2);
+        game->drawPile.cards[cardIdx].back[2] = matchColor(b3);
+
         cardIdx++;
     }
 
@@ -343,8 +285,3 @@ void savePlayerRecords(PlayerRecord playerRecords[], int numPlayerRecords) {
         fclose(playersWrite);
     }
 }
-
-
-// Edit and re-sort players.txt
-
-#endif

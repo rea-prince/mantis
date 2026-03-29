@@ -14,12 +14,8 @@ enum Color matchColor(char c);
 char matchColorChar(enum Color c);
 
 /* USER INPUT */
-// TODO: merge all input into one function
-void getGameInput(int* inputDest, enum Action act, GameState game);
-void getMenuInput(int* inputDest);
-void getTopPlayersInput (int *inputDest);
-void getSettingsInput(int *inputDest);
 
+void getInput(int *inputDest, int min, int max, int exclude);
 
 /* DECK CONTROL */
 

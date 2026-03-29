@@ -7,9 +7,6 @@
  *  Last Modified   : <date when last revision was made>
  ******************************************************************************/
 
-#ifndef LOGIC_C // Include this to prevent redefinition error
-#define LOGIC_C // Include this to prevent redefinition error
-
 #include "common.h"
 #include "models.h"
 #include "helpers.h"
@@ -169,7 +166,7 @@ void takeTurn(GameState* game) {
         printf(  "|    [2] Try to Steal                                      |\n");
         printf(  "+----------------------------------------------------------+\n");
 
-        getGameInput(&playerAction, N_ACTION_Y, *game);
+        getInput(&playerAction, 1, N_ACTION_Y, -1);
 
         printf("\n+----------------------------------------------------------+\n");
         printf(  "| Resolving turn for Player %d...                           |\n", game->playerTurn + 1);
@@ -201,7 +198,7 @@ void takeTurn(GameState* game) {
             /* PLACE HOLDER INPUTS */
             int stealCardIdx;
 
-            getGameInput(&stealCardIdx, STEAL, *game);
+            getInput(&stealCardIdx, 1, game->numPlayers + 1, game->playerTurn + 1);
 
             /* END OF PLACEHOLDER */
 
@@ -352,7 +349,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
 
         if (option == 0) {
             printf("+----------------------------------------------------------+\n");
-            printf("| Insert P%d username (36 chars max):                      |\n", (playerIdx + 1));
+            printf("| Insert P%d username (36 chars max):                       |\n", (playerIdx + 1));
             printf("+----------------------------------------------------------+\n");
 
             printf(  "\n+----+\n");
@@ -434,7 +431,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
             // Case 1: player 1 has more points than player 2
 
             game->winner = 0;
-            printf("WINNER: %s with %d points!\n", game->players[game->winner].username, game->players[game->winner].points);
+            printf("WINNER: %s (P%d) with %d points!\n\n", game->players[game->winner].username, 1, game->players[game->winner].points);
         } else if (game->players[0].points == game->players[1].points) {
 
             // Case 2: player 1 and 2 have equal points
@@ -444,7 +441,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
                 // Case 2a: player 1 has more tank cards than player 2
 
                 game->winner = 0;
-                printf("WINNER: %s with %d points!\n", game->players[game->winner].username, game->players[game->winner].points);
+                printf("WINNER: %s (P%d) with %d points!\n\n", game->players[game->winner].username, 1, game->players[game->winner].points);
 
             } else {
 
@@ -458,7 +455,7 @@ void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecord
                 for (a = 0; a < game->numPlayers; a++) {
                     if (game->players[0].points == game->players[a].points &&
                         game->players[0].tankPile.totalCards == game->players[a].tankPile.totalCards) {
-                            printf("WINNER/s: %s with %d points!\n", game->players[a].username, game->players[a].points);
+                            printf("WINNER/s: %s (P%d) with %d points!\n\n", game->players[a].username, a + 1, game->players[a].points);
                             ++winners;
                         }
                 }
@@ -517,7 +514,7 @@ void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
     printf("| WARNING: This will also change the order in the records. |\n");
     printf("+----------------------------------------------------------+\n");
 
-    getTopPlayersInput(&input);
+    getInput(&input, 0, N_SORT_Y, -1);
 
     if (input != EXIT_TOP_PLAYERS) {
 
@@ -561,17 +558,7 @@ void gameSettings(GameState *game) {
     int input;
     char flushBuffer;
 
-    do {
-        printf(  "\n+----+\n");
-        printf(    "| >> | ");
-        scanf("%d", &input);
-        while (scanf("%c", &flushBuffer) && flushBuffer != '\n');
-        printf(    "+----+\n");
-
-        if (input < 0 || input > 2) {
-            printf("\nError! Please enter a valid option.\n");
-        }
-    } while (input < 0 || input > 2);
+    getInput(&input, 0, N_MENU_Y, -1);
 
     if (input == 1) {
         do {
@@ -670,6 +657,3 @@ int debugGame(DrawPile* drawPile, Player players[], int playerCount) {
 
     return 1;
 }
-
-
-#endif // LOGIC_C; Include this to prevent redefinition error

@@ -11,27 +11,28 @@
 #include "common.h"
 
 enum Color {
-    RED,
-    ORANGE,
-    YELLOW,
-    GREEN,
-    BLUE,
-    INDIGO,
-    VIOLET
+    RED = 0,
+    ORANGE = 1,
+    YELLOW = 2,
+    GREEN = 3,
+    BLUE = 4,
+    INDIGO = 5,
+    VIOLET = 6,
+    N_INVALID_COLOR // flag for invalid color
 };
 
 enum Action {
-    EXIT_ACTION, // filler for index 0
-    SCORE,
-    STEAL,
-    N_ACTION_Y // flag for no action yet
+    EXIT_ACTION = 0,
+    SCORE = 1,
+    STEAL = 2,
+    N_ACTION_Y // flag for max action option
 };
 
 enum MenuOptions {
-    EXIT_MENU,
-    NEW_GAME,
-    TOP_PLAYERS,
-    GAME_SETTINGS,
+    EXIT_MENU = 0,
+    NEW_GAME = 1,
+    TOP_PLAYERS = 2,
+    GAME_SETTINGS = 3,
     N_MENU_Y // flag for max menu option
 };
 
@@ -48,6 +49,7 @@ typedef char StrList[WIN_SCORE_NAME];
 /**
  * Template for the cards that will to be loaded from mantis.txt
  */
+
 typedef struct {
     enum Color color;             // card's color
     enum Color back[BACK_COLORS]; // colors at the card's back
@@ -68,6 +70,7 @@ typedef struct {
 /**
  * Template for a player
  */
+
 typedef struct {
     StrName username;
     TankPile tankPile;
