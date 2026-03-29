@@ -15,10 +15,14 @@
  *  Starts a new game by clearing the terminal, prompting the user for the
  *  number of players, either adding a new player or choosing from the selction,
  *  and calling playGame() to start
+ *
+ *  @param game
+ *  @param playerRecords[]
+ *  @param numPlayerRecords
  *  @return Void
  */
 
-void newGame(GameState* game, PlayerRecord playerRecords[], int *numPlayerRecords) {
+void newGame(GameState* game, PlayerRecord playerRecords[], int* numPlayerRecords) {
     iClear(0, 0, 60, 60);
 
     int playerIdx, i, j;
@@ -256,6 +260,13 @@ void topPlayers(PlayerRecord playerRecords[], int numPlayers) {
         }
     } while (input != EXIT_TOP_PLAYERS);
 }
+
+/**
+ *  Allows player to change settings in the game state
+ *
+ *  @param game
+ *  @return Void
+ */
 
 void gameSettings(GameState *game) {
     iClear(0, 0, 60, 60);
