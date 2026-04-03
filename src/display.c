@@ -385,7 +385,7 @@ void displayStealCard(GameState* game, int drawnColor, int playerIdx, int stealI
             matchColorChar(drawnColor)
         );
         printf("| - +%d (%c) cards to Player %d's Tank!                       |\n",
-            game->players[stealIdx].tankPile.cardsPerColor[drawnColor],
+            game->players[stealIdx].tankPile.cardsPerColor[drawnColor] + 1,
             matchColorChar(drawnColor),
             playerIdx + 1
         );
